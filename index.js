@@ -13,8 +13,8 @@ const wss = new ws.Server({ path: '/', port: 8080 })
 const games = new Map()
 const players = new Map()
 
-games.set(uuidv4(), {name: 'The game!', started: false, total: 12, existing: 9})
-games.set(uuidv4(), {name: 'Hahahah', started: true, total: 6, existing: 6})
+// games.set(uuidv4(), {name: 'The game!', started: false, total: 12, existing: 9})
+// games.set(uuidv4(), {name: 'Hahahah', started: true, total: 6, existing: 6})
 
 wss.on('connection', function connection(player) {
   player.on('message', function message(data) {

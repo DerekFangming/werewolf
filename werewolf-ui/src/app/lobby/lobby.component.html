@@ -15,7 +15,7 @@
     <div class="col">
       <div class="d-grid gap-2">
         <button type="button" class="btn btn-outline-success tall-button"><p class="display-4">加入游戏</p></button>
-        <button type="button" class="btn btn-outline-success tall-button" (click)="gameState.setState('create')"><small><p class="display-4">创建游戏</p></small></button>
+        <button type="button" class="btn btn-outline-success tall-button" (click)="createGame()"><small><p class="display-4">创建游戏</p></small></button>
       </div>
     </div>
   </div>
@@ -59,6 +59,14 @@
       <button type="button" class="btn me-2" [ngClass]="players[9].selected ? 'btn-success' : 'btn-outline-secondary'" (click)="players[9].selected = !players[9].selected">{{players[9].name}}</button>
       <button type="button" class="btn me-2" [ngClass]="players[10].selected ? 'btn-success' : 'btn-outline-secondary'" (click)="players[10].selected = !players[10].selected">{{players[10].name}}</button>
       <button type="button" class="btn me-2" [ngClass]="players[11].selected ? 'btn-success' : 'btn-outline-secondary'" (click)="players[11].selected = !players[11].selected">{{players[11].name}}</button>
+    </div>
+  </div>
+  <div class="row mt-5">
+    <div class="col">
+      <div class="d-grid gap-4">
+        <button type="button" class="btn btn-outline-success" (click)="confirmCreateGame()"><p class="lead mb-0">创建游戏</p></button>
+        <button type="button" class="btn btn-outline-secondary" (click)="gameState.setState('lobby')"><p class="lead mb-0">取消</p></button>
+      </div>
     </div>
   </div>
 </div>

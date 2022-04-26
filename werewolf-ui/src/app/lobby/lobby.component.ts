@@ -14,21 +14,21 @@ import { Witch } from '../model/witch';
 })
 export class LobbyComponent implements OnInit {
 
-  players = [new Werewolf(), new Werewolf(), new Werewolf(), new Werewolf(), new Villager(), new Villager(), new Villager(), new Villager(),
-    new Seer(), new Witch(), new Hunter(), new Guard()]
+  ws: WebSocket
+  players = []
 
   constructor(private gameState: GameStateService) { }
 
   ngOnInit() {
     // const ws = new WebSocket('ws://localhost:8080')
-    const ws = new WebSocket('ws://10.0.1.50:8080')
+    this.ws = new WebSocket('ws://10.0.1.50:8080')
     let that = this
 
-    ws.onopen = function (event) {
-      ws.send(`{"op": "handshake", "playerId": "${that.gameState.getPlayerId()}", "gameId": "${that.gameState.getGameId()}"}`)
+    this.ws.onopen = function (event) {
+      that.ws.send(`{"op": "handshake", "playerId": "${that.gameState.getPlayerId()}", "gameId": "${that.gameState.getGameId()}"}`)
     };
 
-    ws.onmessage = function (data) {
+    this.ws.onmessage = function (data) {
       let cmd = JSON.parse(data.data)
       console.log('received: %s', JSON.stringify(cmd))
       if (cmd.op == 'handshake') {
@@ -39,9 +39,26 @@ export class LobbyComponent implements OnInit {
       }
     }
 
-    ws.onclose = function (data) {
+    this.ws.onclose = function (data) {
       console.log('Server closed')
     }
+  }
+
+  createGame() {
+    this.gameState.setState('create')
+    this.players = [new Werewolf({selected: true}), new Werewolf({selected: true}), new Werewolf(), new Werewolf(),
+      new Villager({selected: true}), new Villager({selected: true}), new Villager(), new Villager(),
+      new Seer({selected: true}), new Witch({selected: true}), new Hunter(), new Guard()]
+  }
+
+  confirmCreateGame() {
+    let selected = this.players.filter(p => p.selected).map(p => p.name)
+    if (selected.length < 6) {
+      
+    }
+
+    this.gameState.setState('loading')
+
   }
 
 }
