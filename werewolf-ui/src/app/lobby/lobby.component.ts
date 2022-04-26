@@ -17,7 +17,7 @@ export class LobbyComponent implements OnInit {
   ws: WebSocket
   players = []
 
-  constructor(private gameState: GameStateService) { }
+  constructor(public gameState: GameStateService) { }
 
   ngOnInit() {
     // const ws = new WebSocket('ws://localhost:8080')
@@ -54,7 +54,7 @@ export class LobbyComponent implements OnInit {
   confirmCreateGame() {
     let selected = this.players.filter(p => p.selected).map(p => p.name)
     if (selected.length < 6) {
-      
+
     }
 
     this.gameState.setState('loading')
