@@ -8,7 +8,7 @@ const app = express()
 const port = '9001'
 const production = process.env.PRODUCTION == 'true'
 
-const wss = new ws.Server({ path: '/haha', port: 8081 });
+const wss = new ws.Server({ path: '/', port: 8080 })
 
 const games = new Map()
 const players = new Map()
@@ -22,40 +22,69 @@ wss.on('connection', function connection(player) {
     try {
       let cmd = JSON.parse(data)
       switch (cmd.op) {
+        case 'handshake':
+          
+        // Existing user reconnected
+          if (players.has(cmd.playerId)) {
+            let existing = players.get(cmd.playerId)
+            existing.heatbeat = new Date()
+
+            console.log('Existing user reconnected: ' + existing.id)
+            player.send(`{"op": "handshake", "playerId": "${existing.id}", "gameId": ""}`)
+
+            break
+          }
+
+          // New or expired user
+          player.id = uuidv4()
+          player.heatbeat = new Date()
+          players.set(player.id, player)
+          console.log('New user joining: ' + player.id)
+
+          player.send(`{"op": "handshake", "playerId": "${player.id}", "gameId": ""}`)
+          break
         case 'create':
           console.log('creating game')
           break
         default:
           console.log('unknown command: ' + cmd.op)
       }
-      console.log(d.op)
+      //console.log(cmd.op)
     } catch (err) {
-      console.log('not json')
+      console.log('not json: ' + err)
     }
   });
 
-  player.id = uuidv4()
-  console.log('Player joined: ' + player.id)
-  player.send('j')
+  // player.id = uuidv4()
+  // console.log('Player joined: ' + player.id)
+  // player.send('j')
 
   // console.log(clients.get('a'));
-  players.set(player.id, {player: player, heatbeat: new Date()})
+  // players.set(player.id, {player: player, heatbeat: new Date()})
 
   // Send games info
-  let gamesInfo = Array.from(games, ([id, game]) => ({ name: game.name, started: game.started, total: game.total, existing: game.existing }))
+  // let gamesInfo = Array.from(games, ([id, game]) => ({ name: game.name, started: game.started, total: game.total, existing: game.existing }))
 
-  player.send(JSON.stringify(gamesInfo))
+  // player.send(JSON.stringify(gamesInfo))
 })
 
 
 
 
-app.get('/poll', (req, res) => {
-  if (req.query.checkPoint == undefined || req.query.checkPoint != checkPoint) {
-    res.json({lastReceived: lastReceived, notification: notification, storeCards: storeCards, sellerCards: sellerCards, highlightCards: highlightCards, checkPoint: checkPoint})
-  } else {
-    res.json({lastReceived: lastReceived, notification: notification, storeCards: [], sellerCards:[], highlightCards: [], checkPoint: checkPoint})
-  }
+app.get('/debug', (req, res) => {
+  // if (req.query.checkPoint == undefined || req.query.checkPoint != checkPoint) {
+  //   res.json({lastReceived: lastReceived, notification: notification, storeCards: storeCards, sellerCards: sellerCards, highlightCards: highlightCards, checkPoint: checkPoint})
+  // } else {
+  //   res.json({lastReceived: lastReceived, notification: notification, storeCards: [], sellerCards:[], highlightCards: [], checkPoint: checkPoint})
+  // }
+
+  let playerStatus = '<h1>Players</h1>'
+  for (const [id, p] of players) {
+
+    playerStatus += '<br />' + id + '   Last heartbeat: ' + p.heatbeat
+  } 
+
+  res.send(playerStatus)
 })
 
 let counter = 0
