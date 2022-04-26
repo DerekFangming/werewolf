@@ -16,6 +16,7 @@ export class GameStateService {
   constructor(private cookieService: CookieService) {
     this.playerId = this.cookieService.get(GameStateService.playerIdCookieName)
     this.gameId = this.cookieService.get(GameStateService.gameIdCookieName)
+    console.log(this.playerId)
   }
 
   getPlayerId() {

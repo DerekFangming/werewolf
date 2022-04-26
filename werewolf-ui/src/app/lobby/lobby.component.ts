@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core'
 import { GameStateService } from '../game-state.service';
 import { Guard } from '../model/guard';
 import { Hunter } from '../model/hunter';
@@ -6,6 +6,7 @@ import { Seer } from '../model/seer';
 import { Villager } from '../model/villager';
 import { Werewolf } from '../model/werewolf';
 import { Witch } from '../model/witch';
+import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-lobby',
@@ -14,10 +15,16 @@ import { Witch } from '../model/witch';
 })
 export class LobbyComponent implements OnInit {
 
+  error = ''
   ws: WebSocket
   players = []
 
-  constructor(public gameState: GameStateService) { }
+  // modalRef: NgbModalRef;
+  // @ViewChild('userModal', { static: true}) userModal: TemplateRef<any>
+  // @ViewChild('banUserModal', { static: true}) banUserModal: TemplateRef<any>
+  @ViewChild('errModel', { static: true}) errModel: TemplateRef<any>
+
+  constructor(public gameState: GameStateService, private modalService: NgbModal) { }
 
   ngOnInit() {
     // const ws = new WebSocket('ws://localhost:8080')
@@ -51,13 +58,21 @@ export class LobbyComponent implements OnInit {
       new Seer({selected: true}), new Witch({selected: true}), new Hunter(), new Guard()]
   }
 
+  // open(content) {
+  //   this.modalService.open(content)
+  // }
+
   confirmCreateGame() {
     let selected = this.players.filter(p => p.selected).map(p => p.name)
     if (selected.length < 6) {
-
+      this.error = '至少需要六人才能创建游戏'
+      this.modalService.open(this.errModel, { centered: true })
+      return
     }
 
     this.gameState.setState('loading')
+    console.log(selected)
+    //this.ws.send(`{"op": "create", "playerId": "${that.gameState.getPlayerId()}", "gameId": "${that.gameState.getGameId()}"}`)
 
   }
 

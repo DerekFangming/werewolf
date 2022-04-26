@@ -70,18 +70,12 @@ wss.on('connection', function connection(player) {
 
 
 app.get('/debug', (req, res) => {
-  // if (req.query.checkPoint == undefined || req.query.checkPoint != checkPoint) {
-  //   res.json({lastReceived: lastReceived, notification: notification, storeCards: storeCards, sellerCards: sellerCards, highlightCards: highlightCards, checkPoint: checkPoint})
-  // } else {
-  //   res.json({lastReceived: lastReceived, notification: notification, storeCards: [], sellerCards:[], highlightCards: [], checkPoint: checkPoint})
-  // }
-
   let status = '<h1>Players</h1>'
   for (const [id, p] of players) {
-    status += '<br />' + id + '   Last heartbeat: ' + p.heatbeat
+    status += '<br />' + id + ' - Last heartbeat: ' + p.heatbeat + (p.gameId == '' ? ' - Not in game' : ' - ' + p.gameId)
   }
 
-  status = '<br /><br /><h1>Games</h1>'
+  status += '<br /><br /><h1>Games</h1>'
   for (const [id, g] of games) {
     status += '<br />' + id
   }

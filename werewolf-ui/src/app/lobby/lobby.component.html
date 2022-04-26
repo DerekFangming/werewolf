@@ -70,3 +70,20 @@
     </div>
   </div>
 </div>
+
+<ng-template #errModel let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title"><span style="color: red">错误</span></h4>
+    <button type="button" class="btn-close" (click)="modal.dismiss('Cross click')"> </button>
+  </div>
+  <div class="modal-body" ngbAutofocus>
+    <div class="row">
+      <div class="col">
+        <p class="lead"><small>{{error}}</small></p>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss('Cross click')">OK</button>
+  </div>
+</ng-template>
