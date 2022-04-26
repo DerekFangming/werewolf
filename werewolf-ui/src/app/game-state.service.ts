@@ -9,31 +9,29 @@ export class GameStateService {
   private static readonly playerIdCookieName = 'wwPlayerId'
   private static readonly gameIdCookieName = 'wwGameId'
 
-  constructor(private cookieService: CookieService) {
-    // let val = this.cookieService.get('Test')
-    // console.log(val)
-    // if (val == '') {
-    //   console.log('=============================')
-    // }
+  playerId = ''
+  gameId = ''
 
-    // this.cookieService.set('ww_asoo', '44444', 0, '/');
-    // let val1 = this.cookieService.get('ww_asoo')
-    // console.log(val1)
+  constructor(private cookieService: CookieService) {
+    this.playerId = this.cookieService.get(GameStateService.playerIdCookieName)
+    this.gameId = this.cookieService.get(GameStateService.gameIdCookieName)
   }
 
   getPlayerId() {
-    return this.cookieService.get(GameStateService.playerIdCookieName)
+    return this.playerId
   }
 
   setPlayerId(playerId: string) {
+    this.playerId = playerId
     return this.cookieService.set(GameStateService.playerIdCookieName, playerId, 0, '/');
   }
 
   getGameId() {
-    return this.cookieService.get(GameStateService.gameIdCookieName)
+    return this.gameId
   }
 
   setGameId(gameId: string) {
+    this.gameId = gameId
     return this.cookieService.set(GameStateService.gameIdCookieName, gameId, 0, '/');
   }
   

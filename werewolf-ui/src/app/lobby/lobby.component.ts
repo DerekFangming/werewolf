@@ -2,11 +2,11 @@ import { Component, OnInit } from '@angular/core'
 import { GameStateService } from '../game-state.service';
 
 @Component({
-  selector: 'app-game',
-  templateUrl: './game.component.html',
-  styleUrls: ['./game.component.css']
+  selector: 'app-lobby',
+  templateUrl: './lobby.component.html',
+  styleUrls: ['./lobby.component.css']
 })
-export class GameComponent implements OnInit {
+export class LobbyComponent implements OnInit {
 
   constructor(private gameStateService: GameStateService) { }
 
@@ -29,12 +29,13 @@ export class GameComponent implements OnInit {
 
     ws.onmessage = function (data) {
       let cmd = JSON.parse(data.data)
+      console.log('received: %s', JSON.stringify(cmd))
       if (cmd.op == 'handshake') {
         console.log('received: %s', cmd.playerId)
         that.gameStateService.setPlayerId(cmd.playerId)
+        
         return
       }
-      console.log('received: %s', data)
     }
 
     ws.onclose = function (data) {

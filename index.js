@@ -24,22 +24,20 @@ wss.on('connection', function connection(player) {
       switch (cmd.op) {
         case 'handshake':
           
-        // Existing user reconnected
+          // Existing user reconnected
           if (players.has(cmd.playerId)) {
             let existing = players.get(cmd.playerId)
             existing.heatbeat = new Date()
 
-            console.log('Existing user reconnected: ' + existing.id)
-            player.send(`{"op": "handshake", "playerId": "${existing.id}", "gameId": ""}`)
-
+            player.send(`{"op": "handshake", "playerId": "${existing.id}", "gameId": "${existing.gameId}"}`)
             break
           }
 
           // New or expired user
           player.id = uuidv4()
           player.heatbeat = new Date()
+          player.gameId = ''
           players.set(player.id, player)
-          console.log('New user joining: ' + player.id)
 
           player.send(`{"op": "handshake", "playerId": "${player.id}", "gameId": ""}`)
           break
@@ -78,13 +76,17 @@ app.get('/debug', (req, res) => {
   //   res.json({lastReceived: lastReceived, notification: notification, storeCards: [], sellerCards:[], highlightCards: [], checkPoint: checkPoint})
   // }
 
-  let playerStatus = '<h1>Players</h1>'
+  let status = '<h1>Players</h1>'
   for (const [id, p] of players) {
+    status += '<br />' + id + '   Last heartbeat: ' + p.heatbeat
+  }
 
-    playerStatus += '<br />' + id + '   Last heartbeat: ' + p.heatbeat
-  } 
+  status = '<br /><br /><h1>Games</h1>'
+  for (const [id, g] of games) {
+    status += '<br />' + id
+  }
 
-  res.send(playerStatus)
+  res.send(status)
 })
 
 let counter = 0
