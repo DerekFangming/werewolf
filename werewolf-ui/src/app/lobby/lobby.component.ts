@@ -1,5 +1,11 @@
 import { Component, OnInit } from '@angular/core'
 import { GameStateService } from '../game-state.service';
+import { Guard } from '../model/guard';
+import { Hunter } from '../model/hunter';
+import { Seer } from '../model/seer';
+import { Villager } from '../model/villager';
+import { Werewolf } from '../model/werewolf';
+import { Witch } from '../model/witch';
 
 @Component({
   selector: 'app-lobby',
@@ -8,23 +14,18 @@ import { GameStateService } from '../game-state.service';
 })
 export class LobbyComponent implements OnInit {
 
-  constructor(private gameStateService: GameStateService) { }
+  players = [new Werewolf(), new Werewolf(), new Werewolf(), new Werewolf(), new Villager(), new Villager(), new Villager(), new Villager(),
+    new Seer(), new Witch(), new Hunter(), new Guard()]
+
+  constructor(private gameState: GameStateService) { }
 
   ngOnInit() {
     // const ws = new WebSocket('ws://localhost:8080')
     const ws = new WebSocket('ws://10.0.1.50:8080')
-
-    let playerId = this.gameStateService.getPlayerId()
-    let gameId = this.gameStateService.getGameId()
-
-    if (playerId == '') {
-
-    }
-
     let that = this
 
     ws.onopen = function (event) {
-      ws.send(`{"op": "handshake", "playerId": "${playerId}", "gameId": "${gameId}"}`);
+      ws.send(`{"op": "handshake", "playerId": "${that.gameState.getPlayerId()}", "gameId": "${that.gameState.getGameId()}"}`)
     };
 
     ws.onmessage = function (data) {
@@ -32,20 +33,15 @@ export class LobbyComponent implements OnInit {
       console.log('received: %s', JSON.stringify(cmd))
       if (cmd.op == 'handshake') {
         console.log('received: %s', cmd.playerId)
-        that.gameStateService.setPlayerId(cmd.playerId)
+        that.gameState.setplayerIdAndGameId(cmd.playerId, cmd.gameId)
         
         return
       }
     }
 
     ws.onclose = function (data) {
-      // clearInterval(interval)
-      console.log('Server closed');
+      console.log('Server closed')
     }
-
-    // const interval = setInterval(function() {
-    //   ws.send('headtbeat')
-    // }, 5000)
   }
 
 }

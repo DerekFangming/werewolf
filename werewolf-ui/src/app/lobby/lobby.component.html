@@ -2,13 +2,63 @@
   <a class="navbar-brand">狼人杀发牌助手</a>
 </nav>
 
-<div class="container mt-5">
+<div *ngIf="gameState.state == 'loading'" class="container">
+  <div class="row my-5">
+    <div class="col text-center my-5">
+      <i class="fa fa-refresh fa-spin fa-3x" aria-hidden="true"></i>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="gameState.state == 'lobby'" class="container mt-5">
   <div class="row mt-2">
     <div class="col">
       <div class="d-grid gap-2">
         <button type="button" class="btn btn-outline-success tall-button"><p class="display-4">加入游戏</p></button>
-        <button type="button" class="btn btn-outline-success tall-button"><small><p class="display-4">创建游戏</p></small></button>
+        <button type="button" class="btn btn-outline-success tall-button" (click)="gameState.setState('create')"><small><p class="display-4">创建游戏</p></small></button>
       </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="gameState.state == 'create'" class="container">
+  <div class="row mt-4">
+    <div class="col">
+      <p class="lead">狼</p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <button type="button" class="btn me-2" [ngClass]="players[0].selected ? 'btn-success' : 'btn-outline-secondary'" (click)="players[0].selected = !players[0].selected">{{players[0].name}}</button>
+      <button type="button" class="btn me-2" [ngClass]="players[1].selected ? 'btn-success' : 'btn-outline-secondary'" (click)="players[1].selected = !players[1].selected">{{players[1].name}}</button>
+      <button type="button" class="btn me-2" [ngClass]="players[2].selected ? 'btn-success' : 'btn-outline-secondary'" (click)="players[2].selected = !players[2].selected">{{players[2].name}}</button>
+      <button type="button" class="btn me-2" [ngClass]="players[3].selected ? 'btn-success' : 'btn-outline-secondary'" (click)="players[3].selected = !players[3].selected">{{players[3].name}}</button>
+    </div>
+  </div>
+  <div class="row mt-4">
+    <div class="col">
+      <p class="lead">民</p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <button type="button" class="btn me-2" [ngClass]="players[4].selected ? 'btn-success' : 'btn-outline-secondary'" (click)="players[4].selected = !players[4].selected">{{players[4].name}}</button>
+      <button type="button" class="btn me-2" [ngClass]="players[5].selected ? 'btn-success' : 'btn-outline-secondary'" (click)="players[5].selected = !players[5].selected">{{players[5].name}}</button>
+      <button type="button" class="btn me-2" [ngClass]="players[6].selected ? 'btn-success' : 'btn-outline-secondary'" (click)="players[6].selected = !players[6].selected">{{players[6].name}}</button>
+      <button type="button" class="btn me-2" [ngClass]="players[7].selected ? 'btn-success' : 'btn-outline-secondary'" (click)="players[7].selected = !players[7].selected">{{players[7].name}}</button>
+    </div>
+  </div>
+  <div class="row mt-4">
+    <div class="col">
+      <p class="lead">神</p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <button type="button" class="btn me-2" [ngClass]="players[8].selected ? 'btn-success' : 'btn-outline-secondary'" (click)="players[8].selected = !players[8].selected">{{players[8].name}}</button>
+      <button type="button" class="btn me-2" [ngClass]="players[9].selected ? 'btn-success' : 'btn-outline-secondary'" (click)="players[9].selected = !players[9].selected">{{players[9].name}}</button>
+      <button type="button" class="btn me-2" [ngClass]="players[10].selected ? 'btn-success' : 'btn-outline-secondary'" (click)="players[10].selected = !players[10].selected">{{players[10].name}}</button>
+      <button type="button" class="btn me-2" [ngClass]="players[11].selected ? 'btn-success' : 'btn-outline-secondary'" (click)="players[11].selected = !players[11].selected">{{players[11].name}}</button>
     </div>
   </div>
 </div>

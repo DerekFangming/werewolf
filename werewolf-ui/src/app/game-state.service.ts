@@ -11,6 +11,7 @@ export class GameStateService {
 
   playerId = ''
   gameId = ''
+  state = 'loading'
 
   constructor(private cookieService: CookieService) {
     this.playerId = this.cookieService.get(GameStateService.playerIdCookieName)
@@ -32,7 +33,17 @@ export class GameStateService {
 
   setGameId(gameId: string) {
     this.gameId = gameId
+    this.state = gameId == '' ? 'lobby' : 'game'
     return this.cookieService.set(GameStateService.gameIdCookieName, gameId, 0, '/');
+  }
+
+  setplayerIdAndGameId(playerId: string, gameId: string) {
+    this.setPlayerId(playerId)
+    this.setGameId(gameId)
+  }
+
+  setState(state: string) {
+    this.state = state
   }
   
 }

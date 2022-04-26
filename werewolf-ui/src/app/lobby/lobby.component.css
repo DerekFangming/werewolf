@@ -1,3 +1,9 @@
 .tall-button {
   height: 150px;
 }
+
+.btn-outline-secondary:hover {
+  background-color: white;
+  border-color: #6C757D;
+  color: #6C757D;
+}
