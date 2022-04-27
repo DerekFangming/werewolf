@@ -1,5 +1,11 @@
-<nav class="navbar navbar-light bg-light justify-content-center">
-  <a class="navbar-brand">{{ gameState.state == 'game' ? '房间号: ' + gameState.gameId : '狼人杀发牌助手' }} </a>
+<nav class="navbar navbar-light bg-light justify-content-between">
+  <div class="container">
+    <p style="width:60px"></p>
+    <a class="navbar-brand">{{ gameState.state == 'game' ? '房间号: ' + gameState.gameId : '狼人杀发牌助手' }} </a>
+    <div>
+      <button *ngIf="gameState.state == 'game'" type="button" class="btn btn-outline-danger">退出</button>
+    </div>
+  </div>
 </nav>
 
 <div *ngIf="gameState.state == 'loading'" class="container">
@@ -14,14 +20,14 @@
   <div class="row mt-2">
     <div class="col">
       <div class="d-grid gap-2">
-        <button type="button" class="btn btn-outline-success tall-button"><p class="display-4">加入游戏</p></button>
+        <button type="button" class="btn btn-outline-success tall-button" (click)="joinGame()"><p class="display-4">加入游戏</p></button>
         <button type="button" class="btn btn-outline-success tall-button" (click)="createGame()"><small><p class="display-4">创建游戏</p></small></button>
       </div>
     </div>
   </div>
 </div>
 
-<div *ngIf="gameState.state == 'create'" class="container">
+<div *ngIf="gameState.state == 'createGame'" class="container">
   <div class="row mt-4">
     <div class="col">
       <p class="lead">狼</p>
@@ -71,6 +77,25 @@
   </div>
 </div>
 
+<div *ngIf="gameState.state == 'joinGame'" class="container">
+  <div class="row mt-5">
+    <div class="col">
+      <div class="mb-3">
+        <label for="exampleFormControlInput1" class="form-label">输入房间号码</label>
+        <input type="text" pattern="\d*" class="form-control" style="font-size:25px;height:50px" [(ngModel)]="gameIdInput" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
+      </div>
+    </div>
+  </div>
+  <div class="row mt-3">
+    <div class="col">
+      <div class="d-grid gap-4">
+        <button type="button" class="btn btn-outline-success" (click)="confirmJoinGame()"><p class="lead mb-0">加入</p></button>
+        <button type="button" class="btn btn-outline-secondary" (click)="gameState.setState('lobby')"><p class="lead mb-0">取消</p></button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div *ngIf="gameState.state == 'game'" class="container">
   <div class="row mt-3">
     <div class="col">
@@ -79,12 +104,23 @@
   </div>
   <div class="row">
     <div class="col-3 mt-4 px-1" *ngFor="let i of ' '.repeat(gameState.playerCount).split(''); let ind = index" >
-      <div class="d-grid"><button type="button" class="btn btn-outline-success seat" ><p class="lead mb-0">{{ind + 1}}</p></button></div>
+      <div class="d-grid"><button type="button" class="btn btn-outline-success seat" (click)="confirmModel.showDialog('入座', '确定在' + (ind+1) + '号入座?', {'op': 'seat', 'position': ind+1})">
+        <p class="lead mb-0">{{ind + 1}}</p></button></div>
+    </div>
+  </div>
+  <div *ngIf="gameState.hostId == gameState.playerId" class="row mt-4">
+    <div class="col-12">
+      你是房主，待人员入座后即可开始游戏。请提高手机音量，游戏进度语音将从你的手机发出。
+    </div>
+    <div class="col-12 mt-2">
+      <div class="d-grid gap-2">
+        <button type="button" class="btn btn-outline-success">开始发牌</button>
+      </div>
     </div>
   </div>
 </div>
 
-<ng-template #errModel let-modal>
+<ng-template #errModal let-modal>
   <div class="modal-header">
     <h4 class="modal-title"><span style="color: red">错误</span></h4>
     <button type="button" class="btn-close" (click)="modal.dismiss('Cross click')"> </button>
@@ -97,6 +133,8 @@
     </div>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" (click)="modal.dismiss('Cross click')">OK</button>
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss('Cross click')">确定</button>
   </div>
 </ng-template>
+
+<app-confirm-dialog #confirmModel (onConfirm)="onConfirm($event)"></app-confirm-dialog>

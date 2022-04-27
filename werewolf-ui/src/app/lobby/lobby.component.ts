@@ -15,14 +15,12 @@ import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
 })
 export class LobbyComponent implements OnInit {
 
+  gameIdInput = ''
   error = ''
   ws: WebSocket
   players = []
 
-  // modalRef: NgbModalRef;
-  // @ViewChild('userModal', { static: true}) userModal: TemplateRef<any>
-  // @ViewChild('banUserModal', { static: true}) banUserModal: TemplateRef<any>
-  @ViewChild('errModel', { static: true}) errModel: TemplateRef<any>
+  @ViewChild('errModal', { static: true}) errModal: TemplateRef<any>
 
   constructor(public gameState: GameStateService, private modalService: NgbModal) { }
 
@@ -41,10 +39,16 @@ export class LobbyComponent implements OnInit {
       switch (cmd.op) {
         case 'handshake':
           that.gameState.setplayerIdAndGameId(cmd.playerId, cmd.gameId)
-          if (cmd.gameId != '') that.ws.send(`{"op": "game", "gameId": "${cmd.gameId}"}`)
+          if (cmd.gameId != '') that.ws.send(`{"op": "gameDetails", "gameId": "${cmd.gameId}"}`)
           break
-        case 'game':
-          that.gameState.setGame(cmd.gameId, cmd.characters)
+        case 'gameDetails':
+          if (cmd.error == null) {
+            that.gameState.setGame(cmd.gameId, cmd.hostId, cmd.characters)
+          } else {
+            that.gameState.setState('lobby')
+            that.error = cmd.error
+            that.modalService.open(that.errModal, { centered: true })
+          }
           break
         default:
         console.log('unknown command: ' + data)
@@ -57,28 +61,46 @@ export class LobbyComponent implements OnInit {
   }
 
   createGame() {
-    this.gameState.setState('create')
+    this.gameState.setState('createGame')
     this.players = [new Werewolf({selected: true}), new Werewolf({selected: true}), new Werewolf(), new Werewolf(),
       new Villager({selected: true}), new Villager({selected: true}), new Villager(), new Villager(),
       new Seer({selected: true}), new Witch({selected: true}), new Hunter(), new Guard()]
   }
 
-  // open(content) {
-  //   this.modalService.open(content)
-  // }
-
   confirmCreateGame() {
     let selected = this.players.filter(p => p.selected).map(p => p.type)
     if (selected.length < 6) {
       this.error = '至少需要六人才能创建游戏'
-      this.modalService.open(this.errModel, { centered: true })
-      return
+      this.modalService.open(this.errModal, { centered: true })
+    } else {
+      this.gameState.setState('loading')
+      console.log(JSON.stringify(selected))
+      this.ws.send(`{"op": "createGame", "characters": ${JSON.stringify(selected)}}`)
     }
+  }
 
-    this.gameState.setState('loading')
-    console.log(JSON.stringify(selected))
-    this.ws.send(`{"op": "create", "characters": ${JSON.stringify(selected)}}`)
+  joinGame(){
+    this.gameIdInput = ''
+    this.gameState.setState('joinGame')
+  }
 
+  confirmJoinGame() {
+    let gameId = this.gameIdInput.trim()
+    if (gameId.length != 4) {
+      this.error = '房间号应该为四位数字'
+      this.modalService.open(this.errModal, { centered: true })
+    } else {
+      this.gameState.setState('loading')
+      this.ws.send(`{"op": "joinGame", "gameId": "${gameId}"}`)
+    }
+  }
+
+  public onConfirm(context: any) {
+    switch(context.op) {
+      case 'seat':
+
+      default:
+    }
   }
 
 }

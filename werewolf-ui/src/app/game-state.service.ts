@@ -12,6 +12,7 @@ export class GameStateService {
 
   playerId = ''
   gameId = ''
+  hostId = ''
   characters = ''
   playerCount = 0
   state = 'loading'
@@ -50,7 +51,7 @@ export class GameStateService {
     this.state = state
   }
 
-  setGame(gameId: string, characters: string[]) {
+  setGame(gameId: string, hostId:string, characters: string[]) {
     let m = new Map()
     for (let c of characters) {
       m.has(c) ? m.set(c, m.get(c) + 1) : m.set(c, 1)
@@ -64,6 +65,7 @@ export class GameStateService {
     }
 
     this.playerCount = characters.length
+    this.hostId = hostId
     this.setGameId(gameId)
   }
   

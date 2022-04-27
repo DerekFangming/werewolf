@@ -23,45 +23,52 @@ wss.on('connection', function connection(player) {
       let cmd = JSON.parse(data)
       switch (cmd.op) {
         case 'handshake':
-          
-          // Existing user reconnected
           if (players.has(cmd.playerId)) {
+            // Existing user reconnected
             let existing = players.get(cmd.playerId)
             existing.id = cmd.playerId
             existing.heatbeat = new Date()
 
             player.send(`{"op": "handshake", "playerId": "${existing.id}", "gameId": "${existing.gameId}"}`)
-            break
+          } else {
+            // New or expired user
+            player.id = uuidv4()
+            player.heatbeat = new Date()
+            player.gameId = ''
+            players.set(player.id, player)
+  
+            player.send(`{"op": "handshake", "playerId": "${player.id}", "gameId": ""}`)
           }
-
-          // New or expired user
-          player.id = uuidv4()
-          player.heatbeat = new Date()
-          player.gameId = ''
-          players.set(player.id, player)
-
-          player.send(`{"op": "handshake", "playerId": "${player.id}", "gameId": ""}`)
           break
-        case 'create':
+        case 'createGame':
           let gameId = Math.floor(1000 + Math.random() * 9000).toString()
           while (games.has(gameId)) {
             gameId = Math.floor(1000 + Math.random() * 9000).toString()
           }
 
+          console.log('creating:' + player.id)
+
           player.gameId = gameId
           games.set(gameId, {started: false, hostId: player.id, characters: cmd.characters})
-          player.send(`{"op": "game", "gameId": "${gameId}", "hostId": "${player.id}", "characters": ${JSON.stringify(cmd.characters)}}`)
+          player.send(`{"op": "gameDetails", "gameId": "${gameId}", "hostId": "${player.id}", "characters": ${JSON.stringify(cmd.characters)}}`)
 
           break
-        case 'game':
-          console.log('Getting game info')
+        case 'joinGame':
+          console.log('Joining: -' + cmd.gameId + '-')
           if (games.has(cmd.gameId)) {
-            console.log('Getting game info1')
             let game = games.get(cmd.gameId)
-            player.send(`{"op": "game", "gameId": "${cmd.gameId}", "hostId": "${game.hostId}", "characters": ${JSON.stringify(game.characters)}}`)
+            player.gameId = cmd.gameId
+            player.send(`{"op": "gameDetails", "gameId": "${cmd.gameId}", "hostId": "${game.hostId}", "characters": ${JSON.stringify(game.characters)}}`)
           } else {
-            console.log('Getting game info2')
-            player.send(`{"op": "game", "gameId": ""}`)
+            player.send(`{"op": "gameDetails", "error": "房间号${cmd.gameId}不存在"}`)
+          }
+          break
+        case 'gameDetails':
+          if (games.has(cmd.gameId)) {
+            let game = games.get(cmd.gameId)
+            player.send(`{"op": "gameDetails", "gameId": "${cmd.gameId}", "hostId": "${game.hostId}", "characters": ${JSON.stringify(game.characters)}}`)
+          } else {
+            player.send(`{"op": "gameDetails", "gameId": ""}`)
           }
           break
         default:
