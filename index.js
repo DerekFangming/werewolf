@@ -48,9 +48,21 @@ wss.on('connection', function connection(player) {
             gameId = Math.floor(1000 + Math.random() * 9000).toString()
           }
 
+          player.gameId = gameId
           games.set(gameId, {started: false, hostId: player.id, characters: cmd.characters})
           player.send(`{"op": "game", "gameId": "${gameId}", "hostId": "${player.id}", "characters": ${JSON.stringify(cmd.characters)}}`)
 
+          break
+        case 'game':
+          console.log('Getting game info')
+          if (games.has(cmd.gameId)) {
+            console.log('Getting game info1')
+            let game = games.get(cmd.gameId)
+            player.send(`{"op": "game", "gameId": "${cmd.gameId}", "hostId": "${game.hostId}", "characters": ${JSON.stringify(game.characters)}}`)
+          } else {
+            console.log('Getting game info2')
+            player.send(`{"op": "game", "gameId": ""}`)
+          }
           break
         default:
           console.log('unknown command: ' + data)

@@ -13,6 +13,7 @@ export class GameStateService {
   playerId = ''
   gameId = ''
   characters = ''
+  playerCount = 0
   state = 'loading'
 
   constructor(private cookieService: CookieService) {
@@ -62,6 +63,7 @@ export class GameStateService {
       this.characters += Utils.parseCharactor(key).name + 'X' + value
     }
 
+    this.playerCount = characters.length
     this.setGameId(gameId)
   }
   

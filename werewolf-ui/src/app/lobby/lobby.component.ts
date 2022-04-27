@@ -40,8 +40,8 @@ export class LobbyComponent implements OnInit {
       console.log('received: %s', JSON.stringify(cmd))
       switch (cmd.op) {
         case 'handshake':
-          console.log('received: %s', cmd.playerId)
           that.gameState.setplayerIdAndGameId(cmd.playerId, cmd.gameId)
+          if (cmd.gameId != '') that.ws.send(`{"op": "game", "gameId": "${cmd.gameId}"}`)
           break
         case 'game':
           that.gameState.setGame(cmd.gameId, cmd.characters)

@@ -71,8 +71,17 @@
   </div>
 </div>
 
-<div *ngIf="gameState.state == 'game'" class="container mt-5">
-  {{ gameState.characters }}
+<div *ngIf="gameState.state == 'game'" class="container">
+  <div class="row mt-3">
+    <div class="col">
+      配置: {{ gameState.characters }}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-3 mt-4 px-1" *ngFor="let i of ' '.repeat(gameState.playerCount).split(''); let ind = index" >
+      <div class="d-grid"><button type="button" class="btn btn-outline-success seat" ><p class="lead mb-0">{{ind + 1}}</p></button></div>
+    </div>
+  </div>
 </div>
 
 <ng-template #errModel let-modal>
