@@ -1,5 +1,5 @@
 <nav class="navbar navbar-light bg-light justify-content-center">
-  <a class="navbar-brand">狼人杀发牌助手</a>
+  <a class="navbar-brand">{{ gameState.state == 'game' ? '房间号: ' + gameState.gameId : '狼人杀发牌助手' }} </a>
 </nav>
 
 <div *ngIf="gameState.state == 'loading'" class="container">
@@ -69,6 +69,10 @@
       </div>
     </div>
   </div>
+</div>
+
+<div *ngIf="gameState.state == 'game'" class="container mt-5">
+  {{ gameState.characters }}
 </div>
 
 <ng-template #errModel let-modal>

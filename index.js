@@ -18,7 +18,7 @@ const players = new Map()
 
 wss.on('connection', function connection(player) {
   player.on('message', function message(data) {
-    console.log('received from %s: %s', player.id, data)
+    // console.log('received from %s: %s', player.id, data)
     try {
       let cmd = JSON.parse(data)
       switch (cmd.op) {
@@ -27,6 +27,7 @@ wss.on('connection', function connection(player) {
           // Existing user reconnected
           if (players.has(cmd.playerId)) {
             let existing = players.get(cmd.playerId)
+            existing.id = cmd.playerId
             existing.heatbeat = new Date()
 
             player.send(`{"op": "handshake", "playerId": "${existing.id}", "gameId": "${existing.gameId}"}`)
@@ -42,14 +43,21 @@ wss.on('connection', function connection(player) {
           player.send(`{"op": "handshake", "playerId": "${player.id}", "gameId": ""}`)
           break
         case 'create':
-          console.log('creating game')
+          let gameId = Math.floor(1000 + Math.random() * 9000).toString()
+          while (games.has(gameId)) {
+            gameId = Math.floor(1000 + Math.random() * 9000).toString()
+          }
+
+          games.set(gameId, {started: false, hostId: player.id, characters: cmd.characters})
+          player.send(`{"op": "game", "gameId": "${gameId}", "hostId": "${player.id}", "characters": ${JSON.stringify(cmd.characters)}}`)
+
           break
         default:
-          console.log('unknown command: ' + cmd.op)
+          console.log('unknown command: ' + data)
       }
       //console.log(cmd.op)
     } catch (err) {
-      console.log('not json: ' + err)
+      console.log('not json: ' + data)
     }
   });
 
@@ -77,9 +85,8 @@ app.get('/debug', (req, res) => {
 
   status += '<br /><br /><h1>Games</h1>'
   for (const [id, g] of games) {
-    status += '<br />' + id
+    status += '<br />' + id + '<span style="color:red"> Host </span> ' + g.hostId + ' <span style="color:red"> characters </span> ' + JSON.stringify(g.characters)
   }
-
   res.send(status)
 })
 

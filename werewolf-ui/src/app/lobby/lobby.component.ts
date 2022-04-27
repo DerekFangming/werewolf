@@ -38,11 +38,16 @@ export class LobbyComponent implements OnInit {
     this.ws.onmessage = function (data) {
       let cmd = JSON.parse(data.data)
       console.log('received: %s', JSON.stringify(cmd))
-      if (cmd.op == 'handshake') {
-        console.log('received: %s', cmd.playerId)
-        that.gameState.setplayerIdAndGameId(cmd.playerId, cmd.gameId)
-        
-        return
+      switch (cmd.op) {
+        case 'handshake':
+          console.log('received: %s', cmd.playerId)
+          that.gameState.setplayerIdAndGameId(cmd.playerId, cmd.gameId)
+          break
+        case 'game':
+          that.gameState.setGame(cmd.gameId, cmd.characters)
+          break
+        default:
+        console.log('unknown command: ' + data)
       }
     }
 
@@ -63,7 +68,7 @@ export class LobbyComponent implements OnInit {
   // }
 
   confirmCreateGame() {
-    let selected = this.players.filter(p => p.selected).map(p => p.name)
+    let selected = this.players.filter(p => p.selected).map(p => p.type)
     if (selected.length < 6) {
       this.error = '至少需要六人才能创建游戏'
       this.modalService.open(this.errModel, { centered: true })
@@ -71,8 +76,8 @@ export class LobbyComponent implements OnInit {
     }
 
     this.gameState.setState('loading')
-    console.log(selected)
-    //this.ws.send(`{"op": "create", "playerId": "${that.gameState.getPlayerId()}", "gameId": "${that.gameState.getGameId()}"}`)
+    console.log(JSON.stringify(selected))
+    this.ws.send(`{"op": "create", "characters": ${JSON.stringify(selected)}}`)
 
   }
 

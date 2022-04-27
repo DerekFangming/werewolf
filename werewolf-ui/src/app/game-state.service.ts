@@ -1,5 +1,6 @@
-import { Injectable } from "@angular/core";
-import { CookieService } from "ngx-cookie-service";
+import { Injectable } from "@angular/core"
+import { CookieService } from "ngx-cookie-service"
+import Utils from "./util"
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +12,7 @@ export class GameStateService {
 
   playerId = ''
   gameId = ''
+  characters = ''
   state = 'loading'
 
   constructor(private cookieService: CookieService) {
@@ -45,6 +47,22 @@ export class GameStateService {
 
   setState(state: string) {
     this.state = state
+  }
+
+  setGame(gameId: string, characters: string[]) {
+    let m = new Map()
+    for (let c of characters) {
+      m.has(c) ? m.set(c, m.get(c) + 1) : m.set(c, 1)
+    }
+
+    this.characters = ''
+    for (const [key, value] of m) {
+      if (this.characters != '') this.characters += ', '
+
+      this.characters += Utils.parseCharactor(key).name + 'X' + value
+    }
+
+    this.setGameId(gameId)
   }
   
 }
