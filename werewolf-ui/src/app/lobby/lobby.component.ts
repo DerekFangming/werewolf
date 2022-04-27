@@ -97,6 +97,8 @@ export class LobbyComponent implements OnInit {
 
   public onConfirm(context: any) {
     switch(context.op) {
+      case 'leaveGame':
+        this.ws.send(`{"op": "leaveGame"}`)
       case 'seat':
 
       default:

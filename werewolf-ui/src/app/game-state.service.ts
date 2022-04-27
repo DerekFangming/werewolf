@@ -52,6 +52,10 @@ export class GameStateService {
   }
 
   setGame(gameId: string, hostId:string, characters: string[]) {
+    if (gameId == '') {
+      this.setGameId(gameId)
+      return
+    }
     let m = new Map()
     for (let c of characters) {
       m.has(c) ? m.set(c, m.get(c) + 1) : m.set(c, 1)

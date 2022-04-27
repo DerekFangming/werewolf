@@ -3,7 +3,8 @@
     <p style="width:60px"></p>
     <a class="navbar-brand">{{ gameState.state == 'game' ? '房间号: ' + gameState.gameId : '狼人杀发牌助手' }} </a>
     <div>
-      <button *ngIf="gameState.state == 'game'" type="button" class="btn btn-outline-danger">退出</button>
+      <button *ngIf="gameState.state == 'game'" type="button" class="btn btn-outline-danger"
+       (click)="confirmModel.showDialog('退出游戏', '确定退出游戏？如果你是房主，这将使所有人退出本局游戏。', {'op': 'leaveGame'})">退出</button>
     </div>
   </div>
 </nav>
@@ -104,7 +105,7 @@
   </div>
   <div class="row">
     <div class="col-3 mt-4 px-1" *ngFor="let i of ' '.repeat(gameState.playerCount).split(''); let ind = index" >
-      <div class="d-grid"><button type="button" class="btn btn-outline-success seat" (click)="confirmModel.showDialog('入座', '确定在' + (ind+1) + '号入座?', {'op': 'seat', 'position': ind+1})">
+      <div class="d-grid"><button type="button" class="btn btn-outline-success seat" (click)="confirmModel.showDialog('入座', '确定在' + (ind+1) + '号入座？', {'op': 'seat', 'position': ind+1})">
         <p class="lead mb-0">{{ind + 1}}</p></button></div>
     </div>
   </div>

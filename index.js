@@ -18,7 +18,7 @@ const players = new Map()
 
 wss.on('connection', function connection(player) {
   player.on('message', function message(data) {
-    // console.log('received from %s: %s', player.id, data)
+    console.log('received from %s: %s', player.id, data)
     try {
       let cmd = JSON.parse(data)
       switch (cmd.op) {
@@ -26,8 +26,10 @@ wss.on('connection', function connection(player) {
           if (players.has(cmd.playerId)) {
             // Existing user reconnected
             let existing = players.get(cmd.playerId)
-            existing.id = cmd.playerId
-            existing.heatbeat = new Date()
+            player.id = cmd.playerId
+            player.heatbeat = new Date()
+            player.gameId = existing.gameId
+            players.set(cmd.playerId, player)
 
             player.send(`{"op": "handshake", "playerId": "${existing.id}", "gameId": "${existing.gameId}"}`)
           } else {
@@ -63,11 +65,25 @@ wss.on('connection', function connection(player) {
             player.send(`{"op": "gameDetails", "error": "房间号${cmd.gameId}不存在"}`)
           }
           break
+        case 'leaveGame':
+          if (player.gameId != '') {
+            if (games.has(player.gameId)) {
+              let game = games.get(player.gameId)
+              if (game.hostId == player.id) {
+                games.delete(player.gameId)
+              }
+            }
+
+            player.gameId = ''
+          }
+          player.send(`{"op": "gameDetails", "gameId": ""}`)
+          break
         case 'gameDetails':
           if (games.has(cmd.gameId)) {
             let game = games.get(cmd.gameId)
             player.send(`{"op": "gameDetails", "gameId": "${cmd.gameId}", "hostId": "${game.hostId}", "characters": ${JSON.stringify(game.characters)}}`)
           } else {
+            player.gameId = ''
             player.send(`{"op": "gameDetails", "gameId": ""}`)
           }
           break
