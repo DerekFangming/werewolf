@@ -13,14 +13,12 @@ const wss = new ws.Server({ path: '/', port: 8080 })
 const games = new Map()
 const players = new Map()
 
-// games.set(uuidv4(), {name: 'The game!', started: false, total: 12, existing: 9})
-// games.set(uuidv4(), {name: 'Hahahah', started: true, total: 6, existing: 6})
-
 wss.on('connection', function connection(player) {
   player.on('message', function message(data) {
     console.log('received from %s: %s', player.id, data)
     try {
       let cmd = JSON.parse(data)
+      var gameId
       switch (cmd.op) {
         case 'handshake':
           if (players.has(cmd.playerId)) {
@@ -43,40 +41,48 @@ wss.on('connection', function connection(player) {
           }
           break
         case 'createGame':
-          let gameId = Math.floor(1000 + Math.random() * 9000).toString()
+          gameId = Math.floor(1000 + Math.random() * 9000).toString()
           while (games.has(gameId)) {
             gameId = Math.floor(1000 + Math.random() * 9000).toString()
           }
 
-          console.log('creating:' + player.id)
-
           player.gameId = gameId
-          games.set(gameId, {started: false, hostId: player.id, characters: cmd.characters})
+
+          let gamePlayers = {}
+          gamePlayers[player.id] = {}
+          games.set(gameId, {started: false, hostId: player.id, characters: cmd.characters, players: gamePlayers })
           player.send(`{"op": "gameDetails", "gameId": "${gameId}", "hostId": "${player.id}", "characters": ${JSON.stringify(cmd.characters)}}`)
 
           break
         case 'joinGame':
-          console.log('Joining: -' + cmd.gameId + '-')
           if (games.has(cmd.gameId)) {
             let game = games.get(cmd.gameId)
             player.gameId = cmd.gameId
+            game.players[player.id] = {}
             player.send(`{"op": "gameDetails", "gameId": "${cmd.gameId}", "hostId": "${game.hostId}", "characters": ${JSON.stringify(game.characters)}}`)
           } else {
             player.send(`{"op": "gameDetails", "error": "房间号${cmd.gameId}不存在"}`)
           }
           break
         case 'leaveGame':
-          if (player.gameId != '') {
-            if (games.has(player.gameId)) {
-              let game = games.get(player.gameId)
+          gameId = player.gameId
+          if (gameId != '') {
+            if (games.has(gameId)) {
+              let game = games.get(gameId)
               if (game.hostId == player.id) {
-                games.delete(player.gameId)
+                for (let p in game.players) {
+                  if (players.has(p)) players.get(p).gameId = ''
+                  players.get(p).send(`{"op": "gameDetails", "gameId": ""}`)
+                }
+                games.delete(gameId)
+              } else {
+                delete game.players[player.id]
+                player.send(`{"op": "gameDetails", "gameId": ""}`)
               }
             }
 
             player.gameId = ''
           }
-          player.send(`{"op": "gameDetails", "gameId": ""}`)
           break
         case 'gameDetails':
           if (games.has(cmd.gameId)) {
@@ -92,7 +98,7 @@ wss.on('connection', function connection(player) {
       }
       //console.log(cmd.op)
     } catch (err) {
-      console.log('not json: ' + data)
+      console.log('not json: ' + data + ' ==> ' + err)
     }
   });
 
@@ -121,6 +127,7 @@ app.get('/debug', (req, res) => {
   status += '<br /><br /><h1>Games</h1>'
   for (const [id, g] of games) {
     status += '<br />' + id + '<span style="color:red"> Host </span> ' + g.hostId + ' <span style="color:red"> characters </span> ' + JSON.stringify(g.characters)
+    status += '<br />' + JSON.stringify(g.players)
   }
   res.send(status)
 })
@@ -138,6 +145,16 @@ app.get('/test', (req, res) => {
 })
 
 app.use(express.static(path.join(__dirname, 'public')));
-app.listen(port, () => {})
+app.listen(port, () => {
+  // let a = {a: 1, b: 2}
+  // console.log(JSON.stringify(a))
+  // for (let key in a) {
+  //   console.log(key + a[key])
+  // }
+  // a.key = 'val'
+  // console.log(JSON.stringify(a))
+  // delete a.key
+  // console.log(JSON.stringify(a))
+})
 
 
