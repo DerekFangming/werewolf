@@ -23,8 +23,11 @@ wss.on('connection', function connection(player) {
         case 'handshake':
           if (players.has(cmd.playerId)) {
             // Existing user reconnected
+            console.log(1)
             let existing = players.get(cmd.playerId)
+            console.log(player.id)
             player.id = cmd.playerId
+            console.log(player.id)
             player.heatbeat = new Date()
             player.gameId = existing.gameId
             players.set(cmd.playerId, player)
@@ -51,8 +54,8 @@ wss.on('connection', function connection(player) {
 
           let gamePlayers = {}
           gamePlayers[player.id] = {}
-          games.set(gameId, {started: false, hostId: player.id, characters: cmd.characters, players: gamePlayers })
-          player.send(`{"op": "gameDetails", "gameId": "${gameId}", "hostId": "${player.id}", "characters": ${JSON.stringify(cmd.characters)}}`)
+          games.set(gameId, {turn: '', hostId: player.id, characters: cmd.characters, players: gamePlayers })
+          player.send(`{"op": "gameDetails", "gameId": "${gameId}", "hostId": "${player.id}", "characters": ${JSON.stringify(cmd.characters)}, "turn": ""}`)
 
           break
         case 'joinGame':
@@ -63,7 +66,7 @@ wss.on('connection', function connection(player) {
             } else {
               player.gameId = cmd.gameId
               game.players[player.id] = {}
-              player.send(`{"op": "gameDetails", "gameId": "${cmd.gameId}", "hostId": "${game.hostId}", "characters": ${JSON.stringify(game.characters)}}`)
+              player.send(`{"op": "gameDetails", "gameId": "${cmd.gameId}", "hostId": "${game.hostId}", "characters": ${JSON.stringify(game.characters)}, "players": ${JSON.stringify(game.players)}, "turn": "${game.turn}"}`)
             }
           } else {
             player.send(`{"op": "gameDetails", "error": "房间号${cmd.gameId}不存在"}`)
@@ -93,25 +96,46 @@ wss.on('connection', function connection(player) {
           if (games.has(cmd.gameId)) {
             let game = games.get(cmd.gameId)
             console.log(JSON.stringify(game.players))
-            player.send(`{"op": "gameDetails", "gameId": "${cmd.gameId}", "hostId": "${game.hostId}", "characters": ${JSON.stringify(game.characters)}, "players": ${JSON.stringify(game.players)}}`)
+            player.send(`{"op": "gameDetails", "gameId": "${cmd.gameId}", "hostId": "${game.hostId}", "characters": ${JSON.stringify(game.characters)}, "players": ${JSON.stringify(game.players)}, "turn": "${game.turn}"}`)
           } else {
             player.gameId = ''
             player.send(`{"op": "gameDetails", "gameId": ""}`)
           }
           break
         case 'takeSeat':
-          let game = games.get(player.gameId)
-          game.players[player.id].position = cmd.position
-          for (let p in game.players) {
-            players.get(p).send(`{"op": "takeSeat", "position": ${cmd.position}, "playerId": "${player.id}"}`)
+          if (games.has(player.gameId)) {
+            let game = games.get(player.gameId)
+            game.players[player.id].position = cmd.position
+            for (let p in game.players) {
+              players.get(p).send(`{"op": "takeSeat", "position": ${cmd.position}, "playerId": "${player.id}"}`)
+            }
+          }
+          break
+        case 'startGame':
+          if (games.has(cmd.gameId)) {
+            let game = games.get(cmd.gameId)
+            let charactersCopy = JSON.parse(JSON.stringify(game.characters))
+            let shuffled = charactersCopy.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value)
+
+            let counter = 0
+            for (let p in game.players) {
+              game.players[p].character = shuffled[counter ++]
+            }
+
+            // game.turn = 'viewCharacter'
+            // game.turnOrder = game.characters.filter((c, p) => (c != 'villager') && a.indexOf(c) == p).sort((a, b) => turnOrder[a] - turnOrder[b])
+
+            for (let p in game.players) {
+              player.send(`{"op": "gameDetails", "gameId": "${cmd.gameId}", "hostId": "${game.hostId}", "characters": ${JSON.stringify(game.characters)}, "players": ${JSON.stringify(game.players)}, "turn": "${game.turn}"}`)
+            }
           }
           break
         default:
           console.log('unknown command: ' + data)
       }
-      //console.log(cmd.op)
     } catch (err) {
-      console.log('not json: ' + data + ' ==> ' + err)
+      // console.log('not json: ' + data + ' ==> ' + err)
+      console.log(err.stack)
     }
   });
 })
@@ -133,18 +157,6 @@ app.get('/debug', (req, res) => {
   res.send(status)
 })
 
-let counter = 0
-
-app.get('/test', (req, res) => {
-  console.log(1)
-  for (const [key, value] of players) {
-    console.log('Sending to client: ' + key)
-    counter ++
-    value.send('Hello! ' + counter)
-  }
-  res.sendStatus(200)
-})
-
 app.use(express.static(path.join(__dirname, 'public')));
 app.listen(port, () => {
   // let a = {a: 1, b: 2}
@@ -156,6 +168,17 @@ app.listen(port, () => {
   // console.log(JSON.stringify(a))
   // delete a.key
   // console.log(JSON.stringify(a))
+  let a = ["werewolf","werewolf","werewolf","werewolf","villager","villager","villager","villager","seer","witch","hunter","guard"]
+  let b = a.filter((c, pos) => (c != 'villager') && a.indexOf(c) == pos).sort((a, b) => turnOrder[a] - turnOrder[b])
+  console.log(b)
 })
+
+const turnOrder = {
+  werewolf: 1,
+  seer: 2,
+  witch: 3,
+  hunter: 4,
+  guard: 5
+}
 
 

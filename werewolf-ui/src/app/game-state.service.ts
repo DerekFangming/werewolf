@@ -41,6 +41,13 @@ export class GameStateService {
   setGameId(gameId: string) {
     this.gameId = gameId
     this.state = gameId == '' ? 'lobby' : 'game'
+    if (gameId == '') {
+      this.gameId = ''
+      this.hostId = ''
+      this.characters = ''
+      this.playerPosition = {}
+      this.players = []
+    }
     return this.cookieService.set(GameStateService.gameIdCookieName, gameId, 0, '/');
   }
 
@@ -74,6 +81,9 @@ export class GameStateService {
     for (let p in players) {
       if ('position' in players[p]) {
         this.takeSeat(p, players[p].position)
+      }
+      if ('character' in players[p]) {
+        players[p].character = Utils.parseCharactor(players[p].character)
       }
     }
 

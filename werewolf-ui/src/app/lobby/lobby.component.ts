@@ -43,6 +43,7 @@ export class LobbyComponent implements OnInit {
           break
         case 'gameDetails':
           if (cmd.error == null) {
+            console.log(cmd)
             that.gameState.setGame(cmd.gameId, cmd.hostId, cmd.characters, cmd.players)
           } else {
             that.gameState.setState('lobby')
@@ -98,14 +99,23 @@ export class LobbyComponent implements OnInit {
     }
   }
 
+  startGame() {
+    if (this.gameState.players.filter(p => !p.selected).length > 0) {
+      this.error = '所有人选择座位之后才可以开始发牌'
+      this.modalService.open(this.errModal, { centered: true })
+    } else {
+      this.ws.send(`{"op": "startGame", "gameId": "${this.gameState.gameId}"}`)
+    }
+  }
+
   public onConfirm(context: any) {
     switch(context.op) {
       case 'leaveGame':
         this.ws.send(`{"op": "leaveGame"}`)
+        break
       case 'takeSeat':
         this.ws.send(`{"op": "takeSeat", "position": ${context.position}}`)
-        
-        console.log(context.position)
+        break
       default:
     }
   }

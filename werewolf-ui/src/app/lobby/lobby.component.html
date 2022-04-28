@@ -2,7 +2,7 @@
   <div class="container">
     <p style="width:60px"></p>
     <a class="navbar-brand">{{ gameState.state == 'game' ? '房间号: ' + gameState.gameId : '狼人杀发牌助手' }} </a>
-    <div>
+    <div style="min-width: 60px;">
       <button *ngIf="gameState.state == 'game'" type="button" class="btn btn-outline-danger"
        (click)="confirmModel.showDialog('退出游戏', '确定退出游戏？如果你是房主，这将使所有人退出本局游戏。', {'op': 'leaveGame'})">退出</button>
     </div>
@@ -116,7 +116,7 @@
     </div>
     <div class="col-12 mt-2">
       <div class="d-grid gap-2">
-        <button type="button" class="btn btn-outline-success">开始发牌</button>
+        <button type="button" class="btn btn-outline-success" (click)="startGame()">开始发牌</button>
       </div>
     </div>
   </div>
