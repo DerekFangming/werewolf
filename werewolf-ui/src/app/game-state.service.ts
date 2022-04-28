@@ -15,6 +15,7 @@ export class GameStateService {
   gameId = ''
   hostId = ''
   characters = ''
+  turn = ''
   playerPosition = {}
   players = []
   state = 'loading'
@@ -45,6 +46,7 @@ export class GameStateService {
       this.gameId = ''
       this.hostId = ''
       this.characters = ''
+      this.turn = ''
       this.playerPosition = {}
       this.players = []
     }
@@ -60,12 +62,13 @@ export class GameStateService {
     this.state = state
   }
 
-  setGame(gameId: string, hostId:string, characters: string[], players: object) {
+  setGame(gameId: string, hostId: string, turn: string, characters: string[], players: object) {
     if (gameId == '') {
       this.setGameId(gameId)
       return
     }
     let m = new Map()
+    this.players = []
     for (let c of characters) {
       m.has(c) ? m.set(c, m.get(c) + 1) : m.set(c, 1)
       this.players.push(new Player())
@@ -83,10 +86,13 @@ export class GameStateService {
         this.takeSeat(p, players[p].position)
       }
       if ('character' in players[p]) {
-        players[p].character = Utils.parseCharactor(players[p].character)
+        if (p in this.playerPosition) {
+          this.players[this.playerPosition[p] - 1].character = Utils.parseCharactor(players[p].character)
+        }
       }
     }
 
+    this.turn = turn
     this.hostId = hostId
     this.setGameId(gameId)
   }

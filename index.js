@@ -23,11 +23,8 @@ wss.on('connection', function connection(player) {
         case 'handshake':
           if (players.has(cmd.playerId)) {
             // Existing user reconnected
-            console.log(1)
             let existing = players.get(cmd.playerId)
-            console.log(player.id)
             player.id = cmd.playerId
-            console.log(player.id)
             player.heatbeat = new Date()
             player.gameId = existing.gameId
             players.set(cmd.playerId, player)
@@ -122,11 +119,11 @@ wss.on('connection', function connection(player) {
               game.players[p].character = shuffled[counter ++]
             }
 
-            // game.turn = 'viewCharacter'
-            // game.turnOrder = game.characters.filter((c, p) => (c != 'villager') && a.indexOf(c) == p).sort((a, b) => turnOrder[a] - turnOrder[b])
+            game.turn = 'viewCharacter'
+            game.turnOrder = game.characters.filter((c, p) => (c != 'villager') && game.characters.indexOf(c) == p).sort((a, b) => turnOrder[a] - turnOrder[b])
 
             for (let p in game.players) {
-              player.send(`{"op": "gameDetails", "gameId": "${cmd.gameId}", "hostId": "${game.hostId}", "characters": ${JSON.stringify(game.characters)}, "players": ${JSON.stringify(game.players)}, "turn": "${game.turn}"}`)
+              players.get(p).send(`{"op": "gameDetails", "gameId": "${cmd.gameId}", "hostId": "${game.hostId}", "characters": ${JSON.stringify(game.characters)}, "players": ${JSON.stringify(game.players)}, "turn": "${game.turn}"}`)
             }
           }
           break

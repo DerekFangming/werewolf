@@ -107,7 +107,7 @@
     <div class="col-3 mt-4 px-1" *ngFor="let p of gameState.players; let ind = index" >
       <div class="d-grid"><button type="button" class="btn seat" [ngClass]="p.selected ? 'btn-success' : 'btn-outline-success'"
           (click)="!p.selected && confirmModel.showDialog('入座', '确定在' + (ind+1) + '号入座？', {'op': 'takeSeat', 'position': ind+1})">
-        <p class="lead mb-0">{{ind + 1}}</p></button></div>
+        <p class="display-5 mb-0">{{ind + 1}}</p></button></div>
     </div>
   </div>
   <div *ngIf="gameState.hostId == gameState.playerId" class="row mt-4">
@@ -118,6 +118,14 @@
       <div class="d-grid gap-2">
         <button type="button" class="btn btn-outline-success" (click)="startGame()">开始发牌</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="gameState.turn != ''" class="container">
+  <div class="row mt-3">
+    <div class="d-grid gap-2">
+      <button type="button" class="btn btn-outline-success" (click)="viewCharacter()">查看身份</button>
     </div>
   </div>
 </div>
@@ -140,3 +148,11 @@
 </ng-template>
 
 <app-confirm-dialog #confirmModel (onConfirm)="onConfirm($event)"></app-confirm-dialog>
+
+<div class="container">
+  <div class="row mt-3">
+    <div class="col">
+      <button type="button" class="btn btn-outline-success" (click)="debug()">Debug</button>
+    </div>
+  </div>
+</div>

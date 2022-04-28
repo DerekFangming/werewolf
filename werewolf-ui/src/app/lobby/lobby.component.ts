@@ -7,6 +7,7 @@ import { Villager } from '../model/villager';
 import { Werewolf } from '../model/werewolf';
 import { Witch } from '../model/witch';
 import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-lobby',
@@ -21,6 +22,7 @@ export class LobbyComponent implements OnInit {
   players = []
 
   @ViewChild('errModal', { static: true}) errModal: TemplateRef<any>
+  @ViewChild('confirmModel') confirmModel: ConfirmDialogComponent
 
   constructor(public gameState: GameStateService, private modalService: NgbModal) { }
 
@@ -44,7 +46,7 @@ export class LobbyComponent implements OnInit {
         case 'gameDetails':
           if (cmd.error == null) {
             console.log(cmd)
-            that.gameState.setGame(cmd.gameId, cmd.hostId, cmd.characters, cmd.players)
+            that.gameState.setGame(cmd.gameId, cmd.hostId, cmd.turn, cmd.characters, cmd.players)
           } else {
             that.gameState.setState('lobby')
             that.error = cmd.error
@@ -84,7 +86,7 @@ export class LobbyComponent implements OnInit {
   }
 
   joinGame(){
-    this.gameIdInput = ''
+    this.gameIdInput = '1111'
     this.gameState.setState('joinGame')
   }
 
@@ -99,6 +101,14 @@ export class LobbyComponent implements OnInit {
     }
   }
 
+  selectSeat(seatInd: number) {
+    if (this.gameState.turn == '') {
+      if (!this.gameState.players[seatInd].selected) {
+        this.confirmModel.showDialog('入座', '确定在' + (seatInd+1) + '号入座？', {'op': 'takeSeat', 'position': seatInd+1})
+      }
+    }
+  }
+
   startGame() {
     if (this.gameState.players.filter(p => !p.selected).length > 0) {
       this.error = '所有人选择座位之后才可以开始发牌'
@@ -106,6 +116,13 @@ export class LobbyComponent implements OnInit {
     } else {
       this.ws.send(`{"op": "startGame", "gameId": "${this.gameState.gameId}"}`)
     }
+  }
+
+  viewCharacter() {
+    let position = this.gameState.playerPosition[this.gameState.playerId]
+    console.log(this.gameState.players[position - 1])
+    let characterName = this.gameState.players[position - 1].character.name
+    this.confirmModel.showDialog('你的身份是', `${characterName}`, {})
   }
 
   public onConfirm(context: any) {
@@ -118,6 +135,12 @@ export class LobbyComponent implements OnInit {
         break
       default:
     }
+  }
+
+  public debug() {
+    console.log('Player: ' + this.gameState.playerId)
+    console.log(this.gameState.playerPosition)
+    console.log(this.gameState.players)
   }
 
 }
