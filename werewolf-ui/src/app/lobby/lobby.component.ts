@@ -34,8 +34,8 @@ export class LobbyComponent implements OnInit {
     };
 
     this.ws.onmessage = function (data) {
+      console.log('received: %s', data.data)
       let cmd = JSON.parse(data.data)
-      console.log('received: %s', JSON.stringify(cmd))
       switch (cmd.op) {
         case 'handshake':
           that.gameState.setplayerIdAndGameId(cmd.playerId, cmd.gameId)
@@ -43,12 +43,15 @@ export class LobbyComponent implements OnInit {
           break
         case 'gameDetails':
           if (cmd.error == null) {
-            that.gameState.setGame(cmd.gameId, cmd.hostId, cmd.characters)
+            that.gameState.setGame(cmd.gameId, cmd.hostId, cmd.characters, cmd.players)
           } else {
             that.gameState.setState('lobby')
             that.error = cmd.error
             that.modalService.open(that.errModal, { centered: true })
           }
+          break
+        case 'takeSeat':
+          that.gameState.takeSeat(cmd.playerId, cmd.position)
           break
         default:
         console.log('unknown command: ' + data)
@@ -99,8 +102,10 @@ export class LobbyComponent implements OnInit {
     switch(context.op) {
       case 'leaveGame':
         this.ws.send(`{"op": "leaveGame"}`)
-      case 'seat':
-
+      case 'takeSeat':
+        this.ws.send(`{"op": "takeSeat", "position": ${context.position}}`)
+        
+        console.log(context.position)
       default:
     }
   }

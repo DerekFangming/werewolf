@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core"
 import { CookieService } from "ngx-cookie-service"
+import { Player } from "./model/player"
 import Utils from "./util"
 
 @Injectable({
@@ -14,7 +15,8 @@ export class GameStateService {
   gameId = ''
   hostId = ''
   characters = ''
-  playerCount = 0
+  playerPosition = {}
+  players = []
   state = 'loading'
 
   constructor(private cookieService: CookieService) {
@@ -51,7 +53,7 @@ export class GameStateService {
     this.state = state
   }
 
-  setGame(gameId: string, hostId:string, characters: string[]) {
+  setGame(gameId: string, hostId:string, characters: string[], players: object) {
     if (gameId == '') {
       this.setGameId(gameId)
       return
@@ -59,6 +61,7 @@ export class GameStateService {
     let m = new Map()
     for (let c of characters) {
       m.has(c) ? m.set(c, m.get(c) + 1) : m.set(c, 1)
+      this.players.push(new Player())
     }
 
     this.characters = ''
@@ -68,9 +71,22 @@ export class GameStateService {
       this.characters += Utils.parseCharactor(key).name + 'X' + value
     }
 
-    this.playerCount = characters.length
+    for (let p in players) {
+      if ('position' in players[p]) {
+        this.takeSeat(p, players[p].position)
+      }
+    }
+
     this.hostId = hostId
     this.setGameId(gameId)
+  }
+
+  takeSeat(playerId: string, position: number) {
+    if (playerId in this.playerPosition) {
+      this.players[this.playerPosition[playerId] - 1].selected = false
+    }
+    this.playerPosition[playerId] = position
+    this.players[position - 1].selected = true
   }
   
 }

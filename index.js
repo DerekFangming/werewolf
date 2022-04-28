@@ -42,6 +42,7 @@ wss.on('connection', function connection(player) {
           break
         case 'createGame':
           gameId = Math.floor(1000 + Math.random() * 9000).toString()
+          gameId = '1111' //TODO
           while (games.has(gameId)) {
             gameId = Math.floor(1000 + Math.random() * 9000).toString()
           }
@@ -57,9 +58,13 @@ wss.on('connection', function connection(player) {
         case 'joinGame':
           if (games.has(cmd.gameId)) {
             let game = games.get(cmd.gameId)
-            player.gameId = cmd.gameId
-            game.players[player.id] = {}
-            player.send(`{"op": "gameDetails", "gameId": "${cmd.gameId}", "hostId": "${game.hostId}", "characters": ${JSON.stringify(game.characters)}}`)
+            if (game.characters.length <= Object.keys(game.players).length) {
+              player.send(`{"op": "gameDetails", "error": "房间已满"}`)
+            } else {
+              player.gameId = cmd.gameId
+              game.players[player.id] = {}
+              player.send(`{"op": "gameDetails", "gameId": "${cmd.gameId}", "hostId": "${game.hostId}", "characters": ${JSON.stringify(game.characters)}}`)
+            }
           } else {
             player.send(`{"op": "gameDetails", "error": "房间号${cmd.gameId}不存在"}`)
           }
@@ -87,10 +92,18 @@ wss.on('connection', function connection(player) {
         case 'gameDetails':
           if (games.has(cmd.gameId)) {
             let game = games.get(cmd.gameId)
-            player.send(`{"op": "gameDetails", "gameId": "${cmd.gameId}", "hostId": "${game.hostId}", "characters": ${JSON.stringify(game.characters)}}`)
+            console.log(JSON.stringify(game.players))
+            player.send(`{"op": "gameDetails", "gameId": "${cmd.gameId}", "hostId": "${game.hostId}", "characters": ${JSON.stringify(game.characters)}, "players": ${JSON.stringify(game.players)}}`)
           } else {
             player.gameId = ''
             player.send(`{"op": "gameDetails", "gameId": ""}`)
+          }
+          break
+        case 'takeSeat':
+          let game = games.get(player.gameId)
+          game.players[player.id].position = cmd.position
+          for (let p in game.players) {
+            players.get(p).send(`{"op": "takeSeat", "position": ${cmd.position}, "playerId": "${player.id}"}`)
           }
           break
         default:
@@ -101,18 +114,6 @@ wss.on('connection', function connection(player) {
       console.log('not json: ' + data + ' ==> ' + err)
     }
   });
-
-  // player.id = uuidv4()
-  // console.log('Player joined: ' + player.id)
-  // player.send('j')
-
-  // console.log(clients.get('a'));
-  // players.set(player.id, {player: player, heatbeat: new Date()})
-
-  // Send games info
-  // let gamesInfo = Array.from(games, ([id, game]) => ({ name: game.name, started: game.started, total: game.total, existing: game.existing }))
-
-  // player.send(JSON.stringify(gamesInfo))
 })
 
 
