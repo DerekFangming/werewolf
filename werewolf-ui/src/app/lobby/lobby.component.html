@@ -140,8 +140,9 @@
 <div *ngIf="gameState.turn == 'viewResult' && gameState.hostId == gameState.playerId" class="container">
   <div class="row mt-4">
     <div class="col">
-      <div class="d-grid gap-2">
+      <div class="d-grid gap-4">
         <button type="button" class="btn btn-outline-success" (click)="viewResult()">查看结果</button>
+        <button type="button" class="btn btn-outline-success" (click)="restartGame()">重新发牌</button>
       </div>
     </div>
   </div>

@@ -167,6 +167,13 @@ export class LobbyComponent implements OnInit {
     if (character.type == 'witch') {
       let position = this.gameState.playerPosition[this.gameState.actions['werewolfKill']]
       return character.note.replace(/\{0\}/g, position)
+    } else if (character.type == 'hunter') {
+      if ('witchKill' in this.gameState.actions) {
+        if (this.gameState.actions['witchKill'] == this.gameState.playerId) {
+          return character.note.replace(/\{0\}/g, '不可以')
+        }
+      }
+      return character.note.replace(/\{0\}/g, '可以')
     } else {
       return character.note
     }
@@ -182,6 +189,10 @@ export class LobbyComponent implements OnInit {
     } else {
       this.confirmModel.showDialog('昨晚结果', `昨晚死亡的玩家为 ${this.gameState.playerPosition[this.gameState.actions['werewolfKill']]} 号`, {}, true)
     }
+  }
+
+  restartGame() {
+    this.confirmModel.showDialog('重新发牌', '请确认使用同样角色配置重新开始游戏', {op: 'restartGame'})
   }
 
   public onConfirm(context: any) {
@@ -200,12 +211,12 @@ export class LobbyComponent implements OnInit {
         }
         break
       case 'seerExamine': {
-        let character = this.gameState.players[context.target].character.name
+        let character = this.gameState.players[context.target].character.isWolf ? '坏人' : '好人'
         this.confirmModel.showDialog('身份检验', `${context.target + 1}号玩家的身份是${character}。`, {op: 'endTurn'}, true, '下一回合')
         break
       }
-      case 'debug':
-        this.confirmModel.showDialog('哈哈哈哈', `你好`, {op: 'debug'}, true, '下一回合')
+      case 'restartGame':
+        this.ws.send(`{"op": "restartGame"}`)
         break
       default:
     }
@@ -218,6 +229,7 @@ export class LobbyComponent implements OnInit {
     console.log(this.gameState.turn)
     console.log(this.gameState.getSelfCharacter().type)
     console.log(this.gameState.actions)
+    console.log(this.gameState.gameId)
     // this.confirmModel.showDialog('你的身份是', `${this.gameState.getSelfCharacter().name}`, {op: 'debug'}, false, '下一回合')
   }
 

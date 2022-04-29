@@ -151,6 +151,26 @@ wss.on('connection', function connection(player) {
             }
           }
           break
+        case 'restartGame':
+          if (games.has(player.gameId)) {
+            let game = games.get(player.gameId)
+            let charactersCopy = JSON.parse(JSON.stringify(game.characters))
+            let shuffled = charactersCopy.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value)
+
+            let counter = 0
+            for (let p in game.players) {
+              game.players[p].character = shuffled[counter ++]
+            }
+
+            game.actions = {}
+            game.turn = 'viewCharacter'
+            game.turnOrder = game.characters.filter((c, p) => (c != 'villager') && game.characters.indexOf(c) == p).sort((a, b) => turnOrder[a] - turnOrder[b])
+
+            for (let p in game.players) {
+              players.get(p).send(`{"op": "gameDetails", "gameId": "${player.gameId}", "hostId": "${game.hostId}", "characters": ${JSON.stringify(game.characters)}, "players": ${JSON.stringify(game.players)}, "turn": "${game.turn}", "actions": ${JSON.stringify(game.actions)}}`)
+            }
+          }
+          break
         default:
           console.log('unknown command: ' + data)
       }
