@@ -18,6 +18,7 @@ export class GameStateService {
   turn = ''
   playerPosition = {}
   players = []
+  actions = {}
   state = 'loading'
 
   constructor(private cookieService: CookieService) {
@@ -49,6 +50,7 @@ export class GameStateService {
       this.turn = ''
       this.playerPosition = {}
       this.players = []
+      this.actions = {}
     }
     return this.cookieService.set(GameStateService.gameIdCookieName, gameId, 0, '/');
   }
@@ -62,7 +64,7 @@ export class GameStateService {
     this.state = state
   }
 
-  setGame(gameId: string, hostId: string, turn: string, characters: string[], players: object) {
+  setGame(gameId: string, hostId: string, turn: string, characters: string[], players: object, actions: object) {
     if (gameId == '') {
       this.setGameId(gameId)
       return
@@ -93,6 +95,11 @@ export class GameStateService {
       }
     }
 
+    this.actions = {}
+    if (actions != undefined) {
+      this.actions = actions
+    }
+
     this.turn = turn
     this.hostId = hostId
     this.setGameId(gameId)
@@ -112,6 +119,9 @@ export class GameStateService {
   }
 
   endTurn(newTurn: string, action: string, targetId: string) {
+    if (action != undefined && targetId != undefined) {
+      this.actions[action] = targetId
+    }
     if (this.hostId == this.playerId) {
       if (this.turn == 'viewCharacter') {
         this.announce('天黑请闭眼')

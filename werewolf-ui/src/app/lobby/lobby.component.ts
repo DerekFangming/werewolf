@@ -46,7 +46,7 @@ export class LobbyComponent implements OnInit {
         case 'gameDetails':
           if (cmd.error == null) {
             console.log(cmd)
-            that.gameState.setGame(cmd.gameId, cmd.hostId, cmd.turn, cmd.characters, cmd.players)
+            that.gameState.setGame(cmd.gameId, cmd.hostId, cmd.turn, cmd.characters, cmd.players, cmd.actions)
           } else {
             that.gameState.setState('lobby')
             that.error = cmd.error
@@ -112,10 +112,22 @@ export class LobbyComponent implements OnInit {
       }
     } else if (this.isMyTurn()) {
       let character = this.gameState.getSelfCharacter()
-      console.log(character.actionName)
-      console.log(this.gameState.players[seatInd].id)
-      this.confirmModel.showDialog(character.actionTitle, character.actionMessage.replace(/\{0\}/, seatInd+1),
-        {'op': 'endTurn', 'action': seatInd+1, 'target': 2}, false, '确认，并结束回合')
+      if (character.actionName == 'seerExamine') {
+        this.confirmModel.showDialog(character.actionTitle, character.actionMessage.replace(/\{0\}/, seatInd+1),
+          {'op': 'seerExamine', 'action': character.actionName, 'target': seatInd})
+      } else if (character.actionName == 'witchPills') {
+        let position = this.gameState.playerPosition[this.gameState.actions['werewolfKill']]
+        if (position == seatInd + 1) {
+          this.confirmModel.showDialog(character.actionTitle.replace(/\{0\}/, '解药'), character.actionMessage.replace(/\{0\}/, seatInd+1).replace(/\{1\}/, '解药'),
+          {'op': 'endTurn', 'action': 'witchSave', 'target': this.gameState.players[seatInd].id}, false, '确认，并结束回合')
+        } else {
+          this.confirmModel.showDialog(character.actionTitle.replace(/\{0\}/, '毒药'), character.actionMessage.replace(/\{0\}/, seatInd+1).replace(/\{1\}/, '毒药'),
+          {'op': 'endTurn', 'action': 'witchKill', 'target': this.gameState.players[seatInd].id}, false, '确认，并结束回合')
+        }
+      } else {
+        this.confirmModel.showDialog(character.actionTitle, character.actionMessage.replace(/\{0\}/, seatInd+1),
+          {'op': 'endTurn', 'action': character.actionName, 'target': this.gameState.players[seatInd].id}, false, '确认，并结束回合')
+      }
     }
   }
 
@@ -146,11 +158,30 @@ export class LobbyComponent implements OnInit {
   }
 
   endTurn() {
-    this.ws.send(`{"op": "endTurn", "action": "foo", "target": "bar"}`)
+    this.ws.send(`{"op": "endTurn"}`)
+  }
+
+  getNote() {
+    let character = this.gameState.getSelfCharacter()
+
+    if (character.type == 'witch') {
+      let position = this.gameState.playerPosition[this.gameState.actions['werewolfKill']]
+      return character.note.replace(/\{0\}/g, position)
+    } else {
+      return character.note
+    }
   }
 
   viewResult() {
-
+    if ('witchSave' in this.gameState.actions) {
+      this.confirmModel.showDialog('昨晚结果', '昨晚是平安夜', {}, true)
+    } else if ('witchKill' in this.gameState.actions) {
+      let wolfKill = this.gameState.playerPosition[this.gameState.actions['werewolfKill']]
+      let witchKill = this.gameState.playerPosition[this.gameState.actions['witchKill']]
+      this.confirmModel.showDialog('昨晚结果', `昨晚死亡的玩家为 ${wolfKill} 号和 ${witchKill} 号`, {}, true)
+    } else {
+      this.confirmModel.showDialog('昨晚结果', `昨晚死亡的玩家为 ${this.gameState.playerPosition[this.gameState.actions['werewolfKill']]} 号`, {}, true)
+    }
   }
 
   public onConfirm(context: any) {
@@ -161,6 +192,18 @@ export class LobbyComponent implements OnInit {
       case 'takeSeat':
         this.ws.send(`{"op": "takeSeat", "position": ${context.position}}`)
         break
+      case 'endTurn':
+        if (context.action == undefined) {
+          this.ws.send(`{"op": "endTurn"}`)
+        } else {
+          this.ws.send(`{"op": "endTurn", "action": "${context.action}", "target": "${context.target}"}`)
+        }
+        break
+      case 'seerExamine': {
+        let character = this.gameState.players[context.target].character.name
+        this.confirmModel.showDialog('身份检验', `${context.target + 1}号玩家的身份是${character}。`, {op: 'endTurn'}, true, '下一回合')
+        break
+      }
       case 'debug':
         this.confirmModel.showDialog('哈哈哈哈', `你好`, {op: 'debug'}, true, '下一回合')
         break
@@ -169,12 +212,12 @@ export class LobbyComponent implements OnInit {
   }
 
   debug() {
-    // console.log('Player: ' + this.gameState.playerId)
-    // console.log(this.gameState.playerPosition)
+    console.log('Player: ' + this.gameState.playerId)
+    console.log(this.gameState.playerPosition)
     console.log(this.gameState.players)
-    // console.log(this.gameState.turn)
-    // console.log(this.gameState.getSelfCharacter().type)
-    // console.log(this.isMyTurn())
+    console.log(this.gameState.turn)
+    console.log(this.gameState.getSelfCharacter().type)
+    console.log(this.gameState.actions)
     // this.confirmModel.showDialog('你的身份是', `${this.gameState.getSelfCharacter().name}`, {op: 'debug'}, false, '下一回合')
   }
 

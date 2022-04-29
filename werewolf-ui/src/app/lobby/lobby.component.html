@@ -122,7 +122,12 @@
   </div>
   <div *ngIf="isMyTurn()" class="row mt-4">
     <div class="col-12">
-      {{ gameState.getSelfCharacter().note }}
+      {{ getNote() }}
+    </div>
+    <div *ngIf="gameState.getSelfCharacter().allowNoAction" class="col-12 mt-4">
+      <div class="d-grid gap-2">
+        <button type="button" class="btn btn-outline-success" (click)="endTurn()">结束回合</button>
+      </div>
     </div>
     <!-- <div class="col">
       <div class="d-grid gap-2">

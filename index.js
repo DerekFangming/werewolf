@@ -63,7 +63,7 @@ wss.on('connection', function connection(player) {
             } else {
               player.gameId = cmd.gameId
               game.players[player.id] = {}
-              player.send(`{"op": "gameDetails", "gameId": "${cmd.gameId}", "hostId": "${game.hostId}", "characters": ${JSON.stringify(game.characters)}, "players": ${JSON.stringify(game.players)}, "turn": "${game.turn}", "actions": "${JSON.stringify(game.actions)}"}`)
+              player.send(`{"op": "gameDetails", "gameId": "${cmd.gameId}", "hostId": "${game.hostId}", "characters": ${JSON.stringify(game.characters)}, "players": ${JSON.stringify(game.players)}, "turn": "${game.turn}", "actions": ${JSON.stringify(game.actions)}}`)
             }
           } else {
             player.send(`{"op": "gameDetails", "error": "房间号${cmd.gameId}不存在"}`)
@@ -95,7 +95,7 @@ wss.on('connection', function connection(player) {
           if (games.has(cmd.gameId)) {
             let game = games.get(cmd.gameId)
             console.log(JSON.stringify(game.players))
-            player.send(`{"op": "gameDetails", "gameId": "${cmd.gameId}", "hostId": "${game.hostId}", "characters": ${JSON.stringify(game.characters)}, "players": ${JSON.stringify(game.players)}, "turn": "${game.turn}", "actions": "${JSON.stringify(game.actions)}"}`)
+            player.send(`{"op": "gameDetails", "gameId": "${cmd.gameId}", "hostId": "${game.hostId}", "characters": ${JSON.stringify(game.characters)}, "players": ${JSON.stringify(game.players)}, "turn": "${game.turn}", "actions": ${JSON.stringify(game.actions)}}`)
           } else {
             player.gameId = ''
             player.send(`{"op": "gameDetails", "gameId": ""}`)
@@ -125,17 +125,17 @@ wss.on('connection', function connection(player) {
             game.turnOrder = game.characters.filter((c, p) => (c != 'villager') && game.characters.indexOf(c) == p).sort((a, b) => turnOrder[a] - turnOrder[b])
 
             for (let p in game.players) {
-              players.get(p).send(`{"op": "gameDetails", "gameId": "${cmd.gameId}", "hostId": "${game.hostId}", "characters": ${JSON.stringify(game.characters)}, "players": ${JSON.stringify(game.players)}, "turn": "${game.turn}", "actions": "${JSON.stringify(game.actions)}"}`)
+              players.get(p).send(`{"op": "gameDetails", "gameId": "${cmd.gameId}", "hostId": "${game.hostId}", "characters": ${JSON.stringify(game.characters)}, "players": ${JSON.stringify(game.players)}, "turn": "${game.turn}", "actions": ${JSON.stringify(game.actions)}}`)
             }
           }
           break
         case 'endTurn':
           if (games.has(player.gameId)) {
             let game = games.get(player.gameId)
+            if (cmd.action != undefined && cmd.action != 'nightStart') game.actions[cmd.action] = cmd.target
             if (game.turnOrder.length > 0){
               game.turn = game.turnOrder.shift()
 
-              if (cmd.action != 'nightStart') game.actions[cmd.action] = cmd.target
               for (let p in game.players) {
                 if (cmd.action == 'nightStart') {
                   players.get(p).send(`{"op": "endTurn", "turn": "${game.turn}"}`)
