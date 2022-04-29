@@ -104,5 +104,34 @@ export class GameStateService {
     this.playerPosition[playerId] = position
     this.players[position - 1].selected = true
   }
+
+  getSelfCharacter() {
+    let position = this.playerPosition[this.playerId]
+    return this.players[position - 1].character
+  }
+
+  endTurn(newTurn: string, action: string, targetId: string) {
+    if (this.hostId == this.playerId) {
+      if (this.turn == 'viewCharacter') {
+        this.announce('天黑请闭眼')
+      } else {
+        this.announce(Utils.parseCharactor(this.turn).name + '请闭眼')
+      }
+
+      let that = this
+      setTimeout(function() {
+        if (newTurn == 'viewResult') {
+          that.announce('天亮了')
+        } else {
+          that.announce(Utils.parseCharactor(newTurn).name + ' 请睁眼')
+        }
+      }, 5000)
+    }
+    this.turn = newTurn
+  }
+
+  announce(things: string) {
+    console.log(new Date() + ' ' + things)
+  }
   
 }

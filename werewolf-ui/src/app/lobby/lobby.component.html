@@ -116,19 +116,41 @@
     </div>
     <div class="col-12 mt-2">
       <div class="d-grid gap-2">
-        <button type="button" class="btn btn-outline-success" (click)="startGame()">开始发牌</button>
+        <button *ngIf="gameState.turn == ''" type="button" class="btn btn-outline-success" (click)="startGame()">开始发牌</button>
+        <button *ngIf="gameState.turn == 'viewCharacter'" type="button" class="btn btn-outline-success" (click)="nightStart()">开始游戏 （天黑请闭眼）</button>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="isMyTurn()" class="row mt-4">
+    <div class="col">
+      <div class="d-grid gap-2">
+        <button type="button" class="btn btn-outline-success" (click)="endTurn()">结束回合</button>
       </div>
     </div>
   </div>
 </div>
 
-<div *ngIf="gameState.turn != ''" class="container">
-  <div class="row mt-3">
-    <div class="d-grid gap-2">
-      <button type="button" class="btn btn-outline-success" (click)="viewCharacter()">查看身份</button>
+<div *ngIf="gameState.turn == 'viewResult' && gameState.hostId == gameState.playerId" class="container">
+  <div class="row mt-4">
+    <div class="col">
+      <div class="d-grid gap-2">
+        <button type="button" class="btn btn-outline-success" (click)="viewResult()">查看结果</button>
+      </div>
     </div>
   </div>
 </div>
+
+<nav *ngIf="gameState.turn != ''" class="navbar fixed-bottom">
+  <div class="container pe-0">
+    <div class="row mb-3 w-100">
+      <div class="d-grid gap-2 pe-0">
+        <button type="button" class="btn btn-outline-success" (click)="viewCharacter()">查看身份</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+
 
 <ng-template #errModal let-modal>
   <div class="modal-header">
@@ -150,8 +172,8 @@
 <app-confirm-dialog #confirmModel (onConfirm)="onConfirm($event)"></app-confirm-dialog>
 
 <div class="container">
-  <div class="row mt-3">
-    <div class="col">
+  <div class="row mt-5">
+    <div class="col mt-5">
       <button type="button" class="btn btn-outline-success" (click)="debug()">Debug</button>
     </div>
   </div>

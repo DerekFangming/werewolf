@@ -56,6 +56,9 @@ export class LobbyComponent implements OnInit {
         case 'takeSeat':
           that.gameState.takeSeat(cmd.playerId, cmd.position)
           break
+        case 'endTurn':
+          that.gameState.endTurn(cmd.turn, cmd.action, cmd.target)
+          break
         default:
         console.log('unknown command: ' + data)
       }
@@ -119,10 +122,31 @@ export class LobbyComponent implements OnInit {
   }
 
   viewCharacter() {
-    let position = this.gameState.playerPosition[this.gameState.playerId]
-    console.log(this.gameState.players[position - 1])
-    let characterName = this.gameState.players[position - 1].character.name
-    this.confirmModel.showDialog('你的身份是', `${characterName}`, {})
+    this.confirmModel.showDialog('你的身份是', `${this.gameState.getSelfCharacter().name}`, {})
+  }
+
+  isMyTurn() {
+    console.log(1)
+    if (this.gameState.turn != '') {
+      console.log(2)
+      if (this.gameState.turn == this.gameState.getSelfCharacter().type) {
+        console.log(3)
+        return true
+      }
+    }
+    return false
+  }
+
+  nightStart() {
+    this.ws.send(`{"op": "endTurn", "action": "nightStart"}`)
+  }
+
+  endTurn() {
+    this.ws.send(`{"op": "endTurn", "action": "foo", "target": "bar"}`)
+  }
+
+  viewResult() {
+    
   }
 
   public onConfirm(context: any) {
@@ -137,10 +161,13 @@ export class LobbyComponent implements OnInit {
     }
   }
 
-  public debug() {
+  debug() {
     console.log('Player: ' + this.gameState.playerId)
     console.log(this.gameState.playerPosition)
     console.log(this.gameState.players)
+    console.log(this.gameState.turn)
+    console.log(this.gameState.getSelfCharacter().type)
+    console.log(this.isMyTurn())
   }
 
 }

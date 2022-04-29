@@ -75,12 +75,14 @@ wss.on('connection', function connection(player) {
             if (games.has(gameId)) {
               let game = games.get(gameId)
               if (game.hostId == player.id) {
+                // Close game for all users if host quit
                 for (let p in game.players) {
                   if (players.has(p)) players.get(p).gameId = ''
                   players.get(p).send(`{"op": "gameDetails", "gameId": ""}`)
                 }
                 games.delete(gameId)
               } else {
+                // Should we keep player data for him to come back? Game will break at this point
                 delete game.players[player.id]
                 player.send(`{"op": "gameDetails", "gameId": ""}`)
               }
@@ -127,6 +129,26 @@ wss.on('connection', function connection(player) {
             }
           }
           break
+        case 'endTurn':
+          if (games.has(player.gameId)) {
+            let game = games.get(player.gameId)
+            if (game.turnOrder.length > 0){
+              game.turn = game.turnOrder.shift()
+              for (let p in game.players) {
+                if (cmd.action == 'nightStart') {
+                  players.get(p).send(`{"op": "endTurn", "turn": "${game.turn}"}`)
+                } else {
+                  players.get(p).send(`{"op": "endTurn", "turn": "${game.turn}", "action": "${cmd.action}", "target": "${cmd.target}"}`)
+                }
+              }
+            } else {
+              game.turn = 'viewResult'
+              for (let p in game.players) {
+                players.get(p).send(`{"op": "endTurn", "turn": "${game.turn}"}`)
+              }
+            }
+          }
+          break
         default:
           console.log('unknown command: ' + data)
       }
@@ -149,6 +171,7 @@ app.get('/debug', (req, res) => {
   status += '<br /><br /><h1>Games</h1>'
   for (const [id, g] of games) {
     status += '<br />' + id + '<span style="color:red"> Host </span> ' + g.hostId + ' <span style="color:red"> characters </span> ' + JSON.stringify(g.characters)
+    status += '<br /><span style="color:red"> Turn </span> ' + g.turn + ' <span style="color:red"> turnOrder </span> ' + (g.turnOrder == undefined ? '[]' : JSON.stringify(g.turnOrder))
     status += '<br />' + JSON.stringify(g.players)
   }
   res.send(status)
@@ -165,9 +188,9 @@ app.listen(port, () => {
   // console.log(JSON.stringify(a))
   // delete a.key
   // console.log(JSON.stringify(a))
-  let a = ["werewolf","werewolf","werewolf","werewolf","villager","villager","villager","villager","seer","witch","hunter","guard"]
-  let b = a.filter((c, pos) => (c != 'villager') && a.indexOf(c) == pos).sort((a, b) => turnOrder[a] - turnOrder[b])
-  console.log(b)
+  // let a = ["werewolf","werewolf","werewolf","werewolf","villager","villager","villager","villager","seer","witch","hunter","guard"]
+  // let b = a.filter((c, pos) => (c != 'villager') && a.indexOf(c) == pos).sort((a, b) => turnOrder[a] - turnOrder[b])
+  // console.log(b)
 })
 
 const turnOrder = {
