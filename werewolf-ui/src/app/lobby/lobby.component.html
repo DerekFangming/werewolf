@@ -105,13 +105,12 @@
   </div>
   <div class="row">
     <div class="col-3 mt-4 px-1" *ngFor="let p of gameState.players; let ind = index" >
-      <div class="d-grid"><button type="button" class="btn seat" [ngClass]="p.selected ? 'btn-success' : 'btn-outline-success'"
-          (click)="!p.selected && confirmModel.showDialog('入座', '确定在' + (ind+1) + '号入座？', {'op': 'takeSeat', 'position': ind+1})">
+      <div class="d-grid"><button type="button" class="btn seat" [ngClass]="p.selected ? 'btn-success' : 'btn-outline-success'" (click)="selectSeat(ind)">
         <p class="display-5 mb-0">{{ind + 1}}</p></button></div>
     </div>
   </div>
   <div *ngIf="gameState.hostId == gameState.playerId" class="row mt-4">
-    <div class="col-12">
+    <div *ngIf="gameState.turn == '' || gameState.turn == 'viewCharacter'" class="col-12">
       你是房主，待人员入座后即可开始游戏。请提高手机音量，游戏进度语音将从你的手机发出。
     </div>
     <div class="col-12 mt-2">
@@ -122,11 +121,14 @@
     </div>
   </div>
   <div *ngIf="isMyTurn()" class="row mt-4">
-    <div class="col">
+    <div class="col-12">
+      {{ gameState.getSelfCharacter().note }}
+    </div>
+    <!-- <div class="col">
       <div class="d-grid gap-2">
         <button type="button" class="btn btn-outline-success" (click)="endTurn()">结束回合</button>
       </div>
-    </div>
+    </div> -->
   </div>
 </div>
 

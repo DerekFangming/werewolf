@@ -11,6 +11,8 @@ export class ConfirmDialogComponent implements OnInit {
   title = ''
   message = ''
   context = null
+  confirmOnly = false
+  confirmText = '确定'
 
   modalRef: NgbModalRef
   @ViewChild('confirmModal', { static: true}) confirmModal: TemplateRef<any>
@@ -21,12 +23,18 @@ export class ConfirmDialogComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  showDialog(title: string, message: string, context: any) {
+  showDialog(title: string, message: string, context: any, confirmOnly = false, confirmText = '确定') {
     this.title = title
     this.message = message
     this.context = context
+    this.confirmOnly = confirmOnly
+    this.confirmText = confirmText
 
-    this.modalRef = this.modalService.open(this.confirmModal, { centered: true })
+    if (confirmOnly) {
+      this.modalRef = this.modalService.open(this.confirmModal, { centered: true, backdrop: 'static', keyboard: false })
+    } else {
+      this.modalRef = this.modalService.open(this.confirmModal, { centered: true })
+    }
   }
 
   confirm(){

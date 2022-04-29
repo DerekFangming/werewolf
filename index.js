@@ -51,7 +51,7 @@ wss.on('connection', function connection(player) {
 
           let gamePlayers = {}
           gamePlayers[player.id] = {}
-          games.set(gameId, {turn: '', hostId: player.id, characters: cmd.characters, players: gamePlayers })
+          games.set(gameId, {turn: '', hostId: player.id, characters: cmd.characters, players: gamePlayers, actions: {} })
           player.send(`{"op": "gameDetails", "gameId": "${gameId}", "hostId": "${player.id}", "characters": ${JSON.stringify(cmd.characters)}, "turn": ""}`)
 
           break
@@ -63,7 +63,7 @@ wss.on('connection', function connection(player) {
             } else {
               player.gameId = cmd.gameId
               game.players[player.id] = {}
-              player.send(`{"op": "gameDetails", "gameId": "${cmd.gameId}", "hostId": "${game.hostId}", "characters": ${JSON.stringify(game.characters)}, "players": ${JSON.stringify(game.players)}, "turn": "${game.turn}"}`)
+              player.send(`{"op": "gameDetails", "gameId": "${cmd.gameId}", "hostId": "${game.hostId}", "characters": ${JSON.stringify(game.characters)}, "players": ${JSON.stringify(game.players)}, "turn": "${game.turn}", "actions": "${JSON.stringify(game.actions)}"}`)
             }
           } else {
             player.send(`{"op": "gameDetails", "error": "房间号${cmd.gameId}不存在"}`)
@@ -95,7 +95,7 @@ wss.on('connection', function connection(player) {
           if (games.has(cmd.gameId)) {
             let game = games.get(cmd.gameId)
             console.log(JSON.stringify(game.players))
-            player.send(`{"op": "gameDetails", "gameId": "${cmd.gameId}", "hostId": "${game.hostId}", "characters": ${JSON.stringify(game.characters)}, "players": ${JSON.stringify(game.players)}, "turn": "${game.turn}"}`)
+            player.send(`{"op": "gameDetails", "gameId": "${cmd.gameId}", "hostId": "${game.hostId}", "characters": ${JSON.stringify(game.characters)}, "players": ${JSON.stringify(game.players)}, "turn": "${game.turn}", "actions": "${JSON.stringify(game.actions)}"}`)
           } else {
             player.gameId = ''
             player.send(`{"op": "gameDetails", "gameId": ""}`)
@@ -125,7 +125,7 @@ wss.on('connection', function connection(player) {
             game.turnOrder = game.characters.filter((c, p) => (c != 'villager') && game.characters.indexOf(c) == p).sort((a, b) => turnOrder[a] - turnOrder[b])
 
             for (let p in game.players) {
-              players.get(p).send(`{"op": "gameDetails", "gameId": "${cmd.gameId}", "hostId": "${game.hostId}", "characters": ${JSON.stringify(game.characters)}, "players": ${JSON.stringify(game.players)}, "turn": "${game.turn}"}`)
+              players.get(p).send(`{"op": "gameDetails", "gameId": "${cmd.gameId}", "hostId": "${game.hostId}", "characters": ${JSON.stringify(game.characters)}, "players": ${JSON.stringify(game.players)}, "turn": "${game.turn}", "actions": "${JSON.stringify(game.actions)}"}`)
             }
           }
           break
@@ -134,6 +134,8 @@ wss.on('connection', function connection(player) {
             let game = games.get(player.gameId)
             if (game.turnOrder.length > 0){
               game.turn = game.turnOrder.shift()
+
+              if (cmd.action != 'nightStart') game.actions[cmd.action] = cmd.target
               for (let p in game.players) {
                 if (cmd.action == 'nightStart') {
                   players.get(p).send(`{"op": "endTurn", "turn": "${game.turn}"}`)
@@ -153,7 +155,6 @@ wss.on('connection', function connection(player) {
           console.log('unknown command: ' + data)
       }
     } catch (err) {
-      // console.log('not json: ' + data + ' ==> ' + err)
       console.log(err.stack)
     }
   });
@@ -173,6 +174,7 @@ app.get('/debug', (req, res) => {
     status += '<br />' + id + '<span style="color:red"> Host </span> ' + g.hostId + ' <span style="color:red"> characters </span> ' + JSON.stringify(g.characters)
     status += '<br /><span style="color:red"> Turn </span> ' + g.turn + ' <span style="color:red"> turnOrder </span> ' + (g.turnOrder == undefined ? '[]' : JSON.stringify(g.turnOrder))
     status += '<br />' + JSON.stringify(g.players)
+    status += '<br />' + JSON.stringify(g.actions)
   }
   res.send(status)
 })

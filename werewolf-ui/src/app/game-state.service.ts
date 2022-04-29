@@ -87,6 +87,7 @@ export class GameStateService {
       }
       if ('character' in players[p]) {
         if (p in this.playerPosition) {
+          this.players[this.playerPosition[p] - 1].id = p
           this.players[this.playerPosition[p] - 1].character = Utils.parseCharactor(players[p].character)
         }
       }

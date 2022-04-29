@@ -106,9 +106,16 @@ export class LobbyComponent implements OnInit {
 
   selectSeat(seatInd: number) {
     if (this.gameState.turn == '') {
+      console.log(3)
       if (!this.gameState.players[seatInd].selected) {
         this.confirmModel.showDialog('入座', '确定在' + (seatInd+1) + '号入座？', {'op': 'takeSeat', 'position': seatInd+1})
       }
+    } else if (this.isMyTurn()) {
+      let character = this.gameState.getSelfCharacter()
+      console.log(character.actionName)
+      console.log(this.gameState.players[seatInd].id)
+      this.confirmModel.showDialog(character.actionTitle, character.actionMessage.replace(/\{0\}/, seatInd+1),
+        {'op': 'endTurn', 'action': seatInd+1, 'target': 2}, false, '确认，并结束回合')
     }
   }
 
@@ -126,11 +133,8 @@ export class LobbyComponent implements OnInit {
   }
 
   isMyTurn() {
-    console.log(1)
     if (this.gameState.turn != '') {
-      console.log(2)
       if (this.gameState.turn == this.gameState.getSelfCharacter().type) {
-        console.log(3)
         return true
       }
     }
@@ -146,7 +150,7 @@ export class LobbyComponent implements OnInit {
   }
 
   viewResult() {
-    
+
   }
 
   public onConfirm(context: any) {
@@ -157,17 +161,21 @@ export class LobbyComponent implements OnInit {
       case 'takeSeat':
         this.ws.send(`{"op": "takeSeat", "position": ${context.position}}`)
         break
+      case 'debug':
+        this.confirmModel.showDialog('哈哈哈哈', `你好`, {op: 'debug'}, true, '下一回合')
+        break
       default:
     }
   }
 
   debug() {
-    console.log('Player: ' + this.gameState.playerId)
-    console.log(this.gameState.playerPosition)
+    // console.log('Player: ' + this.gameState.playerId)
+    // console.log(this.gameState.playerPosition)
     console.log(this.gameState.players)
-    console.log(this.gameState.turn)
-    console.log(this.gameState.getSelfCharacter().type)
-    console.log(this.isMyTurn())
+    // console.log(this.gameState.turn)
+    // console.log(this.gameState.getSelfCharacter().type)
+    // console.log(this.isMyTurn())
+    // this.confirmModel.showDialog('你的身份是', `${this.gameState.getSelfCharacter().name}`, {op: 'debug'}, false, '下一回合')
   }
 
 }

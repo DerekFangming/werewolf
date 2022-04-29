@@ -1,7 +1,7 @@
 <ng-template #confirmModal let-modal>
   <div class="modal-header">
     <h4 class="modal-title">{{ title }}</h4>
-    <button type="button" class="btn-close" (click)="modal.dismiss('Cross click')"> </button>
+    <button *ngIf="!confirmOnly" type="button" class="btn-close" (click)="modal.dismiss('Cross click')"> </button>
   </div>
   <div class="modal-body" ngbAutofocus>
     <div class="row">
@@ -11,7 +11,7 @@
     </div>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" (click)="modal.dismiss('Cross click')">取消</button>
-    <button type="button" class="btn btn-success" (click)="confirm()">确定</button>
+    <button *ngIf="!confirmOnly" type="button" class="btn btn-secondary" (click)="modal.dismiss('Cross click')">取消</button>
+    <button type="button" class="btn btn-success" (click)="confirm()">{{ confirmText }}</button>
   </div>
 </ng-template>
