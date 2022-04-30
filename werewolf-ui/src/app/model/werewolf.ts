@@ -8,6 +8,8 @@ export class Werewolf extends Character {
   actionName = 'werewolfKill'
   actionTitle = '击杀玩家'
   actionMessage = '确认击杀 {0} 号玩家？'
+  startAudio = 'werewolfStart.m4a'
+  endAudio = 'werewolfEnd.m4a'
 
   public constructor(init?:Partial<Werewolf>) {
     super()

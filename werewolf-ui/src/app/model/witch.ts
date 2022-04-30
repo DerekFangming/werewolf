@@ -8,6 +8,8 @@ export class Witch extends Character {
   actionName = 'witchPills'
   actionTitle = '确认使用{0}'
   actionMessage = '确认对 {0} 号玩家使用{1}？'
+  startAudio = 'witchStart.m4a'
+  endAudio = 'witchEnd.m4a'
 
   public constructor(init?:Partial<Witch>) {
     super()

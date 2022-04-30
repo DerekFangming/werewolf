@@ -124,25 +124,34 @@ export class GameStateService {
     }
     if (this.hostId == this.playerId) {
       if (this.turn == 'viewCharacter') {
-        this.announce('天黑请闭眼')
+        this.announce('nightStart.m4a')
       } else {
-        this.announce(Utils.parseCharactor(this.turn).name + '请闭眼')
+        this.announce(Utils.parseCharactor(this.turn).endAudio)
       }
 
       let that = this
       setTimeout(function() {
         if (newTurn == 'viewResult') {
-          that.announce('天亮了')
+          that.announce('nightEnd.m4a')
         } else {
-          that.announce(Utils.parseCharactor(newTurn).name + ' 请睁眼')
+          that.announce(Utils.parseCharactor(newTurn).startAudio)
         }
-      }, 5000)
+      }, 8000)
     }
     this.turn = newTurn
   }
 
-  announce(things: string) {
-    console.log(new Date() + ' ' + things)
+  audio: HTMLAudioElement
+
+  announce(fileName: string) {
+
+    if (this.audio == null) {
+      this.audio = new Audio()
+    }
+
+    this.audio.src = `../../assets/${fileName}`
+    this.audio.load() 
+    this.audio.play()
   }
   
 }

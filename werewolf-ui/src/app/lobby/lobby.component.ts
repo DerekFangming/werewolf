@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core'
+import { Component, ElementRef, OnInit, TemplateRef, ViewChild } from '@angular/core'
 import { GameStateService } from '../game-state.service';
 import { Guard } from '../model/guard';
 import { Hunter } from '../model/hunter';
@@ -6,7 +6,7 @@ import { Seer } from '../model/seer';
 import { Villager } from '../model/villager';
 import { Werewolf } from '../model/werewolf';
 import { Witch } from '../model/witch';
-import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
 @Component({
@@ -24,7 +24,7 @@ export class LobbyComponent implements OnInit {
   @ViewChild('errModal', { static: true}) errModal: TemplateRef<any>
   @ViewChild('confirmModel') confirmModel: ConfirmDialogComponent
 
-  constructor(public gameState: GameStateService, private modalService: NgbModal) { }
+  constructor(public gameState: GameStateService, private modalService: NgbModal, private elementRef:ElementRef) { }
 
   ngOnInit() {
     // const ws = new WebSocket('ws://localhost:8080')
@@ -154,6 +154,7 @@ export class LobbyComponent implements OnInit {
   }
 
   nightStart() {
+    this.gameState.announce('soundUnlock.mp3')
     this.ws.send(`{"op": "endTurn", "action": "nightStart"}`)
   }
 
@@ -236,14 +237,36 @@ export class LobbyComponent implements OnInit {
   }
 
   debug() {
-    console.log('Player: ' + this.gameState.playerId)
-    console.log(this.gameState.playerPosition)
-    console.log(this.gameState.players)
-    console.log(this.gameState.turn)
-    console.log(this.gameState.getSelfCharacter().type)
-    console.log(this.gameState.actions)
-    console.log(this.gameState.gameId)
+    // console.log('Player: ' + this.gameState.playerId)
+    // console.log(this.gameState.playerPosition)
+    // console.log(this.gameState.players)
+    // console.log(this.gameState.turn)
+    // console.log(this.gameState.getSelfCharacter().type)
+    // console.log(this.gameState.actions)
+    // console.log(this.gameState.gameId)
     // this.confirmModel.showDialog('你的身份是', `${this.gameState.getSelfCharacter().name}`, {op: 'debug'}, false, '下一回合')
+
+    // try {
+    //   let audio = new Audio()
+    //   audio.src = `../../assets/nightStart.m4a`
+    //   audio.loop = true
+    //   audio.load() 
+    //   audio.play()
+
+    //   setTimeout(function() {
+    //     audio.pause()
+    //     audio.src = `../../assets/nightEnd.m4a`
+    //     audio.pause()
+    //     audio.play()
+    //   }, 6000)
+    // } catch (err) {
+    //   console.log(err)
+    // }
+
+    
+
+
+    this.gameState.announce('nightStart.m4a')
   }
 
 }

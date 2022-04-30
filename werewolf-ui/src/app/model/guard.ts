@@ -7,6 +7,8 @@ export class Guard extends Character {
   actionName = 'guardProtect'
   actionTitle = '守卫玩家'
   actionMessage = '确认守卫 {0} 号玩家？'
+  startAudio = 'guardStart.m4a'
+  endAudio = 'guardEnd.m4a'
 
   public constructor(init?:Partial<Guard>) {
     super()

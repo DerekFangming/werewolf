@@ -25,6 +25,4 @@ export default class Utils {
         return null
     }
   }
-
-  static doSomethingElse(val: string) { return val; }
 }
