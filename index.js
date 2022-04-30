@@ -6,7 +6,7 @@ const server = require('http').createServer()
 
 const app = express()
 
-const port = '8080'
+const port = '9003'
 const production = process.env.PRODUCTION == 'true'
 
 
@@ -48,7 +48,7 @@ wss.on('connection', function connection(player) {
           break
         case 'createGame':
           gameId = Math.floor(1000 + Math.random() * 9000).toString()
-          gameId = '1111' //TODO
+          if (!production) gameId = '1111' // Force first room # for dev testing
           while (games.has(gameId)) {
             gameId = Math.floor(1000 + Math.random() * 9000).toString()
           }
