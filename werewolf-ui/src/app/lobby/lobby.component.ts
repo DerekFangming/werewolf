@@ -154,6 +154,7 @@ export class LobbyComponent implements OnInit {
   }
 
   nightStart() {
+    // Need this to break IOS mobile audio limitation.
     this.gameState.announce('soundUnlock.mp3')
     this.ws.send(`{"op": "endTurn", "action": "nightStart"}`)
   }
