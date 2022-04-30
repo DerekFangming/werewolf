@@ -8,6 +8,7 @@ import { Werewolf } from '../model/werewolf';
 import { Witch } from '../model/witch';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-lobby',
@@ -27,8 +28,7 @@ export class LobbyComponent implements OnInit {
   constructor(public gameState: GameStateService, private modalService: NgbModal, private elementRef:ElementRef) { }
 
   ngOnInit() {
-    // const ws = new WebSocket('ws://localhost:8080')
-    this.ws = new WebSocket('ws://10.0.1.50:8080')
+    this.ws = new WebSocket(environment.socketAddress)
     let that = this
 
     this.ws.onopen = function (event) {
@@ -89,7 +89,7 @@ export class LobbyComponent implements OnInit {
   }
 
   joinGame(){
-    this.gameIdInput = '1111'
+    if (!environment.production) this.gameIdInput = '1111' // Force first room # for dev testing
     this.gameState.setState('joinGame')
   }
 

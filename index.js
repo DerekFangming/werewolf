@@ -1,5 +1,6 @@
 const express = require('express')
 const path = require('path')
+const fs = require('fs')
 const ws = require('ws')
 const { v4: uuidv4 } = require('uuid');
 const server = require('http').createServer()
@@ -203,6 +204,12 @@ app.get('/debug', (req, res) => {
     status += '<br />' + JSON.stringify(g.actions)
   }
   res.send(status)
+})
+
+app.get('/game', (req, res) => {
+  fs.readFile(__dirname + '/public/index.html', 'utf8', (err, text) => {
+    res.send(text);
+});
 })
 
 app.use(express.static(path.join(__dirname, 'public')));

@@ -3,7 +3,8 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  socketAddress: 'ws://10.0.1.50:9003'
 };
 
 /*
