@@ -181,13 +181,26 @@ export class LobbyComponent implements OnInit {
 
   viewResult() {
     if ('witchSave' in this.gameState.actions) {
-      this.confirmModel.showDialog('昨晚结果', '昨晚是平安夜', {}, true)
+      if ('guardProtect' in this.gameState.actions && this.gameState.actions['witchSave'] == this.gameState.actions['guardProtect']) {
+        this.confirmModel.showDialog('昨晚结果', `昨晚死亡的玩家为 ${this.gameState.playerPosition[this.gameState.actions['werewolfKill']]} 号`, {}, true)
+      } else {
+        this.confirmModel.showDialog('昨晚结果', '昨晚是平安夜', {}, true)
+      }
     } else if ('witchKill' in this.gameState.actions) {
-      let wolfKill = this.gameState.playerPosition[this.gameState.actions['werewolfKill']]
       let witchKill = this.gameState.playerPosition[this.gameState.actions['witchKill']]
-      this.confirmModel.showDialog('昨晚结果', `昨晚死亡的玩家为 ${wolfKill} 号和 ${witchKill} 号`, {}, true)
+
+      if ('guardProtect' in this.gameState.actions && this.gameState.actions['werewolfKill'] == this.gameState.actions['guardProtect']) {
+        this.confirmModel.showDialog('昨晚结果', `昨晚死亡的玩家为 ${witchKill} 号`, {}, true)
+      } else {
+        let wolfKill = this.gameState.playerPosition[this.gameState.actions['werewolfKill']]
+        this.confirmModel.showDialog('昨晚结果', `昨晚死亡的玩家为 ${wolfKill} 号和 ${witchKill} 号`, {}, true)
+      }
     } else {
-      this.confirmModel.showDialog('昨晚结果', `昨晚死亡的玩家为 ${this.gameState.playerPosition[this.gameState.actions['werewolfKill']]} 号`, {}, true)
+      if ('guardProtect' in this.gameState.actions && this.gameState.actions['werewolfKill'] == this.gameState.actions['guardProtect']) {
+        this.confirmModel.showDialog('昨晚结果', '昨晚是平安夜', {}, true)
+      } else {
+        this.confirmModel.showDialog('昨晚结果', `昨晚死亡的玩家为 ${this.gameState.playerPosition[this.gameState.actions['werewolfKill']]} 号`, {}, true)
+      }
     }
   }
 

@@ -146,7 +146,7 @@ wss.on('connection', function connection(player) {
             } else {
               game.turn = 'viewResult'
               for (let p in game.players) {
-                players.get(p).send(`{"op": "endTurn", "turn": "${game.turn}"}`)
+                players.get(p).send(`{"op": "endTurn", "turn": "${game.turn}", "action": "${cmd.action}", "target": "${cmd.target}"}`)
               }
             }
           }
