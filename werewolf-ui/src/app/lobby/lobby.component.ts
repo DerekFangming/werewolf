@@ -33,7 +33,7 @@ export class LobbyComponent implements OnInit {
 
     this.ws.onopen = function (event) {
       that.ws.send(`{"op": "handshake", "playerId": "${that.gameState.getPlayerId()}", "gameId": "${that.gameState.getGameId()}"}`)
-    };
+    }
 
     this.ws.onmessage = function (data) {
       console.log('received: %s', data.data)

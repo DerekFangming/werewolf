@@ -2,13 +2,19 @@ const express = require('express')
 const path = require('path')
 const ws = require('ws')
 const { v4: uuidv4 } = require('uuid');
+const server = require('http').createServer()
 
 const app = express()
 
-const port = '9001'
+const port = '8080'
 const production = process.env.PRODUCTION == 'true'
 
-const wss = new ws.Server({ path: '/', port: 8080 })
+
+const wss = new ws.Server({
+  server: server
+})
+
+server.on('request', app);
 
 const games = new Map()
 const players = new Map()
@@ -200,20 +206,9 @@ app.get('/debug', (req, res) => {
 })
 
 app.use(express.static(path.join(__dirname, 'public')));
-app.listen(port, () => {
-  // let a = {a: 1, b: 2}
-  // console.log(JSON.stringify(a))
-  // for (let key in a) {
-  //   console.log(key + a[key])
-  // }
-  // a.key = 'val'
-  // console.log(JSON.stringify(a))
-  // delete a.key
-  // console.log(JSON.stringify(a))
-  // let a = ["werewolf","werewolf","werewolf","werewolf","villager","villager","villager","villager","seer","witch","hunter","guard"]
-  // let b = a.filter((c, pos) => (c != 'villager') && a.indexOf(c) == pos).sort((a, b) => turnOrder[a] - turnOrder[b])
-  // console.log(b)
-})
+//app.listen(port, () => {})
+
+server.listen(port, function() {});
 
 const turnOrder = {
   werewolf: 1,
