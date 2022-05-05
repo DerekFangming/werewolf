@@ -105,7 +105,7 @@
   </div>
   <div class="row">
     <div class="col-3 mt-4 px-1" *ngFor="let p of gameState.players; let ind = index" >
-      <div class="d-grid"><button type="button" class="btn seat" [ngClass]="p.selected ? 'btn-success' : 'btn-outline-success'" (click)="selectSeat(ind)">
+      <div class="d-grid"><button type="button" class="btn seat" [ngClass]="p.isOcupied ? 'btn-success' : 'btn-outline-success'" (click)="selectSeat(ind)">
         <p class="display-5 mb-0">{{ind + 1}}</p><p *ngIf="p.isSelf" class="mb-0"><small>我的位置</small></p></button></div>
     </div>
   </div>

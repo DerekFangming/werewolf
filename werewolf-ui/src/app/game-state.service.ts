@@ -107,13 +107,13 @@ export class GameStateService {
 
   takeSeat(playerId: string, position: number) {
     if (playerId in this.playerPosition) {
-      this.players[this.playerPosition[playerId] - 1].selected = false
+      this.players[this.playerPosition[playerId] - 1].isOcupied = false
       if (this.playerId == playerId) {
         this.players[this.playerPosition[playerId] - 1].isSelf = false
       }
     }
     this.playerPosition[playerId] = position
-    this.players[position - 1].selected = true
+    this.players[position - 1].isOcupied = true
     if (this.playerId == playerId) {
       this.players[position - 1].isSelf = true
     }

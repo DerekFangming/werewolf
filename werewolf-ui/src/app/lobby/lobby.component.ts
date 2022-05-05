@@ -109,7 +109,7 @@ export class LobbyComponent implements OnInit {
   selectSeat(seatInd: number) {
     if (this.gameState.turn == '') {
       console.log(3)
-      if (!this.gameState.players[seatInd].selected) {
+      if (!this.gameState.players[seatInd].isOcupied) {
         this.confirmModel.showDialog('入座', '确定在' + (seatInd+1) + '号入座？', {'op': 'takeSeat', 'position': seatInd+1})
       }
     } else if (this.isMyTurn()) {
@@ -134,7 +134,7 @@ export class LobbyComponent implements OnInit {
   }
 
   startGame() {
-    if (this.gameState.players.filter(p => !p.selected).length > 0) {
+    if (this.gameState.players.filter(p => !p.isOcupied).length > 0) {
       this.error = '所有人选择座位之后才可以开始发牌'
       this.modalService.open(this.errModal, { centered: true })
     } else {

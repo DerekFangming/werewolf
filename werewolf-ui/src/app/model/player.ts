@@ -3,7 +3,7 @@ import { Character } from "./character";
 export class Player {
   character: Character
   id: string
-  selected = false
+  isOcupied = false
   isSelf = false
 
   public constructor(init?:Partial<Player>) {
