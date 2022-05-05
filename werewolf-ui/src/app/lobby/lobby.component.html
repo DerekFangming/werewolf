@@ -111,7 +111,7 @@
   </div>
   <div *ngIf="gameState.hostId == gameState.playerId" class="row mt-4">
     <div *ngIf="gameState.turn == '' || gameState.turn == 'viewCharacter'" class="col-12">
-      你是房主，待人员入座后即可开始游戏。请提高手机音量，游戏进度语音将从你的手机发出。
+      <div class="alert alert-success" role="alert">你是房主，待人员入座后即可开始游戏。请取消静音并提高手机音量，游戏进度语音将从你的手机发出。</div>
     </div>
     <div class="col-12 mt-2">
       <div class="d-grid gap-2">
@@ -120,9 +120,9 @@
       </div>
     </div>
   </div>
-  <div *ngIf="isMyTurn()" class="row mt-4">
+  <div *ngIf="isMyTurn()" class="row mt-2">
     <div class="col-12">
-      {{ getNote() }}
+      <div class="alert alert-success" role="alert">{{ getNote() }}</div>
     </div>
     <div *ngIf="gameState.getSelfCharacter().allowNoAction" class="col-12 mt-4">
       <div class="d-grid gap-2">
