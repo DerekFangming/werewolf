@@ -138,6 +138,8 @@ export class LobbyComponent implements OnInit {
       this.error = '所有人选择座位之后才可以开始发牌'
       this.modalService.open(this.errModal, { centered: true })
     } else {
+      // Need this to break IOS mobile audio limitation.
+      this.gameState.announce('soundUnlock.mp3')
       this.ws.send(`{"op": "startGame", "gameId": "${this.gameState.gameId}"}`)
     }
   }
@@ -156,8 +158,6 @@ export class LobbyComponent implements OnInit {
   }
 
   nightStart() {
-    // Need this to break IOS mobile audio limitation.
-    this.gameState.announce('soundUnlock.mp3')
     this.ws.send(`{"op": "endTurn", "action": "nightStart"}`)
   }
 
