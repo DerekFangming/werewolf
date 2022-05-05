@@ -22,6 +22,8 @@ export class LobbyComponent implements OnInit {
   ws: WebSocket
   players = []
 
+  env = environment
+
   @ViewChild('errModal', { static: true}) errModal: TemplateRef<any>
   @ViewChild('confirmModel') confirmModel: ConfirmDialogComponent
 
@@ -239,12 +241,12 @@ export class LobbyComponent implements OnInit {
 
   debug() {
     // console.log('Player: ' + this.gameState.playerId)
-    // console.log(this.gameState.playerPosition)
-    // console.log(this.gameState.players)
-    // console.log(this.gameState.turn)
-    // console.log(this.gameState.getSelfCharacter().type)
-    // console.log(this.gameState.actions)
-    // console.log(this.gameState.gameId)
+    console.log(this.gameState.playerPosition)
+    console.log(this.gameState.players)
+    console.log(this.gameState.turn)
+    console.log(this.gameState.getSelfCharacter().type)
+    console.log(this.gameState.actions)
+    console.log(this.gameState.gameId)
     // this.confirmModel.showDialog('你的身份是', `${this.gameState.getSelfCharacter().name}`, {op: 'debug'}, false, '下一回合')
 
     // try {
@@ -267,7 +269,7 @@ export class LobbyComponent implements OnInit {
     
 
 
-    this.gameState.announce('nightStart.m4a')
+    // this.gameState.announce('nightStart.m4a')
   }
 
 }

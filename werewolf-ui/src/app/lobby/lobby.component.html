@@ -106,7 +106,7 @@
   <div class="row">
     <div class="col-3 mt-4 px-1" *ngFor="let p of gameState.players; let ind = index" >
       <div class="d-grid"><button type="button" class="btn seat" [ngClass]="p.selected ? 'btn-success' : 'btn-outline-success'" (click)="selectSeat(ind)">
-        <p class="display-5 mb-0">{{ind + 1}}</p></button></div>
+        <p class="display-5 mb-0">{{ind + 1}}</p><p *ngIf="p.isSelf" class="mb-0"><small>我的位置</small></p></button></div>
     </div>
   </div>
   <div *ngIf="gameState.hostId == gameState.playerId" class="row mt-4">
@@ -174,10 +174,10 @@
 
 <app-confirm-dialog #confirmModel (onConfirm)="onConfirm($event)"></app-confirm-dialog>
 
-<!-- <div class="container">
+<div *ngIf="!env.production" class="container">
   <div class="row mt-5">
     <div class="col mt-5">
       <button type="button" class="btn btn-outline-success" (click)="debug()">Debug</button>
     </div>
   </div>
-</div> -->
+</div>
