@@ -2,6 +2,7 @@ import { Character } from "./character";
 
 export class Seer extends Character {
   type = 'seer'
+  category = 'god'
   name = '预言家'
   note = '请选择需要检验的玩家。'
   actionName = 'seerExamine'

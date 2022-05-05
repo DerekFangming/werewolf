@@ -2,6 +2,7 @@ import { Character } from "./character";
 
 export class Hunter extends Character {
   type = 'hunter'
+  category = 'god'
   name = '猎人'
   allowNoAction = true
   note = '你今天{0}开枪'
