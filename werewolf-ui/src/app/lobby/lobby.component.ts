@@ -21,6 +21,7 @@ export class LobbyComponent implements OnInit {
   error = ''
   ws: WebSocket
   players = []
+  heartbeatInterval
 
   env = environment
 
@@ -30,11 +31,24 @@ export class LobbyComponent implements OnInit {
   constructor(public gameState: GameStateService, private modalService: NgbModal, private elementRef:ElementRef) { }
 
   ngOnInit() {
+    this.connect()
+  }
+
+  connect() {
     this.ws = new WebSocket(environment.socketAddress)
     let that = this
 
     this.ws.onopen = function (event) {
       that.ws.send(`{"op": "handshake", "playerId": "${that.gameState.getPlayerId()}", "gameId": "${that.gameState.getGameId()}"}`)
+
+      // heartbeat
+      if (that.heartbeatInterval != undefined) {
+        clearInterval(that.heartbeatInterval)
+      }
+      that.heartbeatInterval = setInterval(function() {
+        that.ws.send(`{"op": "heartBeat"}`)
+      }, 30000)
+     
     }
 
     this.ws.onmessage = function (data) {
@@ -67,7 +81,13 @@ export class LobbyComponent implements OnInit {
     }
 
     this.ws.onclose = function (data) {
-      console.log('Server closed')
+      setTimeout(function() {
+        that.connect()
+      }, 1000)
+    }
+
+    this.ws.onerror = function (data) {
+      that.ws.close();
     }
   }
 

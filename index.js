@@ -47,6 +47,11 @@ wss.on('connection', function connection(player) {
             player.send(`{"op": "handshake", "playerId": "${player.id}", "gameId": ""}`)
           }
           break
+        case 'heartBeat':
+          if (players.has(player.id)) {
+            players.get(player.id).heatbeat = new Date()
+          }
+          break
         case 'createGame':
           gameId = Math.floor(1000 + Math.random() * 9000).toString()
           if (!production) gameId = '1111' // Force first room # for dev testing
