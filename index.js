@@ -10,15 +10,22 @@ const app = express()
 const port = '9003'
 const production = process.env.PRODUCTION == 'true'
 
+const games = new Map()
+const players = new Map()
+
+const turnOrder = {
+  werewolf: 1,
+  seer: 2,
+  witch: 3,
+  hunter: 4,
+  guard: 5
+}
 
 const wss = new ws.Server({
   server: server
 })
 
 server.on('request', app);
-
-const games = new Map()
-const players = new Map()
 
 wss.on('connection', function connection(player) {
   player.on('message', function message(data) {
@@ -63,8 +70,9 @@ wss.on('connection', function connection(player) {
 
           let gamePlayers = {}
           gamePlayers[player.id] = {}
-          games.set(gameId, {turn: '', hostId: player.id, characters: cmd.characters, players: gamePlayers, actions: {} })
-          player.send(`{"op": "gameDetails", "gameId": "${gameId}", "hostId": "${player.id}", "characters": ${JSON.stringify(cmd.characters)}, "turn": ""}`)
+          let game = {turn: '', hostId: player.id, characters: cmd.characters, players: gamePlayers, actions: {} }
+          games.set(gameId, game)
+          player.send(gameDetailsOp(game, gameId))
 
           break
         case 'joinGame':
@@ -75,7 +83,7 @@ wss.on('connection', function connection(player) {
             } else {
               player.gameId = cmd.gameId
               game.players[player.id] = {}
-              player.send(`{"op": "gameDetails", "gameId": "${cmd.gameId}", "hostId": "${game.hostId}", "characters": ${JSON.stringify(game.characters)}, "players": ${JSON.stringify(game.players)}, "turn": "${game.turn}", "actions": ${JSON.stringify(game.actions)}}`)
+              player.send(gameDetailsOp(game, cmd.gameId))
             }
           } else {
             player.send(`{"op": "gameDetails", "error": "房间号${cmd.gameId}不存在"}`)
@@ -107,7 +115,7 @@ wss.on('connection', function connection(player) {
           if (games.has(cmd.gameId)) {
             let game = games.get(cmd.gameId)
             console.log(JSON.stringify(game.players))
-            player.send(`{"op": "gameDetails", "gameId": "${cmd.gameId}", "hostId": "${game.hostId}", "characters": ${JSON.stringify(game.characters)}, "players": ${JSON.stringify(game.players)}, "turn": "${game.turn}", "actions": ${JSON.stringify(game.actions)}}`)
+            player.send(gameDetailsOp(game, cmd.gameId))
           } else {
             player.gameId = ''
             player.send(`{"op": "gameDetails", "gameId": ""}`)
@@ -137,7 +145,7 @@ wss.on('connection', function connection(player) {
             game.turnOrder = game.characters.filter((c, p) => (c != 'villager') && game.characters.indexOf(c) == p).sort((a, b) => turnOrder[a] - turnOrder[b])
 
             for (let p in game.players) {
-              players.get(p).send(`{"op": "gameDetails", "gameId": "${cmd.gameId}", "hostId": "${game.hostId}", "characters": ${JSON.stringify(game.characters)}, "players": ${JSON.stringify(game.players)}, "turn": "${game.turn}", "actions": ${JSON.stringify(game.actions)}}`)
+              players.get(p).send(gameDetailsOp(game, cmd.gameId))
             }
           }
           break
@@ -179,7 +187,7 @@ wss.on('connection', function connection(player) {
             game.turnOrder = game.characters.filter((c, p) => (c != 'villager') && game.characters.indexOf(c) == p).sort((a, b) => turnOrder[a] - turnOrder[b])
 
             for (let p in game.players) {
-              players.get(p).send(`{"op": "gameDetails", "gameId": "${player.gameId}", "hostId": "${game.hostId}", "characters": ${JSON.stringify(game.characters)}, "players": ${JSON.stringify(game.players)}, "turn": "${game.turn}", "actions": ${JSON.stringify(game.actions)}}`)
+              players.get(p).send(gameDetailsOp(game, player.gameId))
             }
           }
           break
@@ -213,21 +221,20 @@ app.get('/debug', (req, res) => {
 
 app.get('/game', (req, res) => {
   fs.readFile(__dirname + '/public/index.html', 'utf8', (err, text) => {
-    res.send(text);
-});
+    res.send(text)
+  })
 })
 
-app.use(express.static(path.join(__dirname, 'public')));
-//app.listen(port, () => {})
+app.use(express.static(path.join(__dirname, 'public')))
 
-server.listen(port, function() {});
+server.listen(port, function() {})
 
-const turnOrder = {
-  werewolf: 1,
-  seer: 2,
-  witch: 3,
-  hunter: 4,
-  guard: 5
+function gameDetailsOp(game, gameId){
+  let g = Object.assign({}, game)
+  delete g['turnOrder']
+  g.gameId = gameId
+  g.op = 'gameDetails'
+  
+  return JSON.stringify(g)
 }
-
 
