@@ -15,10 +15,11 @@ const players = new Map()
 
 const turnOrder = {
   werewolf: 1,
-  seer: 2,
-  witch: 3,
-  hunter: 4,
-  guard: 5
+  werewolfQueen: 2,
+  seer: 3,
+  witch: 4,
+  hunter: 5,
+  guard: 6
 }
 
 const wss = new ws.Server({

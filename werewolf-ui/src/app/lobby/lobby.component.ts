@@ -9,6 +9,10 @@ import { Witch } from '../model/witch';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { environment } from 'src/environments/environment';
+import { Idiot } from '../model/idiot';
+import { Knight } from '../model/knight';
+import { Pervert } from '../model/pervert';
+import { WerewolfQueen } from '../model/werewolfQueen';
 
 @Component({
   selector: 'app-lobby',
@@ -46,7 +50,7 @@ export class LobbyComponent implements OnInit {
         clearInterval(that.heartbeatInterval)
       }
       that.heartbeatInterval = setInterval(function() {
-        that.ws.send(`{"op": "heartBeat"}`)
+        if (environment.production) that.ws.send(`{"op": "heartBeat"}`)
       }, 30000)
      
     }
@@ -93,9 +97,9 @@ export class LobbyComponent implements OnInit {
 
   createGame() {
     this.gameState.setState('createGame')
-    this.players = [new Werewolf({selected: true}), new Werewolf({selected: true}), new Werewolf(), new Werewolf(),
-      new Villager({selected: true}), new Villager({selected: true}), new Villager(), new Villager(),
-      new Seer({selected: true}), new Witch({selected: true}), new Hunter(), new Guard()]
+    this.players = [new Werewolf({selected: true}), new Werewolf({selected: true}), new Werewolf(), new Werewolf(), new WerewolfQueen(),
+      new Villager({selected: true}), new Villager({selected: true}), new Villager(), new Villager(), new Pervert(),
+      new Seer({selected: true}), new Witch({selected: true}), new Hunter(), new Guard(), new Idiot(), new Knight()]
   }
 
   confirmCreateGame() {
