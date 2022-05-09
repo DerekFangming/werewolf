@@ -15,7 +15,7 @@ const players = new Map()
 
 const turnOrder = {
   werewolf: 1,
-  werewolfQueen: 2,
+  hiddenWerewolf: 2,
   seer: 3,
   witch: 4,
   hunter: 5,
@@ -143,7 +143,8 @@ wss.on('connection', function connection(player) {
             }
 
             game.turn = 'viewCharacter'
-            game.turnOrder = game.characters.filter((c, p) => (c != 'villager') && game.characters.indexOf(c) == p).sort((a, b) => turnOrder[a] - turnOrder[b])
+            game.turnOrder = game.characters.filter((c, p) => c in turnOrder && game.characters.indexOf(c) == p)
+              .sort((a, b) => turnOrder[a] - turnOrder[b])
 
             for (let p in game.players) {
               players.get(p).send(gameDetailsOp(game, cmd.gameId))

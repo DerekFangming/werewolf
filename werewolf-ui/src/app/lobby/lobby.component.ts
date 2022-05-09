@@ -13,6 +13,8 @@ import { Idiot } from '../model/idiot';
 import { Knight } from '../model/knight';
 import { Pervert } from '../model/pervert';
 import { WerewolfQueen } from '../model/werewolfQueen';
+import { WerewolfKing } from '../model/werewolfKing';
+import { HiddenWerewolf } from '../model/hiddenWerewolf';
 
 @Component({
   selector: 'app-lobby',
@@ -97,8 +99,9 @@ export class LobbyComponent implements OnInit {
 
   createGame() {
     this.gameState.setState('createGame')
-    this.players = [new Werewolf({selected: true}), new Werewolf({selected: true}), new Werewolf(), new Werewolf(), new WerewolfQueen(),
-      new Villager({selected: true}), new Villager({selected: true}), new Villager(), new Villager(), new Pervert(),
+    this.players = [new Werewolf({selected: true}), new Werewolf({selected: true}), new Werewolf(), new Werewolf(),
+      new WerewolfKing(), new WerewolfQueen(), new HiddenWerewolf(),
+      new Villager({selected: true}), new Villager({selected: true}), new Villager(), new Villager(), new Villager(), new Pervert(),
       new Seer({selected: true}), new Witch({selected: true}), new Hunter(), new Guard(), new Idiot(), new Knight()]
   }
 
@@ -177,6 +180,10 @@ export class LobbyComponent implements OnInit {
       if (this.gameState.turn == this.gameState.getSelfCharacter().type) {
         return true
       }
+
+      if (this.gameState.turn == 'werewolf' && this.gameState.getSelfCharacter().type == 'werewolfKing') {
+        return true
+      }
     }
     return false
   }
@@ -202,6 +209,16 @@ export class LobbyComponent implements OnInit {
         }
       }
       return character.note.replace(/\{0\}/g, '可以')
+    } else if (character.type == 'hiddenWerewolf') {
+      let werewolfs = ''
+      for (let p in this.gameState.players) {
+        console.log(this.gameState.players[p])
+        if (this.gameState.players[p].character.isWolf) {
+          if (werewolfs != '') werewolfs += '，'
+          werewolfs += (parseInt(p) + 1) + '号' 
+        }
+      }
+      return character.note.replace(/\{0\}/g, werewolfs)
     } else {
       return character.note
     }

@@ -1,4 +1,5 @@
 import { Guard } from "./model/guard"
+import { HiddenWerewolf } from "./model/hiddenWerewolf"
 import { Hunter } from "./model/hunter"
 import { Idiot } from "./model/idiot"
 import { Knight } from "./model/knight"
@@ -6,6 +7,7 @@ import { Pervert } from "./model/pervert"
 import { Seer } from "./model/seer"
 import { Villager } from "./model/villager"
 import { Werewolf } from "./model/werewolf"
+import { WerewolfKing } from "./model/werewolfKing"
 import { WerewolfQueen } from "./model/werewolfQueen"
 import { Witch } from "./model/witch"
 
@@ -15,8 +17,12 @@ export default class Utils {
     switch (type) {
       case 'werewolf':
         return new Werewolf()
+      case 'werewolfKing':
+        return new WerewolfKing()
       case 'werewolfQueen':
         return new WerewolfQueen()
+      case 'hiddenWerewolf':
+        return new HiddenWerewolf()
       case 'villager':
         return new Villager()
       case 'pervert':
