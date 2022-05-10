@@ -6,8 +6,8 @@ export class Hunter extends Character {
   name = '猎人'
   allowNoAction = true
   note = '你今天{0}开枪'
-  startAudio = 'hunterStart.m4a'
-  endAudio = 'hunterEnd.m4a'
+  startAudio = 'hunterStart.mp3'
+  endAudio = 'hunterEnd.mp3'
 
   public constructor(init?:Partial<Hunter>) {
     super()

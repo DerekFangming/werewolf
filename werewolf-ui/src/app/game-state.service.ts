@@ -130,7 +130,7 @@ export class GameStateService {
     }
     if (this.hostId == this.playerId) {
       if (this.turn == 'viewCharacter') {
-        this.announce('nightStart.m4a')
+        this.announce('nightStart.mp3')
       } else {
         this.announce(Utils.parseCharactor(this.turn).endAudio)
       }
@@ -138,11 +138,11 @@ export class GameStateService {
       let that = this
       setTimeout(function() {
         if (newTurn == 'viewResult') {
-          that.announce('nightEnd.m4a')
+          that.announce('nightEnd.mp3')
         } else {
           that.announce(Utils.parseCharactor(newTurn).startAudio)
         }
-      }, 8000)
+      }, 6000)
     }
     this.turn = newTurn
   }

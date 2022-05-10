@@ -294,14 +294,14 @@ export class LobbyComponent implements OnInit {
 
     // try {
     //   let audio = new Audio()
-    //   audio.src = `../../assets/nightStart.m4a`
+    //   audio.src = `../../assets/nightStart.mp3`
     //   audio.loop = true
     //   audio.load() 
     //   audio.play()
 
     //   setTimeout(function() {
     //     audio.pause()
-    //     audio.src = `../../assets/nightEnd.m4a`
+    //     audio.src = `../../assets/nightEnd.mp3`
     //     audio.pause()
     //     audio.play()
     //   }, 6000)
@@ -312,7 +312,7 @@ export class LobbyComponent implements OnInit {
     
 
 
-    // this.gameState.announce('nightStart.m4a')
+    // this.gameState.announce('nightStart.mp3')
   }
 
 }

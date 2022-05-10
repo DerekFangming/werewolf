@@ -9,8 +9,8 @@ export class WerewolfQueen extends Character {
   actionName = 'werewolfQueenLink'
   actionTitle = '魅惑玩家'
   actionMessage = '确认魅惑 {0} 号玩家？'
-  startAudio = 'werewolfQueenStart.m4a'
-  endAudio = 'werewolfQueenEnd.m4a'
+  startAudio = 'werewolfQueenStart.mp3'
+  endAudio = 'werewolfQueenEnd.mp3'
 
   public constructor(init?:Partial<WerewolfQueen>) {
     super()

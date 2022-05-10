@@ -8,8 +8,8 @@ export class Seer extends Character {
   actionName = 'seerExamine'
   actionTitle = '检验玩家'
   actionMessage = '确认检验 {0} 号玩家？'
-  startAudio = 'seerStart.m4a'
-  endAudio = 'seerEnd.m4a'
+  startAudio = 'seerStart.mp3'
+  endAudio = 'seerEnd.mp3'
 
   public constructor(init?:Partial<Seer>) {
     super()
