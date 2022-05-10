@@ -15,6 +15,7 @@ import { Pervert } from '../model/pervert';
 import { WerewolfQueen } from '../model/werewolfQueen';
 import { WerewolfKing } from '../model/werewolfKing';
 import { HiddenWerewolf } from '../model/hiddenWerewolf';
+import { IntroDialogComponent } from '../intro-dialog/intro-dialog.component';
 
 @Component({
   selector: 'app-lobby',
@@ -32,6 +33,7 @@ export class LobbyComponent implements OnInit {
   env = environment
 
   @ViewChild('errModal', { static: true}) errModal: TemplateRef<any>
+  @ViewChild('introModel') introModel: IntroDialogComponent
   @ViewChild('confirmModel') confirmModel: ConfirmDialogComponent
 
   constructor(public gameState: GameStateService, private modalService: NgbModal, private elementRef:ElementRef) { }

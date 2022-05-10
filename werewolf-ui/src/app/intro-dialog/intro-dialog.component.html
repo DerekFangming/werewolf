@@ -1,0 +1,23 @@
+<ng-template #inrtoModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">角色介绍</h4>
+    <button type="button" class="btn-close" (click)="modal.dismiss('Cross click')"> </button>
+  </div>
+  <div class="modal-body" ngbAutofocus>
+    <div class="row">
+      <div class="col">
+        <p class="display-6"><small>狼阵营</small></p>
+        
+      </div>
+    </div>
+    <div class="row">
+      <hr class="mt-2 mb-3 mx-4"/>
+    </div>
+    <div class="row">
+      <p class="lead">狼</p>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-success" (click)="modal.dismiss('Cross click')">关闭</button>
+  </div>
+</ng-template>

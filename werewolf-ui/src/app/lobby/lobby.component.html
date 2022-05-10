@@ -19,10 +19,15 @@
 
 <div *ngIf="gameState.state == 'lobby'" class="container mt-5">
   <div class="row mt-2">
-    <div class="col">
+    <div class="col-12">
       <div class="d-grid gap-2">
         <button type="button" class="btn btn-outline-success tall-button" (click)="joinGame()"><p class="display-4">加入游戏</p></button>
         <button type="button" class="btn btn-outline-success tall-button" (click)="createGame()"><small><p class="display-4">创建游戏</p></small></button>
+      </div>
+    </div>
+    <div class="col-12 mt-4">
+      <div class="d-grid gap-2">
+        <button type="button" class="btn btn-outline-secondary" (click)="introModel.showDialog()"><p class="display-6 mb-0">角色介绍</p></button>
       </div>
     </div>
   </div>
@@ -171,6 +176,7 @@
   </div>
 </ng-template>
 
+<app-intro-dialog #introModel></app-intro-dialog>
 <app-confirm-dialog #confirmModel (onConfirm)="onConfirm($event)"></app-confirm-dialog>
 
 <div *ngIf="!env.production" class="container">
