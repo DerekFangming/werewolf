@@ -155,7 +155,7 @@ export class GameStateService {
       this.audio = new Audio()
     }
 
-    this.audio.src = `https://www.fmning.com/werewolf/assets/${fileName}`
+    this.audio.src = `./assets/${fileName}`
     this.audio.load() 
     this.audio.play()
   }

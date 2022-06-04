@@ -132,6 +132,7 @@
       </div>
     </div>
   </div>
+  <div class="row bottom-padding"></div>
 </div>
 
 <div *ngIf="gameState.turn == 'viewResult' && gameState.hostId == gameState.playerId" class="container">
@@ -143,6 +144,7 @@
       </div>
     </div>
   </div>
+  <div class="row bottom-padding"></div>
 </div>
 
 <nav *ngIf="gameState.turn != ''" class="navbar fixed-bottom">
@@ -156,8 +158,6 @@
     </div>
   </div>
 </nav>
-
-
 
 <ng-template #errModal let-modal>
   <div class="modal-header">
@@ -179,10 +179,10 @@
 <app-intro-dialog #introModel></app-intro-dialog>
 <app-confirm-dialog #confirmModel (onConfirm)="onConfirm($event)"></app-confirm-dialog>
 
-<div *ngIf="!env.production" class="container">
+<!-- <div *ngIf="!env.production" class="container">
   <div class="row mt-5">
     <div class="col mt-5">
       <button type="button" class="btn btn-outline-success" (click)="debug()">Debug</button>
     </div>
   </div>
-</div>
+</div> -->
