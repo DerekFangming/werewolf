@@ -36,7 +36,7 @@
 <div *ngIf="gameState.state == 'createGame'" class="container">
   <div class="row mt-4">
     <div class="col">
-      <p class="lead mb-0">狼</p>
+      <p class="lead mb-0">狼阵营</p>
     </div>
   </div>
   <div class="row">
@@ -48,7 +48,7 @@
   </div>
   <div class="row mt-4">
     <div class="col">
-      <p class="lead mb-0">民</p>
+      <p class="lead mb-0">民阵营</p>
     </div>
   </div>
   <div class="row">
@@ -60,7 +60,7 @@
   </div>
   <div class="row mt-4">
     <div class="col">
-      <p class="lead mb-0">神</p>
+      <p class="lead mb-0">神阵营</p>
     </div>
   </div>
   <div class="row">
@@ -113,7 +113,7 @@
   </div>
   <div *ngIf="gameState.hostId == gameState.playerId" class="row mt-4">
     <div *ngIf="gameState.turn == '' || gameState.turn == 'viewCharacter'" class="col-12">
-      <div class="alert alert-success" role="alert">你是房主，待人员入座后即可开始游戏。请取消静音并提高手机音量，游戏进度语音将从你的手机发出。</div>
+      <div class="alert alert-success" role="alert">你是房主，待人员入座后即可开始游戏。请取消静音并提高手机音量，并切勿锁屏。游戏进度语音将从你的手机发出。</div>
     </div>
     <div class="col-12 mt-2">
       <div class="d-grid gap-2">
@@ -153,7 +153,14 @@
       <div class="d-grid gap-2 pe-0">
         <button *ngIf="gameState.playerId == gameState.hostId && gameState.audio == null" type="button" class="btn btn-outline-danger" (click)="gameState.announce('soundUnlock.mp3')">
           <small>请点此解锁语音, 由于苹果系统浏览器限制，刷新网页后需要点此解锁语音自动播放</small></button>
-        <button type="button" class="btn btn-outline-success" (click)="viewCharacter()">查看身份</button>
+        <div class="row">
+          <div class="col">
+            <button type="button" class="btn btn-outline-success w-100" (click)="viewCharacter()">查看身份</button>
+          </div>
+          <div class="col">
+            <button type="button" class="btn btn-outline-secondary w-100" (click)="introModel.showDialog()">角色介绍</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
