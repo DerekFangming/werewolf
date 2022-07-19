@@ -154,10 +154,10 @@
         <button *ngIf="gameState.playerId == gameState.hostId && gameState.audio == null" type="button" class="btn btn-outline-danger" (click)="gameState.announce('soundUnlock.mp3')">
           <small>请点此解锁语音, 由于苹果系统浏览器限制，刷新网页后需要点此解锁语音自动播放</small></button>
         <div class="row">
-          <div class="col">
+          <div class="col pe-1">
             <button type="button" class="btn btn-outline-success w-100" (click)="viewCharacter()">查看身份</button>
           </div>
-          <div class="col">
+          <div class="col ps-1">
             <button type="button" class="btn btn-outline-secondary w-100" (click)="introModel.showDialog()">角色介绍</button>
           </div>
         </div>

@@ -80,7 +80,8 @@ export class GameStateService {
     for (const [key, value] of m) {
       if (this.characters != '') this.characters += ', '
 
-      this.characters += Utils.parseCharactor(key).name + 'X' + value
+      this.characters += Utils.parseCharactor(key).name
+      if (value > 1) this.characters += 'X' + value
     }
 
     for (let p in players) {
