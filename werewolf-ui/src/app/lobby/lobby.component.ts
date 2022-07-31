@@ -84,7 +84,7 @@ export class LobbyComponent implements OnInit {
           that.gameState.endTurn(cmd.turn, cmd.action, cmd.target)
           break
         default:
-        console.log('unknown command: ' + data)
+          console.log('unknown command: ' + data)
       }
     }
 
@@ -132,6 +132,7 @@ export class LobbyComponent implements OnInit {
     } else {
       this.gameState.setState('loading')
       this.ws.send(`{"op": "joinGame", "gameId": "${gameId}"}`)
+      this.gameIdInput = ''
     }
   }
 

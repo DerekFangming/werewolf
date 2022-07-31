@@ -132,11 +132,6 @@
       </div>
     </div>
   </div>
-  <div class="row mt-2">
-    <div class="col mt-4">
-      <button type="button" class="btn w-100 btn-outline-secondary" (click)="introModel.showDialog()">角色介绍</button>
-    </div>
-  </div>
   <div class="row bottom-padding"></div>
 </div>
 
@@ -151,6 +146,16 @@
   </div>
   <div class="row bottom-padding"></div>
 </div>
+
+<nav *ngIf="gameState.state == 'game' && gameState.turn == ''" class="navbar fixed-bottom">
+  <div class="container pe-0">
+    <div class="row mb-1 w-100">
+      <div class="col">
+        <button type="button" class="btn w-100 btn-outline-secondary" (click)="introModel.showDialog()">角色介绍</button>
+      </div>
+    </div>
+  </div>
+</nav>
 
 <nav *ngIf="gameState.turn != ''" class="navbar fixed-bottom">
   <div class="container pe-0">
