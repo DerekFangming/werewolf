@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  socketAddress: 'wss://fmning.com/werewolf'
+  socketAddress: 'wss://werewolf.fmning.com'
 };
