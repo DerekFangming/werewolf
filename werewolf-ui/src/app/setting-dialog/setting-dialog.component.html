@@ -1,0 +1,33 @@
+<ng-template #settingModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">玩家信息</h4>
+    <button type="button" class="btn-close" (click)="modal.dismiss('Cross click')"> </button>
+  </div>
+  <div class="modal-body" ngbAutofocus>
+    <div class="row">
+      <div class="col">
+        <form>
+          <div class="mb-3 row">
+            <label><b>名字</b></label>
+            <div class="col mt-2">
+              <input type="text" name="addCredit" class="form-control text-center" [(ngModel)]="name">
+            </div>
+          </div>
+
+          <div class="mb-3 row">
+            <label><b>头像 </b>(点击更换)</label>
+            <div class="col mt-2 text-center">
+              <img [src]="avatar"
+                height="150" width="150" (click)="fileSelect.click()">
+              <input #fileSelect type="file" class="d-none" accept="image/*" (change)="onFilesSelected($event)">
+            </div>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-success" (click)="modal.dismiss('Cross click')">关闭</button>
+  </div>
+</ng-template>

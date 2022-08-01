@@ -10,6 +10,8 @@ export class GameStateService {
 
   private static readonly playerIdCookieName = 'wwPlayerId'
   private static readonly gameIdCookieName = 'wwGameId'
+  public static readonly playerNameCookieName = 'wwPlayerName'
+  public static readonly playerAvatarCookieName = 'wwGameAvatar'
 
   playerId = ''
   gameId = ''
@@ -24,7 +26,6 @@ export class GameStateService {
   constructor(private cookieService: CookieService) {
     this.playerId = this.cookieService.get(GameStateService.playerIdCookieName)
     this.gameId = this.cookieService.get(GameStateService.gameIdCookieName)
-    console.log(this.playerId)
   }
 
   getPlayerId() {

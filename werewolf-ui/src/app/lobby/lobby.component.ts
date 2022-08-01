@@ -35,6 +35,7 @@ export class LobbyComponent implements OnInit {
   @ViewChild('errModal', { static: true}) errModal: TemplateRef<any>
   @ViewChild('introModel') introModel: IntroDialogComponent
   @ViewChild('confirmModel') confirmModel: ConfirmDialogComponent
+  @ViewChild('settingModal', { static: true}) inrtoModal: TemplateRef<any>
 
   constructor(public gameState: GameStateService, private modalService: NgbModal, private elementRef:ElementRef) { }
 

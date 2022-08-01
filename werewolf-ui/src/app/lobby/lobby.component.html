@@ -1,10 +1,13 @@
 <nav class="navbar navbar-light bg-light justify-content-between" id="body">
   <div class="container">
-    <p style="width:60px"></p>
-    <a class="navbar-brand">{{ gameState.state == 'game' ? '房间号: ' + gameState.gameId : '狼人杀发牌助手' }} </a>
-    <div style="min-width: 60px;">
+    <div style="min-width: 80px;">
       <button *ngIf="gameState.state == 'game'" type="button" class="btn btn-outline-danger"
        (click)="confirmModel.showDialog('退出游戏', '确定退出游戏？如果你是房主，这将使所有人退出本局游戏。', {'op': 'leaveGame'})">退出</button>
+    </div>
+    <a class="navbar-brand">{{ gameState.state == 'game' ? '房间号: ' + gameState.gameId : '狼人杀发牌助手' }} </a>
+    <div style="min-width: 60px;">
+      <button *ngIf="gameState.state == 'game'" type="button" class="btn btn-outline-secondary"
+        (click)="settingModel.showDialog()">玩家信息</button>
     </div>
   </div>
 </nav>
@@ -28,6 +31,7 @@
     <div class="col-12 mt-4">
       <div class="d-grid gap-2">
         <button type="button" class="btn btn-outline-secondary" (click)="introModel.showDialog()"><p class="display-6 mb-0">角色介绍</p></button>
+        <button type="button" class="btn btn-outline-secondary" (click)="settingModel.showDialog()"><p class="display-6 mb-0">玩家信息</p></button>
       </div>
     </div>
   </div>
@@ -202,8 +206,11 @@
   </div>
 </ng-template>
 
+<app-setting-dialog #settingModel ></app-setting-dialog>
 <app-intro-dialog #introModel></app-intro-dialog>
 <app-confirm-dialog #confirmModel (onConfirm)="onConfirm($event)"></app-confirm-dialog>
+
+
 
 <!-- <div *ngIf="!env.production" class="container">
   <div class="row mt-5">
