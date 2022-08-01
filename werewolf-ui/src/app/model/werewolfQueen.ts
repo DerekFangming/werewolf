@@ -11,6 +11,7 @@ export class WerewolfQueen extends Character {
   actionMessage = '确认魅惑 {0} 号玩家？'
   startAudio = 'werewolfQueenStart.mp3'
   endAudio = 'werewolfQueenEnd.mp3'
+  actionResult = '你昨晚魅惑的是 {0} 号玩家'
 
   public constructor(init?:Partial<WerewolfQueen>) {
     super()
