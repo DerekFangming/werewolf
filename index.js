@@ -2,7 +2,7 @@ const express = require('express')
 const path = require('path')
 const fs = require('fs')
 const ws = require('ws')
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4, validate: uuidValidate } = require('uuid');
 const server = require('http').createServer()
 
 const app = express()
@@ -48,7 +48,7 @@ wss.on('connection', function connection(player) {
             player.send(`{"op": "handshake", "playerId": "${existing.id}", "gameId": "${existing.gameId}"}`)
           } else {
             // New or expired user
-            player.id = uuidv4()
+            player.id = uuidValidate(cmd.playerId) ? cmd.playerId : uuidv4()
             player.heatbeat = new Date()
             player.gameId = ''
             players.set(player.id, player)
