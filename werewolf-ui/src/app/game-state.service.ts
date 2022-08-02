@@ -87,7 +87,7 @@ export class GameStateService {
 
     for (let p in players) {
       if ('position' in players[p]) {
-        this.takeSeat(p, players[p].position)
+        this.takeSeat(p, players[p].position, players[p].name, players[p].avatar)
       }
       if ('character' in players[p]) {
         if (p in this.playerPosition) {
@@ -115,7 +115,7 @@ export class GameStateService {
     return this.cookieService.get(GameStateService.playerAvatarCookieName)
   }
 
-  takeSeat(playerId: string, position: number) {
+  takeSeat(playerId: string, position: number, name: string, avatar: string) {
     if (playerId in this.playerPosition) {
       this.players[this.playerPosition[playerId] - 1].isOcupied = false
       if (this.playerId == playerId) {
@@ -124,6 +124,8 @@ export class GameStateService {
     }
     this.playerPosition[playerId] = position
     this.players[position - 1].isOcupied = true
+    this.players[position - 1].name = name
+    this.players[position - 1].avatar = avatar
     if (this.playerId == playerId) {
       this.players[position - 1].isSelf = true
     }

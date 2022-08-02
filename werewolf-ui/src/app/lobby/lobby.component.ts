@@ -79,7 +79,7 @@ export class LobbyComponent implements OnInit {
           }
           break
         case 'takeSeat':
-          that.gameState.takeSeat(cmd.playerId, cmd.position)
+          that.gameState.takeSeat(cmd.playerId, cmd.position, cmd.name, cmd.avatar)
           break
         case 'endTurn':
           that.gameState.endTurn(cmd.turn, cmd.action, cmd.target)

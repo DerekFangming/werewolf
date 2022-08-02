@@ -25,7 +25,7 @@ export class SettingDialogComponent implements OnInit {
     this.name = this.cookieService.get(GameStateService.playerNameCookieName)
 
     if (this.avatar == '') {
-      this.avatar = 'https://img.tapimg.net/market/lcs/3b8c6fe20ae9f356b271257df2888b3a_360.png?imageMogr2/auto-orient/strip'
+      this.avatar = 'https://i.imgur.com/Q6Y7L9u.png'
     }
     if (this.name == '') {
       this.name = '玩家'
@@ -56,7 +56,7 @@ export class SettingDialogComponent implements OnInit {
         this.avatar = json['data']['link']
         this.saveAndEmit()
       }, () => {
-        this.avatar = 'https://img.tapimg.net/market/lcs/3b8c6fe20ae9f356b271257df2888b3a_360.png?imageMogr2/auto-orient/strip'
+        this.avatar = 'https://i.imgur.com/Q6Y7L9u.png'
         this.saveAndEmit()
       })
     } else {
