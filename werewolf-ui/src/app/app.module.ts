@@ -9,6 +9,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { IntroDialogComponent } from './intro-dialog/intro-dialog.component';
 import { SettingDialogComponent } from './setting-dialog/setting-dialog.component'
+import { HttpClientModule } from '@angular/common/http'
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { SettingDialogComponent } from './setting-dialog/setting-dialog.componen
   imports: [
     BrowserModule,
     AppRoutingModule,
-    FormsModule
+    FormsModule,
+    HttpClientModule
   ],
   providers: [CookieService],
   bootstrap: [AppComponent]

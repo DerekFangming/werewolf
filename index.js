@@ -41,6 +41,8 @@ wss.on('connection', function connection(player) {
             // Existing user reconnected
             let existing = players.get(cmd.playerId)
             player.id = cmd.playerId
+            player.profileName = cmd.name
+            player.profileAvatar = cmd.avatar
             player.heatbeat = new Date()
             player.gameId = existing.gameId
             players.set(cmd.playerId, player)
@@ -49,6 +51,8 @@ wss.on('connection', function connection(player) {
           } else {
             // New or expired user
             player.id = uuidValidate(cmd.playerId) ? cmd.playerId : uuidv4()
+            player.profileName = cmd.name
+            player.profileAvatar = cmd.avatar
             player.heatbeat = new Date()
             player.gameId = ''
             players.set(player.id, player)
@@ -71,7 +75,7 @@ wss.on('connection', function connection(player) {
           player.gameId = gameId
 
           let gamePlayers = {}
-          gamePlayers[player.id] = {}
+          gamePlayers[player.id] = {name: player.profileName, avatar: player.profileAvatar}
           let game = {turn: '', hostId: player.id, characters: cmd.characters, players: gamePlayers, actions: {} }
           games.set(gameId, game)
           player.send(gameDetailsOp(game, gameId))
@@ -84,7 +88,7 @@ wss.on('connection', function connection(player) {
               player.send(`{"op": "gameDetails", "error": "房间已满"}`)
             } else {
               player.gameId = cmd.gameId
-              game.players[player.id] = {}
+              game.players[player.id] = {name: player.profileName, avatar: player.profileAvatar}
               player.send(gameDetailsOp(game, cmd.gameId))
             }
           } else {
@@ -128,7 +132,7 @@ wss.on('connection', function connection(player) {
             let game = games.get(player.gameId)
             game.players[player.id].position = cmd.position
             for (let p in game.players) {
-              players.get(p).send(`{"op": "takeSeat", "position": ${cmd.position}, "playerId": "${player.id}"}`)
+              players.get(p).send(`{"op": "takeSeat", "position": ${cmd.position}, "playerId": "${player.id}", "name": "${player.profileName}", "avatar": "${player.profileAvatar}"}`)
             }
           }
           break

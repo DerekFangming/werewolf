@@ -48,7 +48,7 @@ export class LobbyComponent implements OnInit {
     let that = this
 
     this.ws.onopen = function (event) {
-      that.ws.send(`{"op": "handshake", "playerId": "${that.gameState.getPlayerId()}", "gameId": "${that.gameState.getGameId()}"}`)
+      that.ws.send(`{"op": "handshake", "playerId": "${that.gameState.getPlayerId()}", "gameId": "${that.gameState.getGameId()}", "name" : "${that.gameState.getName()}", "avatar" : "${that.gameState.getAvatar()}"}`)
 
       // heartbeat
       if (that.heartbeatInterval != undefined) {
@@ -295,6 +295,10 @@ export class LobbyComponent implements OnInit {
         break
       default:
     }
+  }
+
+  onSettingSave(data: any) {
+    console.log(data)
   }
 
   debug() {

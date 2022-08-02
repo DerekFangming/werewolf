@@ -107,6 +107,14 @@ export class GameStateService {
     this.setGameId(gameId)
   }
 
+  getName() {
+    return this.cookieService.get(GameStateService.playerNameCookieName)
+  }
+
+  getAvatar() {
+    return this.cookieService.get(GameStateService.playerAvatarCookieName)
+  }
+
   takeSeat(playerId: string, position: number) {
     if (playerId in this.playerPosition) {
       this.players[this.playerPosition[playerId] - 1].isOcupied = false
