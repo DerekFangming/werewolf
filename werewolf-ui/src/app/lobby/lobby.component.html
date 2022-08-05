@@ -110,9 +110,18 @@
     </div>
   </div>
   <div class="row px-2">
-    <div class="col-3 mt-4 px-1" *ngFor="let p of gameState.players; let ind = index" >
-      <div class="d-grid"><button type="button" class="btn seat px-0" [ngClass]="p.isOcupied ? 'btn-success' : 'btn-outline-success'" (click)="selectSeat(ind)">
-        <p class="display-5 mb-0">{{ind + 1}}</p><p *ngIf="p.isSelf" class="mb-0"><small>我的位置</small></p></button></div>
+    <div class="col mt-4 px-1" *ngFor="let p of gameState.players; let ind = index" >
+      <!-- <div class="d-grid"> -->
+        <!-- <button type="button" class="btn seat px-0" [ngClass]="p.isOcupied ? 'btn-success' : 'btn-outline-success'" (click)="selectSeat(ind)">
+          <p class="display-5 mb-0">{{ind + 1}}</p><p *ngIf="p.isSelf" class="mb-0"><small>我的位置</small></p>
+        </button> -->
+
+        <div class="btn seat px-0 border" (click)="selectSeat(ind)">
+          <img class="avatar" *ngIf="p.isOcupied && p.avatar && p.avatar != ''" [src]="p.avatar">
+          <!-- <p class="display-5 mb-0">{{ind + 1}}</p><p *ngIf="p.isSelf" class="mb-0"><small>我的位置</small></p> -->
+        </div>
+
+      <!-- </div> -->
     </div>
   </div>
   <div *ngIf="gameState.hostId == gameState.playerId" class="row mt-4">

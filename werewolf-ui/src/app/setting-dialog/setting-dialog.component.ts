@@ -1,8 +1,8 @@
-import { Component, EventEmitter, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { CookieService } from 'ngx-cookie-service';
-import { GameStateService } from '../game-state.service';
+import { Component, EventEmitter, OnInit, Output, TemplateRef, ViewChild } from '@angular/core'
+import { HttpClient, HttpHeaders } from '@angular/common/http'
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap'
+import { CookieService } from 'ngx-cookie-service'
+import { GameStateService } from '../game-state.service'
 
 @Component({
   selector: 'app-setting-dialog',
@@ -15,6 +15,7 @@ export class SettingDialogComponent implements OnInit {
   name = ''
 
   key = atob('Q2xpZW50LUlEIDQzMzQzNWRkNjBmNWQ3OQ==')
+  defaultAvatar = 'https://i.imgur.com/Q6Y7L9u.png'
 
   modalRef: NgbModalRef
   @ViewChild('settingModal', { static: true}) settingModal: TemplateRef<any>
@@ -25,7 +26,7 @@ export class SettingDialogComponent implements OnInit {
     this.name = this.cookieService.get(GameStateService.playerNameCookieName)
 
     if (this.avatar == '') {
-      this.avatar = 'https://i.imgur.com/Q6Y7L9u.png'
+      this.avatar = this.defaultAvatar
     }
     if (this.name == '') {
       this.name = '玩家'
@@ -48,15 +49,24 @@ export class SettingDialogComponent implements OnInit {
     reader.readAsDataURL(event.target.files[0]);
   }
 
-  saveSetting() {
+  async saveSetting() {
     if (this.avatar.startsWith('data')) {
       let parts = this.avatar.split(',');
       let data = parts[1];
-      this.http.post('https://api.imgur.com/3/image', {image: data}, {headers: {'authorization': this.key}}).subscribe(json => {
-        this.avatar = json['data']['link']
+      console.log(this.key)
+
+      const httpOptions = {
+        headers: new HttpHeaders({
+          'Authorization': this.key,
+        })
+      }
+
+      this.http.post<any>('https://api.imgur.com/3/image', {image: data}, httpOptions).subscribe(res => {
+        this.avatar = res.data.link
         this.saveAndEmit()
-      }, () => {
-        this.avatar = 'https://i.imgur.com/Q6Y7L9u.png'
+      }, error => {
+        console.log(error)
+        this.avatar = this.defaultAvatar
         this.saveAndEmit()
       })
     } else {
