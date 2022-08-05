@@ -13,6 +13,7 @@ export class SettingDialogComponent implements OnInit {
 
   avatar = ''
   name = ''
+  loading = false
 
   key = atob('Q2xpZW50LUlEIDQzMzQzNWRkNjBmNWQ3OQ==')
 
@@ -36,6 +37,7 @@ export class SettingDialogComponent implements OnInit {
   }
 
   showDialog() {
+    this.loading = false
     this.modalRef = this.modalService.open(this.settingModal, { centered: true })
   }
 
@@ -50,9 +52,8 @@ export class SettingDialogComponent implements OnInit {
 
   async saveSetting() {
     if (this.avatar.startsWith('data')) {
-      let parts = this.avatar.split(',');
-      let data = parts[1];
-      console.log(this.key)
+      let parts = this.avatar.split(',')
+      let data = parts[1]
 
       const httpOptions = {
         headers: new HttpHeaders({
@@ -60,10 +61,13 @@ export class SettingDialogComponent implements OnInit {
         })
       }
 
+      this.loading = true
       this.http.post<any>('https://api.imgur.com/3/image', {image: data}, httpOptions).subscribe(res => {
+        this.loading = false
         this.avatar = res.data.link
         this.saveAndEmit()
       }, error => {
+        this.loading = false
         console.log(error)
         this.avatar = ''
         this.saveAndEmit()
