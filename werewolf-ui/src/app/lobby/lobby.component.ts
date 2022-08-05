@@ -297,7 +297,7 @@ export class LobbyComponent implements OnInit {
   }
 
   onSettingSave(data: any) {
-    console.log(data)
+    this.ws.send(`{"op": "updateSetting", "name": "${data.name}", "avatar": "${data.avatar}"}`)
   }
 
   debug() {

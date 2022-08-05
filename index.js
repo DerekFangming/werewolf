@@ -136,6 +136,20 @@ wss.on('connection', function connection(player) {
             }
           }
           break
+        case 'updateSetting':
+          player.profileName = cmd.name
+          player.profileAvatar = cmd.avatar
+          if (games.has(player.gameId)) {
+            let game = games.get(player.gameId)
+            game.players[player.id].name = cmd.name
+            game.players[player.id].avatar = cmd.avatar
+            for (let p in game.players) {
+              if (game.players[player.id].position) {
+                players.get(p).send(`{"op": "takeSeat", "position": ${game.players[player.id].position}, "playerId": "${player.id}", "name": "${player.profileName}", "avatar": "${player.profileAvatar}"}`)
+              }
+            }
+          }
+          break
         case 'startGame':
           if (games.has(cmd.gameId)) {
             let game = games.get(cmd.gameId)

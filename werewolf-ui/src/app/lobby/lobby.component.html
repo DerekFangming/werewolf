@@ -118,8 +118,8 @@
           {{ind + 1}}
         </span>
       </button>
-      <p *ngIf="p.isSelf" class="mb-0 mt-1 text-center text-truncate seat-width text-success"><b>{{ p.name != '' ? p.name : (ind + 1) + '号玩家' }}</b></p>
-      <p *ngIf="!p.isSelf" class="mb-0 mt-1 text-center text-truncate seat-width text-secondary">{{ p.name != '' ? p.name : (ind + 1) + '号玩家' }}</p>
+      <p *ngIf="p.isOcupied && p.isSelf" class="mb-0 mt-1 text-center text-truncate seat-width text-success"><b>{{ p.name != '' ? p.name : (ind + 1) + '号玩家' }}</b></p>
+      <p *ngIf="p.isOcupied && !p.isSelf" class="mb-0 mt-1 text-center text-truncate seat-width text-secondary">{{ p.name != '' ? p.name : (ind + 1) + '号玩家' }}</p>
 
     </div>
   </div>
