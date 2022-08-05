@@ -111,17 +111,16 @@
   </div>
   <div class="row px-2">
     <div class="col mt-4 px-1" *ngFor="let p of gameState.players; let ind = index" >
-      <!-- <div class="d-grid"> -->
-        <!-- <button type="button" class="btn seat px-0" [ngClass]="p.isOcupied ? 'btn-success' : 'btn-outline-success'" (click)="selectSeat(ind)">
-          <p class="display-5 mb-0">{{ind + 1}}</p><p *ngIf="p.isSelf" class="mb-0"><small>我的位置</small></p>
-        </button> -->
+      <button type="button" class="btn btn-primary position-relative seat p-0 bg-white" (click)="selectSeat(ind)"
+        [ngClass]="p.isSelf ? 'border-3 border-success' : 'border-secondary'">
+        <img class="avatar" *ngIf="p.isOcupied" [src]="p.avatar && p.avatar != '' ? p.avatar : 'https://i.imgur.com/Q6Y7L9u.png'">
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill" [ngClass]="p.isSelf ? ' bg-success' : ' bg-secondary'">
+          {{ind + 1}}
+        </span>
+      </button>
+      <p *ngIf="p.isSelf" class="mb-0 mt-1 text-center text-truncate seat-width text-success"><b>{{ p.name != '' ? p.name : (ind + 1) + '号玩家' }}</b></p>
+      <p *ngIf="!p.isSelf" class="mb-0 mt-1 text-center text-truncate seat-width text-secondary">{{ p.name != '' ? p.name : (ind + 1) + '号玩家' }}</p>
 
-        <div class="btn seat px-0 border" (click)="selectSeat(ind)">
-          <img class="avatar" *ngIf="p.isOcupied && p.avatar && p.avatar != ''" [src]="p.avatar">
-          <!-- <p class="display-5 mb-0">{{ind + 1}}</p><p *ngIf="p.isSelf" class="mb-0"><small>我的位置</small></p> -->
-        </div>
-
-      <!-- </div> -->
     </div>
   </div>
   <div *ngIf="gameState.hostId == gameState.playerId" class="row mt-4">

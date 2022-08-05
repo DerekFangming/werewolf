@@ -139,7 +139,6 @@ export class LobbyComponent implements OnInit {
 
   selectSeat(seatInd: number) {
     if (this.gameState.turn == '') {
-      console.log(3)
       if (!this.gameState.players[seatInd].isOcupied) {
         this.confirmModel.showDialog('入座', '确定在' + (seatInd+1) + '号入座？', {'op': 'takeSeat', 'position': seatInd+1})
       }

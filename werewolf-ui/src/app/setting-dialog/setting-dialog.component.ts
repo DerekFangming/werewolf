@@ -15,7 +15,6 @@ export class SettingDialogComponent implements OnInit {
   name = ''
 
   key = atob('Q2xpZW50LUlEIDQzMzQzNWRkNjBmNWQ3OQ==')
-  defaultAvatar = 'https://i.imgur.com/Q6Y7L9u.png'
 
   modalRef: NgbModalRef
   @ViewChild('settingModal', { static: true}) settingModal: TemplateRef<any>
@@ -26,7 +25,7 @@ export class SettingDialogComponent implements OnInit {
     this.name = this.cookieService.get(GameStateService.playerNameCookieName)
 
     if (this.avatar == '') {
-      this.avatar = this.defaultAvatar
+      this.avatar = 'https://i.imgur.com/Q6Y7L9u.png'
     }
     if (this.name == '') {
       this.name = '玩家'
@@ -66,7 +65,7 @@ export class SettingDialogComponent implements OnInit {
         this.saveAndEmit()
       }, error => {
         console.log(error)
-        this.avatar = this.defaultAvatar
+        this.avatar = ''
         this.saveAndEmit()
       })
     } else {
