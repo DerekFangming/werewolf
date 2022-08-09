@@ -141,30 +141,27 @@ export class GameStateService {
       this.actions[action] = targetId
     }
     if (this.hostId == this.playerId) {
-      if (this.turn == 'viewCharacter') {
-        this.announce('nightStart.mp3')
-      } else {
-        this.announce(Utils.parseCharactor(this.turn).endAudio)
-      }
+      let roundEndAudio = this.turn == 'viewCharacter' ? 'nightStart.mp3' : Utils.parseCharactor(this.turn).endAudio
 
       let that = this
-      setTimeout(function() {
-        if (newTurn == 'viewResult') {
-          that.announce('nightEnd.mp3')
-        } else {
-          that.announce(Utils.parseCharactor(newTurn).startAudio)
-        }
-      }, 6000)
+      this.announce(roundEndAudio, function() {
+        let roundStartAudio = newTurn == 'viewResult' ? 'nightEnd.mp3' : Utils.parseCharactor(newTurn).startAudio
+        setTimeout(function() {
+          that.announce(roundStartAudio)
+        }, 2500)
+      })
     }
     this.turn = newTurn
   }
 
   audio: HTMLAudioElement
 
-  announce(fileName: string) {
-
+  announce(fileName: string, done: any = null) {
     if (this.audio == null) {
       this.audio = new Audio()
+    }
+    this.audio.onended = function() {
+      if (done != null) done()
     }
 
     this.audio.src = `./assets/${fileName}`
