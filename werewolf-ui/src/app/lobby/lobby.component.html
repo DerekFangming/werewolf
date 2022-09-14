@@ -38,7 +38,7 @@
 </div>
 
 <div *ngIf="gameState.state == 'createGame'" class="container">
-  <div class="row mt-4">
+  <div class="row mt-3">
     <div class="col">
       <p class="lead mb-0">狼阵营</p>
     </div>
@@ -50,7 +50,7 @@
       </ng-container>
     </div>
   </div>
-  <div class="row mt-4">
+  <div class="row mt-3">
     <div class="col">
       <p class="lead mb-0">民阵营</p>
     </div>
@@ -62,7 +62,7 @@
       </ng-container>
     </div>
   </div>
-  <div class="row mt-4">
+  <div class="row mt-3">
     <div class="col">
       <p class="lead mb-0">神阵营</p>
     </div>
@@ -71,6 +71,18 @@
     <div class="col">
       <ng-container *ngFor="let p of players; let ind = index" >
         <button *ngIf="p.category == 'god'" type="button" class="btn mt-2 me-2" [ngClass]="p.selected ? 'btn-success' : 'btn-outline-secondary'" (click)="p.selected = !p.selected">{{p.name}}</button>
+      </ng-container>
+    </div>
+  </div>
+  <div class="row mt-3">
+    <div class="col">
+      <p class="lead mb-0">第三方阵营</p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <ng-container *ngFor="let p of players; let ind = index" >
+        <button *ngIf="p.category == 'thirdParty'" type="button" class="btn mt-2 me-2" [ngClass]="p.selected ? 'btn-success' : 'btn-outline-secondary'" (click)="p.selected = !p.selected">{{p.name}}</button>
       </ng-container>
     </div>
   </div>
@@ -168,7 +180,7 @@
   <div class="row bottom-padding"></div>
 </div>
 
-<nav *ngIf="gameState.state == 'game' && gameState.turn == ''" class="navbar fixed-bottom">
+<nav *ngIf="gameState.state == 'game' && gameState.turn == ''" class="navbar navbar-light bg-light fixed-bottom">
   <div class="container pe-0">
     <div class="row mb-1 w-100">
       <div class="col">
@@ -178,7 +190,7 @@
   </div>
 </nav>
 
-<nav *ngIf="gameState.turn != ''" class="navbar fixed-bottom">
+<nav *ngIf="gameState.turn != ''" class="navbar navbar-light bg-light fixed-bottom">
   <div class="container pe-0">
     <div class="row mb-1 w-100">
       <div class="d-grid gap-2 pe-0">

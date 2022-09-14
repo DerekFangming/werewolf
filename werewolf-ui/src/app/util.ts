@@ -5,6 +5,7 @@ import { Idiot } from "./model/idiot"
 import { Knight } from "./model/knight"
 import { Pervert } from "./model/pervert"
 import { Seer } from "./model/seer"
+import { Thief } from "./model/thief"
 import { Villager } from "./model/villager"
 import { Werewolf } from "./model/werewolf"
 import { WerewolfKing } from "./model/werewolfKing"
@@ -39,6 +40,8 @@ export default class Utils {
         return new Idiot()
       case 'knight':
         return new Knight()
+      case 'thief':
+        return new Thief()
       default:
         return null
     }

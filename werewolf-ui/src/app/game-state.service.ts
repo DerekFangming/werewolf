@@ -77,6 +77,9 @@ export class GameStateService {
       this.players.push(new Player())
     }
 
+    // Two players less if thief exists
+    if (characters.includes('thief')) this.players = this.players.slice(0, -2)
+
     this.characters = ''
     for (const [key, value] of m) {
       if (this.characters != '') this.characters += ', '

@@ -16,6 +16,7 @@ import { WerewolfQueen } from '../model/werewolfQueen';
 import { WerewolfKing } from '../model/werewolfKing';
 import { HiddenWerewolf } from '../model/hiddenWerewolf';
 import { IntroDialogComponent } from '../intro-dialog/intro-dialog.component';
+import { Thief } from '../model/thief';
 
 @Component({
   selector: 'app-lobby',
@@ -105,13 +106,17 @@ export class LobbyComponent implements OnInit {
     this.players = [new Werewolf({selected: true}), new Werewolf({selected: true}), new Werewolf(), new Werewolf(),
       new WerewolfKing(), new WerewolfQueen(), new HiddenWerewolf(),
       new Villager({selected: true}), new Villager({selected: true}), new Villager(), new Villager(), new Villager(), new Pervert(),
-      new Seer({selected: true}), new Witch({selected: true}), new Hunter(), new Guard(), new Idiot(), new Knight()]
+      new Seer({selected: true}), new Witch({selected: true}), new Hunter(), new Guard(), new Idiot(), new Knight(), new Thief()]
   }
 
   confirmCreateGame() {
     let selected = this.players.filter(p => p.selected).map(p => p.type)
-    if (selected.length < 6) {
-      this.error = '至少需要六人才能创建游戏'
+    let hasThief = selected.includes('thief')
+    if (hasThief && selected.length < 8) {
+      this.error = '至少需要六人才能创建游戏。因为选择了盗贼，需要额外选择两张身份牌。'
+      this.modalService.open(this.errModal, { centered: true })
+    } else if (!hasThief && selected.length < 6) {
+      this.error = '至少需要六人才能创建游戏。'
       this.modalService.open(this.errModal, { centered: true })
     } else {
       this.gameState.setState('loading')
