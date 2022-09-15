@@ -78,8 +78,8 @@ export class SettingDialogComponent implements OnInit {
   }
 
   saveAndEmit() {
-    this.cookieService.set(GameStateService.playerNameCookieName, this.name, 0, '/')
-    this.cookieService.set(GameStateService.playerAvatarCookieName, this.avatar, 0, '/')
+    this.cookieService.set(GameStateService.playerNameCookieName, this.name, 3650, '/')
+    this.cookieService.set(GameStateService.playerAvatarCookieName, this.avatar, 3650, '/')
 
     this.modalRef.close()
     this.onSave.emit({name: this.name, avatar: this.avatar})

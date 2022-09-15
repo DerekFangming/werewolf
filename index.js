@@ -158,24 +158,7 @@ wss.on('connection', function connection(player) {
           break
         case 'endTurn':
           if (games.has(player.gameId)) {
-            let game = games.get(player.gameId)
-            if (cmd.action != undefined && cmd.action != 'nightStart') game.actions[cmd.action] = cmd.target
-            if (game.turnOrder.length > 0){
-              game.turn = game.turnOrder.shift()
-
-              for (let p in game.players) {
-                if (cmd.action == 'nightStart') {
-                  players.get(p).send(`{"op": "endTurn", "turn": "${game.turn}"}`)
-                } else {
-                  players.get(p).send(`{"op": "endTurn", "turn": "${game.turn}", "action": "${cmd.action}", "target": "${cmd.target}"}`)
-                }
-              }
-            } else {
-              game.turn = 'viewResult'
-              for (let p in game.players) {
-                players.get(p).send(`{"op": "endTurn", "turn": "${game.turn}", "action": "${cmd.action}", "target": "${cmd.target}"}`)
-              }
-            }
+            endTurn(player.gameId, cmd.action, cmd.target)
           }
           break
         case 'restartGame':
@@ -213,12 +196,44 @@ function startGame(gameId) {
     game.players[p].character = shuffled[counter ++]
   }
 
+  game.actions = {}
   game.turn = 'viewCharacter'
   game.turnOrder = game.characters.filter((c, p) => c in turnOrder && game.characters.indexOf(c) == p)
     .sort((a, b) => turnOrder[a] - turnOrder[b])
 
   for (let p in game.players) {
     players.get(p).send(gameDetailsOp(game, gameId))
+  }
+}
+
+function endTurn(gameId, action, target) {
+  let game = games.get(gameId)
+  if (action != undefined && action != 'nightStart') game.actions[action] = target
+  if (game.turnOrder.length > 0){
+    game.turn = game.turnOrder.shift()
+
+    for (let p in game.players) {
+      if (action == 'nightStart') {
+        players.get(p).send(`{"op": "endTurn", "turn": "${game.turn}"}`)
+      } else {
+        players.get(p).send(`{"op": "endTurn", "turn": "${game.turn}", "action": "${action}", "target": "${target}"}`)
+      }
+    }
+  } else {
+    game.turn = 'viewResult'
+    for (let p in game.players) {
+      players.get(p).send(`{"op": "endTurn", "turn": "${game.turn}", "action": "${action}", "target": "${target}"}`)
+    }
+  }
+
+  // Check for empty round that thief discarded
+  if (game.thiefOpt) {
+    let discarded = game.thiefOpt[0] == game.actions.thiefChoose ? game.thiefOpt[1] : game.thiefOpt[0]
+    if (game.turn == discarded) {
+      setTimeout(function(){
+        endTurn(gameId, undefined, undefined)
+      }, Math.floor(Math.random() * 20000) + 10000);
+    }
   }
 }
 
