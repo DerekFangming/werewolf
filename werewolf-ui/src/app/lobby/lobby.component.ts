@@ -18,6 +18,7 @@ import { HiddenWerewolf } from '../model/hiddenWerewolf';
 import { IntroDialogComponent } from '../intro-dialog/intro-dialog.component';
 import { Thief } from '../model/thief';
 import Utils from '../util';
+import { Cupid } from '../model/cupid';
 
 @Component({
   selector: 'app-lobby',
@@ -107,7 +108,8 @@ export class LobbyComponent implements OnInit {
     this.players = [new Werewolf({selected: true}), new Werewolf({selected: true}), new Werewolf(), new Werewolf(),
       new WerewolfKing(), new WerewolfQueen(), new HiddenWerewolf(),
       new Villager({selected: true}), new Villager({selected: true}), new Villager(), new Villager(), new Villager(), new Pervert(),
-      new Seer({selected: true}), new Witch({selected: true}), new Hunter(), new Guard(), new Idiot(), new Knight(), new Thief()]
+      new Seer({selected: true}), new Witch({selected: true}), new Hunter(), new Guard(), new Idiot(), new Knight(),
+      new Thief(), new Cupid()]
   }
 
   confirmCreateGame() {
@@ -127,8 +129,13 @@ export class LobbyComponent implements OnInit {
   }
 
   joinGame(){
-    if (!environment.production) this.gameIdInput = '1111' // Force first room # for dev testing
-    this.gameState.setState('joinGame')
+    if (environment.production) {
+      this.gameState.setState('joinGame')
+    } else {
+      this.gameState.setState('loading')
+      this.ws.send(`{"op": "joinGame", "gameId": "1111"}`)
+      this.gameIdInput = ''
+    }
   }
 
   confirmJoinGame() {
@@ -146,7 +153,11 @@ export class LobbyComponent implements OnInit {
   selectSeat(seatInd: number) {
     if (this.gameState.turn == '') {
       if (!this.gameState.players[seatInd].isOcupied) {
-        this.confirmModel.showDialog('入座', '确定在' + (seatInd+1) + '号入座？', {'op': 'takeSeat', 'position': seatInd+1})
+        if (environment.production) {
+          this.confirmModel.showDialog('入座', '确定在' + (seatInd+1) + '号入座？', {'op': 'takeSeat', 'position': seatInd+1})
+        } else {
+          this.ws.send(`{"op": "takeSeat", "position": ${seatInd+1}}`)
+        }
       }
     } else if (this.isMyTurn()) {
       let character = this.gameState.getSelfCharacter()
