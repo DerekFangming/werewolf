@@ -14,13 +14,14 @@ const games = new Map()
 const players = new Map()
 
 const turnOrder = {
-  werewolf: 1,
-  werewolfQueen: 2,
-  hiddenWerewolf: 3,
-  seer: 4,
-  witch: 5,
-  hunter: 6,
-  guard: 7
+  thief: 1,
+  werewolf: 2,
+  werewolfQueen: 3,
+  hiddenWerewolf: 4,
+  seer: 5,
+  witch: 6,
+  hunter: 7,
+  guard: 8
 }
 
 const wss = new ws.Server({
@@ -152,22 +153,7 @@ wss.on('connection', function connection(player) {
           break
         case 'startGame':
           if (games.has(cmd.gameId)) {
-            let game = games.get(cmd.gameId)
-            let charactersCopy = JSON.parse(JSON.stringify(game.characters))
-            let shuffled = charactersCopy.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value)
-
-            let counter = 0
-            for (let p in game.players) {
-              game.players[p].character = shuffled[counter ++]
-            }
-
-            game.turn = 'viewCharacter'
-            game.turnOrder = game.characters.filter((c, p) => c in turnOrder && game.characters.indexOf(c) == p)
-              .sort((a, b) => turnOrder[a] - turnOrder[b])
-
-            for (let p in game.players) {
-              players.get(p).send(gameDetailsOp(game, cmd.gameId))
-            }
+            startGame(cmd.gameId)
           }
           break
         case 'endTurn':
@@ -194,22 +180,7 @@ wss.on('connection', function connection(player) {
           break
         case 'restartGame':
           if (games.has(player.gameId)) {
-            let game = games.get(player.gameId)
-            let charactersCopy = JSON.parse(JSON.stringify(game.characters))
-            let shuffled = charactersCopy.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value)
-
-            let counter = 0
-            for (let p in game.players) {
-              game.players[p].character = shuffled[counter ++]
-            }
-
-            game.actions = {}
-            game.turn = 'viewCharacter'
-            game.turnOrder = game.characters.filter((c, p) => (c != 'villager') && game.characters.indexOf(c) == p).sort((a, b) => turnOrder[a] - turnOrder[b])
-
-            for (let p in game.players) {
-              players.get(p).send(gameDetailsOp(game, player.gameId))
-            }
+            startGame(player.gameId)
           }
           break
         default:
@@ -221,7 +192,44 @@ wss.on('connection', function connection(player) {
   });
 })
 
+function startGame(gameId) {
+  let game = games.get(gameId)
+  let charactersCopy = JSON.parse(JSON.stringify(game.characters))
 
+  let thiefOpt = []
+  if (charactersCopy.includes('thief')) {
+      charactersCopy = charactersCopy.filter(c => c != 'thief')
+      charactersCopy = charactersCopy.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value)
+      thiefOpt.push(charactersCopy.pop())
+      thiefOpt.push(charactersCopy.pop())
+      charactersCopy.push('thief')
+      game.thiefOpt = thiefOpt
+  }
+
+  let shuffled = charactersCopy.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value)
+
+  let counter = 0
+  for (let p in game.players) {
+    game.players[p].character = shuffled[counter ++]
+  }
+
+  game.turn = 'viewCharacter'
+  game.turnOrder = game.characters.filter((c, p) => c in turnOrder && game.characters.indexOf(c) == p)
+    .sort((a, b) => turnOrder[a] - turnOrder[b])
+
+  for (let p in game.players) {
+    players.get(p).send(gameDetailsOp(game, gameId))
+  }
+}
+
+function gameDetailsOp(game, gameId){
+  let g = Object.assign({}, game)
+  delete g['turnOrder']
+  g.gameId = gameId
+  g.op = 'gameDetails'
+  
+  return JSON.stringify(g)
+}
 
 
 app.get('/debug', (req, res) => {
@@ -249,13 +257,4 @@ app.get('/game', (req, res) => {
 app.use(express.static(path.join(__dirname, 'public')))
 
 server.listen(port, function() {})
-
-function gameDetailsOp(game, gameId){
-  let g = Object.assign({}, game)
-  delete g['turnOrder']
-  g.gameId = gameId
-  g.op = 'gameDetails'
-  
-  return JSON.stringify(g)
-}
 

@@ -21,6 +21,7 @@ export class GameStateService {
   playerPosition = {}
   players = []
   actions = {}
+  thiefOpt = []
   state = 'loading'
 
   constructor(private cookieService: CookieService) {
@@ -52,6 +53,7 @@ export class GameStateService {
       this.playerPosition = {}
       this.players = []
       this.actions = {}
+      this.thiefOpt = []
     }
     return this.cookieService.set(GameStateService.gameIdCookieName, gameId, 0, '/');
   }
@@ -65,7 +67,7 @@ export class GameStateService {
     this.state = state
   }
 
-  setGame(gameId: string, hostId: string, turn: string, characters: string[], players: object, actions: object) {
+  setGame(gameId: string, hostId: string, turn: string, characters: string[], players: any, actions: any, thiefOpt: string[]) {
     if (gameId == '') {
       this.setGameId(gameId)
       return
@@ -103,6 +105,20 @@ export class GameStateService {
     this.actions = {}
     if (actions != undefined) {
       this.actions = actions
+
+      if (actions.thiefChoose) {
+        for (let p of this.players) {
+          if (p.character.type == 'thief') {
+            p.character = Utils.parseCharactor(actions.thiefChoose)
+            break
+          }
+        }
+      }
+    }
+
+    this.thiefOpt = []
+    if (thiefOpt != undefined) {
+      this.thiefOpt = thiefOpt
     }
 
     this.turn = turn
@@ -139,6 +155,28 @@ export class GameStateService {
     return this.players[position - 1].character
   }
 
+  setSelfCharacter(character: any) {
+    let position = this.playerPosition[this.playerId]
+    return this.players[position - 1] = character
+  }
+
+  getThiefChoices() {
+    if (this.thiefOpt == null && this.thiefOpt.length != 2) return []
+    let character0 = Utils.parseCharactor(this.thiefOpt[0])
+    let character1 = Utils.parseCharactor(this.thiefOpt[1])
+    let hasWolf = character0.isWolf || character1.isWolf
+
+    return [{
+      type: this.thiefOpt[0],
+      name: character0.name,
+      selectable: hasWolf ? character0.isWolf : true
+    }, {
+      type: this.thiefOpt[1],
+      name: character1.name,
+      selectable: hasWolf ? character1.isWolf : true
+    }]
+  }
+
   endTurn(newTurn: string, action: string, targetId: string) {
     if (action != undefined && targetId != undefined) {
       this.actions[action] = targetId
@@ -153,6 +191,14 @@ export class GameStateService {
           that.announce(roundStartAudio)
         }, 2500)
       })
+    }
+    if (action == 'thiefChoose') {
+      for (let p of this.players) {
+        if (p.character.type == 'thief') {
+          p.character = Utils.parseCharactor(targetId)
+          break
+        }
+      }
     }
     this.turn = newTurn
   }

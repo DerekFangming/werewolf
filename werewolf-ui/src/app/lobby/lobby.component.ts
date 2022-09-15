@@ -17,6 +17,7 @@ import { WerewolfKing } from '../model/werewolfKing';
 import { HiddenWerewolf } from '../model/hiddenWerewolf';
 import { IntroDialogComponent } from '../intro-dialog/intro-dialog.component';
 import { Thief } from '../model/thief';
+import Utils from '../util';
 
 @Component({
   selector: 'app-lobby',
@@ -72,7 +73,7 @@ export class LobbyComponent implements OnInit {
         case 'gameDetails':
           if (cmd.error == null) {
             console.log(cmd)
-            that.gameState.setGame(cmd.gameId, cmd.hostId, cmd.turn, cmd.characters, cmd.players, cmd.actions)
+            that.gameState.setGame(cmd.gameId, cmd.hostId, cmd.turn, cmd.characters, cmd.players, cmd.actions, cmd.thiefOpt)
           } else {
             that.gameState.setState('lobby')
             that.error = cmd.error
@@ -149,6 +150,7 @@ export class LobbyComponent implements OnInit {
       }
     } else if (this.isMyTurn()) {
       let character = this.gameState.getSelfCharacter()
+      if (character.type == 'thief') return
       if (character.actionName == 'seerExamine') {
         this.confirmModel.showDialog(character.actionTitle, character.actionMessage.replace(/\{0\}/, seatInd+1),
           {'op': 'seerExamine', 'action': character.actionName, 'target': seatInd})
@@ -166,6 +168,13 @@ export class LobbyComponent implements OnInit {
           {'op': 'endTurn', 'action': character.actionName, 'target': this.gameState.players[seatInd].id}, false, '确认，并结束回合')
       }
     }
+  }
+
+  // Currently thief only
+  selectOption(selection: any) {
+    let thief:any = Utils.parseCharactor('thief')
+    this.confirmModel.showDialog(thief.actionTitle, thief.actionMessage.replace(/\{0\}/, selection.name),
+          {'op': 'endTurn', 'action': thief.actionName, 'target': selection.type})
   }
 
   startGame() {
@@ -306,36 +315,8 @@ export class LobbyComponent implements OnInit {
   }
 
   debug() {
-    // console.log('Player: ' + this.gameState.playerId)
-    // console.log(this.gameState.playerPosition)
     // console.log(this.gameState.players)
-    // console.log(this.gameState.turn)
-    // console.log(this.gameState.getSelfCharacter().type)
-    // console.log(this.gameState.actions)
-    // console.log(this.gameState.gameId)
-    // this.confirmModel.showDialog('你的身份是', `${this.gameState.getSelfCharacter().name}`, {op: 'debug'}, false, '下一回合')
-
-    // try {
-    //   let audio = new Audio()
-    //   audio.src = `../../assets/nightStart.mp3`
-    //   audio.loop = true
-    //   audio.load() 
-    //   audio.play()
-
-    //   setTimeout(function() {
-    //     audio.pause()
-    //     audio.src = `../../assets/nightEnd.mp3`
-    //     audio.pause()
-    //     audio.play()
-    //   }, 6000)
-    // } catch (err) {
-    //   console.log(err)
-    // }
-
-    
-
-
-    this.gameState.announce('nightStart.mp3')
+    this.ws.send(`{"op": "restartGame"}`)
   }
 
 }
