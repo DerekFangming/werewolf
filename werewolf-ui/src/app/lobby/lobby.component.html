@@ -124,7 +124,7 @@
   <div class="row px-2">
     <div class="col mt-4 px-1" *ngFor="let p of gameState.players; let ind = index" >
       <button type="button" class="btn btn-primary position-relative seat p-0 bg-white" (click)="selectSeat(ind)"
-        [ngClass]="p.isSelf ? 'border-3 border-success' : 'border-secondary'">
+        [ngClass]="isCupidSelection(p.id) ? 'border-3 border-primary' : p.isSelf ? 'border-3 border-success' : 'border-secondary'">
         <img class="avatar" *ngIf="p.isOcupied" [src]="p.avatar && p.avatar != '' ? p.avatar : 'https://i.imgur.com/Q6Y7L9u.png'">
         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill" [ngClass]="p.isSelf ? ' bg-success' : ' bg-secondary'">
           {{ind + 1}}
@@ -160,6 +160,11 @@
         <div class="col" [ngClass]="i === 0 ? 'pe-1' : 'ps-1'" *ngFor="let c of gameState.getThiefChoices(); let i = index">
           <button type="button" class="btn btn-outline-success w-100 px-0" (click)="selectOption(c)" [disabled]="!c.selectable">{{c.name}}</button>
         </div>
+      </div>
+    </div>
+    <div *ngIf="gameState.getSelfCharacter().type == 'cupid'" class="col-12 mt-2">
+      <div class="d-grid gap-2">
+        <button type="button" class="btn btn-outline-success" (click)="cupidConfirm()">确认选择</button>
       </div>
     </div>
   </div>

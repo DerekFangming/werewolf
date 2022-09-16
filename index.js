@@ -211,7 +211,12 @@ function endTurn(gameId, action, target) {
   let game = games.get(gameId)
   if (action != undefined && action != 'nightStart') game.actions[action] = target
   if (game.turnOrder.length > 0){
-    game.turn = game.turnOrder.shift()
+
+    if (action == 'cupidChoose') {
+      game.turn = 'cupidResult'
+    } else {
+      game.turn = game.turnOrder.shift()
+    }
 
     for (let p in game.players) {
       if (action == 'nightStart') {

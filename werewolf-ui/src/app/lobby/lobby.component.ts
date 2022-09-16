@@ -162,6 +162,19 @@ export class LobbyComponent implements OnInit {
     } else if (this.isMyTurn()) {
       let character = this.gameState.getSelfCharacter()
       if (character.type == 'thief') return
+      if (this.gameState.turn  == 'cupid') {
+        let playerId = this.gameState.players[seatInd].id
+        if (this.gameState.cupidSelection.includes(playerId)) {
+          this.gameState.cupidSelection = this.gameState.cupidSelection.filter(i => i != playerId)
+        } else {
+          if (this.gameState.cupidSelection.length == 2) {
+            this.confirmModel.showDialog('无法选择', '你只能选择两个玩家。请点击已经选中的玩家之一来取消选择，然后在选择其他玩家。', {}, true)
+          } else {
+            this.gameState.cupidSelection.push(playerId)
+          }
+        }
+        return
+      }
       if (character.actionName == 'seerExamine') {
         this.confirmModel.showDialog(character.actionTitle, character.actionMessage.replace(/\{0\}/, seatInd+1),
           {'op': 'seerExamine', 'action': character.actionName, 'target': seatInd})
@@ -214,6 +227,25 @@ export class LobbyComponent implements OnInit {
       }
     }
     return false
+  }
+
+  isCupidSelection(id: string) {
+    if (this.gameState.turn  == 'cupid' && this.gameState.getSelfCharacter().type == 'cupid') {
+      return this.gameState.cupidSelection.includes(id)
+    }
+    return false
+  }
+  
+  cupidConfirm() {
+    if (this.gameState.cupidSelection.length != 2) {
+      this.confirmModel.showDialog('无法确认', '请选择两名玩家成为情侣。', {}, true)
+    } else {
+      let first = this.gameState.playerPosition[this.gameState.cupidSelection[0]]
+      let second = this.gameState.playerPosition[this.gameState.cupidSelection[1]]
+      let choice = `${this.gameState.cupidSelection[0]},${this.gameState.cupidSelection[1]}`
+      this.confirmModel.showDialog('确认选择', `确认选择 ${first} 号和 ${second} 号成为情侣？`,
+        {'op': 'endTurn', 'action': 'cupidChoose', 'target': choice})
+    }
   }
 
   nightStart() {

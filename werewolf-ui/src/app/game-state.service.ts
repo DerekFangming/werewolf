@@ -22,6 +22,7 @@ export class GameStateService {
   players = []
   actions = {}
   thiefOpt = []
+  cupidSelection = []
   state = 'loading'
 
   constructor(private cookieService: CookieService) {
@@ -54,6 +55,7 @@ export class GameStateService {
       this.players = []
       this.actions = {}
       this.thiefOpt = []
+      this.cupidSelection = []
     }
     return this.cookieService.set(GameStateService.gameIdCookieName, gameId, 0, '/');
   }
@@ -121,6 +123,7 @@ export class GameStateService {
       this.thiefOpt = thiefOpt
     }
 
+    this.cupidSelection = []
     this.turn = turn
     this.hostId = hostId
     this.setGameId(gameId)
@@ -182,11 +185,11 @@ export class GameStateService {
       this.actions[action] = targetId
     }
     if (this.hostId == this.playerId) {
-      let roundEndAudio = this.turn == 'viewCharacter' ? 'nightStart.mp3' : Utils.parseCharactor(this.turn).endAudio
+      let roundEndAudio = this.turn == 'viewCharacter' ? 'nightStart.mp3' : this.turn == 'cupidResult' ? 'cupidRevealEnd.mp3' : Utils.parseCharactor(this.turn).endAudio
 
       let that = this
       this.announce(roundEndAudio, function() {
-        let roundStartAudio = newTurn == 'viewResult' ? 'nightEnd.mp3' : Utils.parseCharactor(newTurn).startAudio
+        let roundStartAudio = newTurn == 'viewResult' ? 'nightEnd.mp3' : newTurn == 'cupidResult' ? 'cupidRevealStart.mp3' : Utils.parseCharactor(newTurn).startAudio
         setTimeout(function() {
           that.announce(roundStartAudio)
         }, 2500)
