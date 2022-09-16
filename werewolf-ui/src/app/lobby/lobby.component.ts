@@ -213,7 +213,18 @@ export class LobbyComponent implements OnInit {
   }
 
   viewCharacter() {
-    this.confirmModel.showDialog('你的身份是', `${this.gameState.getSelfCharacter().name}`, {})
+    let extra = ''
+    if (this.gameState.actions['cupidChoose']) {
+      let userIds = this.gameState.actions['cupidChoose'].split(',')
+      if (userIds[0] == this.gameState.playerId) {
+        extra += `<br /> 你和 ${this.gameState.playerPosition[userIds[1]]} 号被丘比特选中为情侣。`
+      } else if (userIds[1] == this.gameState.playerId) {
+        extra += `<br /> 你和 ${this.gameState.playerPosition[userIds[0]]} 号被丘比特选中为情侣。`
+      }else {
+        extra += '<br /> 你没有被丘比特选中。'
+      }
+    }
+    this.confirmModel.showDialog('你的身份是', `${this.gameState.getSelfCharacter().name}${extra}`, {})
   }
 
   isMyTurn() {
@@ -243,8 +254,7 @@ export class LobbyComponent implements OnInit {
       let first = this.gameState.playerPosition[this.gameState.cupidSelection[0]]
       let second = this.gameState.playerPosition[this.gameState.cupidSelection[1]]
       let choice = `${this.gameState.cupidSelection[0]},${this.gameState.cupidSelection[1]}`
-      this.confirmModel.showDialog('确认选择', `确认选择 ${first} 号和 ${second} 号成为情侣？`,
-        {'op': 'endTurn', 'action': 'cupidChoose', 'target': choice})
+      this.confirmModel.showDialog('确认选择', `确认选择 ${first} 号和 ${second} 号成为情侣？`, {'op': 'endTurn', 'action': 'cupidChoose', 'target': choice})
     }
   }
 

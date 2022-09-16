@@ -158,11 +158,6 @@ export class GameStateService {
     return this.players[position - 1].character
   }
 
-  setSelfCharacter(character: any) {
-    let position = this.playerPosition[this.playerId]
-    return this.players[position - 1] = character
-  }
-
   getThiefChoices() {
     if (this.thiefOpt == null && this.thiefOpt.length != 2) return []
     let character0 = Utils.parseCharactor(this.thiefOpt[0])

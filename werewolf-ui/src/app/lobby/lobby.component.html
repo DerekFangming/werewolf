@@ -139,6 +139,16 @@
     <div *ngIf="gameState.turn == '' || gameState.turn == 'viewCharacter'" class="col-12">
       <div class="alert alert-success" role="alert">你是房主，待人员入座后即可开始游戏。请取消静音并提高手机音量，并切勿锁屏。游戏进度语音将从你的手机发出。</div>
     </div>
+    <div *ngIf="gameState.turn == 'cupidResult'" class="col-12">
+      <div class="alert alert-success" role="alert">当全部玩家重新查看完身份之后，房主结束回合，大家重新闭眼。</div>
+    </div>
+    <div *ngIf="gameState.turn == 'cupidResult'" class="row mt-2">
+      <div class="col">
+        <div class="d-grid gap-4">
+          <button type="button" class="btn btn-outline-success" (click)="confirmModel.showDialog('确认结束', '确认结束回合，大家重新闭眼。', {'op': 'endTurn'})">结束回合</button>
+        </div>
+      </div>
+    </div>
     <div class="col-12 mt-2">
       <div class="d-grid gap-2">
         <button *ngIf="gameState.turn == ''" type="button" class="btn btn-outline-success" (click)="startGame()">开始发牌</button>
@@ -181,7 +191,7 @@
     </div>
   </div>
 
-  <div *ngIf="gameState.hostId != gameState.playerId && gameState.getSelfCharacter().actionResult" class="col-12 mt-2">
+  <div *ngIf="gameState.hostId != gameState.playerId && gameState.getSelfCharacter().actionResult" class="row mt-2">
     <div class="col">
       <div class="d-grid gap-4">
         <button type="button" class="btn btn-outline-success" (click)="viewResult(false)">查看结果</button>
