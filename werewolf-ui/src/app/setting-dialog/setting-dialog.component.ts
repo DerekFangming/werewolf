@@ -45,7 +45,21 @@ export class SettingDialogComponent implements OnInit {
     var reader = new FileReader()
     let that = this
     reader.onload = function(e) {
-      that.avatar = e.target.result.toString()
+      let origImg = new Image()
+      origImg.src = e.target.result.toString()
+      origImg.onload = function() {
+        let size = Math.min(origImg.height, origImg.width)
+        let cropX = origImg.width == size ? 0 : (origImg.width - size) / 2
+        let cropY = origImg.height == size ? 0 : (origImg.height - size) / 2
+
+        var canvas = document.createElement("canvas")
+        canvas.width = size
+        canvas.height = size
+        let c2d = canvas.getContext('2d')
+        c2d.drawImage(origImg, cropX, cropY, size, size, 0, 0, size, size)
+        let newimgUri = canvas.toDataURL("image/png").toString()
+        that.avatar = newimgUri
+      }
     }
     reader.readAsDataURL(event.target.files[0]);
   }
