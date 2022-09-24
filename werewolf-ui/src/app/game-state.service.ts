@@ -36,7 +36,7 @@ export class GameStateService {
 
   setPlayerId(playerId: string) {
     this.playerId = playerId
-    return this.cookieService.set(GameStateService.playerIdCookieName, playerId, 0, '/');
+    return this.cookieService.set(GameStateService.playerIdCookieName, playerId, 3650, '/');
   }
 
   getGameId() {
@@ -57,7 +57,7 @@ export class GameStateService {
       this.thiefOpt = []
       this.cupidSelection = []
     }
-    return this.cookieService.set(GameStateService.gameIdCookieName, gameId, 0, '/');
+    return this.cookieService.set(GameStateService.gameIdCookieName, gameId, 3650, '/');
   }
 
   setplayerIdAndGameId(playerId: string, gameId: string) {
