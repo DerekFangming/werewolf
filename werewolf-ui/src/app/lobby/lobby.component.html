@@ -1,13 +1,17 @@
 <nav class="navbar navbar-light bg-light justify-content-between" id="body">
   <div class="container">
-    <div style="min-width: 80px;">
+    <div *ngIf="gameState.hostId != gameState.playerId" style="min-width: 80px;">
       <button *ngIf="gameState.state == 'game'" type="button" class="btn btn-outline-danger"
-       (click)="confirmModel.showDialog('退出游戏', '确定退出游戏？如果你是房主，这将使所有人退出本局游戏。', {'op': 'leaveGame'})">退出</button>
+       (click)="confirmModel.showDialog('退出游戏', '确定退出游戏？', {'op': 'leaveGame'})">退出</button>
+    </div>
+    <div *ngIf="gameState.hostId == gameState.playerId" style="min-width: 60px;">
+       <button *ngIf="gameState.state == 'game'" type="button" class="btn btn-outline-secondary"
+       (click)="confirmModel.showDialog('退出游戏', '确定退出游戏？', {'op': 'leaveGame'})">游戏设置</button>
     </div>
     <a class="navbar-brand">{{ gameState.state == 'game' ? '房间号: ' + gameState.gameId : '狼人杀发牌助手' }} </a>
     <div style="min-width: 60px;">
       <button *ngIf="gameState.state == 'game'" type="button" class="btn btn-outline-secondary"
-        (click)="settingModel.showDialog()">玩家信息</button>
+        (click)="profileModel.showDialog()">玩家信息</button>
     </div>
   </div>
 </nav>
@@ -31,7 +35,7 @@
     <div class="col-12 mt-4">
       <div class="d-grid gap-3">
         <button type="button" class="btn btn-outline-secondary" (click)="introModel.showDialog()"><p class="display-6 mb-0">角色介绍</p></button>
-        <button type="button" class="btn btn-outline-secondary" (click)="settingModel.showDialog()"><p class="display-6 mb-0">玩家信息</p></button>
+        <button type="button" class="btn btn-outline-secondary" (click)="profileModel.showDialog()"><p class="display-6 mb-0">玩家信息</p></button>
       </div>
     </div>
   </div>
@@ -248,7 +252,7 @@
   </div>
 </ng-template>
 
-<app-setting-dialog #settingModel (onSave)="onSettingSave($event)"></app-setting-dialog>
+<app-profile-dialog #profileModel (onSave)="onProfileSave($event)"></app-profile-dialog>
 <app-intro-dialog #introModel></app-intro-dialog>
 <app-confirm-dialog #confirmModel (onConfirm)="onConfirm($event)"></app-confirm-dialog>
 

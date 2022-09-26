@@ -6,7 +6,7 @@ import { AppRoutingModule } from './app-routing.module'
 import { CookieService } from 'ngx-cookie-service';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { IntroDialogComponent } from './intro-dialog/intro-dialog.component';
-import { SettingDialogComponent } from './setting-dialog/setting-dialog.component'
+import { ProfileDialogComponent } from './profile-dialog/profile-dialog.component'
 import { HttpClientModule } from '@angular/common/http'
 import { FormsModule } from '@angular/forms'
 import { BrowserModule } from '@angular/platform-browser';
@@ -17,7 +17,7 @@ import { BrowserModule } from '@angular/platform-browser';
     LobbyComponent,
     ConfirmDialogComponent,
     IntroDialogComponent,
-    SettingDialogComponent
+    ProfileDialogComponent
   ],
   imports: [
     BrowserModule,

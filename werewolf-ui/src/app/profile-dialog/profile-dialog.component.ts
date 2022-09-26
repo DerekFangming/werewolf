@@ -5,11 +5,11 @@ import { CookieService } from 'ngx-cookie-service'
 import { GameStateService } from '../game-state.service'
 
 @Component({
-  selector: 'app-setting-dialog',
-  templateUrl: './setting-dialog.component.html',
-  styleUrls: ['./setting-dialog.component.css']
+  selector: 'app-profile-dialog',
+  templateUrl: './profile-dialog.component.html',
+  styleUrls: ['./profile-dialog.component.css']
 })
-export class SettingDialogComponent implements OnInit {
+export class ProfileDialogComponent implements OnInit {
 
   avatar = ''
   name = ''
@@ -18,7 +18,7 @@ export class SettingDialogComponent implements OnInit {
   key = atob('Q2xpZW50LUlEIDQzMzQzNWRkNjBmNWQ3OQ==')
 
   modalRef: NgbModalRef
-  @ViewChild('settingModal', { static: true}) settingModal: TemplateRef<any>
+  @ViewChild('profileModal', { static: true}) profileModal: TemplateRef<any>
   @Output() onSave = new EventEmitter<any>()
 
   constructor(public modalService: NgbModal, private cookieService: CookieService, private http: HttpClient) {
@@ -38,7 +38,7 @@ export class SettingDialogComponent implements OnInit {
 
   showDialog() {
     this.loading = false
-    this.modalRef = this.modalService.open(this.settingModal, { centered: true })
+    this.modalRef = this.modalService.open(this.profileModal, { centered: true })
   }
 
   onFilesSelected(event) {
@@ -64,7 +64,7 @@ export class SettingDialogComponent implements OnInit {
     reader.readAsDataURL(event.target.files[0]);
   }
 
-  async saveSetting() {
+  async saveProfile() {
     if (this.avatar.startsWith('data')) {
       let parts = this.avatar.split(',')
       let data = parts[1]

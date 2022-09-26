@@ -138,7 +138,7 @@ wss.on('connection', function connection(player) {
             }
           }
           break
-        case 'updateSetting':
+        case 'updateProfile':
           player.profileName = cmd.name
           player.profileAvatar = cmd.avatar
           if (games.has(player.gameId)) {

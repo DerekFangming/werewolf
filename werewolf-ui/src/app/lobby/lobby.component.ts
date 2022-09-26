@@ -38,7 +38,7 @@ export class LobbyComponent implements OnInit {
   @ViewChild('errModal', { static: true}) errModal: TemplateRef<any>
   @ViewChild('introModel') introModel: IntroDialogComponent
   @ViewChild('confirmModel') confirmModel: ConfirmDialogComponent
-  @ViewChild('settingModal', { static: true}) inrtoModal: TemplateRef<any>
+  @ViewChild('profileModal', { static: true}) profileModal: TemplateRef<any>
 
   constructor(public gameState: GameStateService, private modalService: NgbModal, private elementRef:ElementRef) { }
 
@@ -363,8 +363,8 @@ export class LobbyComponent implements OnInit {
     }
   }
 
-  onSettingSave(data: any) {
-    this.ws.send(`{"op": "updateSetting", "name": "${data.name}", "avatar": "${data.avatar}"}`)
+  onProfileSave(data: any) {
+    this.ws.send(`{"op": "updateProfile", "name": "${data.name}", "avatar": "${data.avatar}"}`)
   }
 
   debug() {
