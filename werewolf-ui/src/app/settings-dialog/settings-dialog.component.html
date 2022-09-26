@@ -1,0 +1,26 @@
+<ng-template #settingModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">房间设置</h4>
+    <button type="button" class="btn-close" (click)="modal.dismiss('Cross click')"> </button>
+  </div>
+  <div class="modal-body" ngbAutofocus>
+    <div class="row">
+      <div class="col">
+        <p class="">如果需要按照同样阵容重新开始游戏并重置游戏进度，请点击<b>重新开始</b>按键。</p>
+      </div>
+    </div>
+    <!-- <div class="row">
+      <div class="col-9">
+        玩家1
+      </div>
+      <div class="col-3">
+        <button type="button" class="btn btn-danger" (click)="leaveGame()">踢出</button>
+      </div>
+    </div> -->
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-danger" (click)="leaveGame()">退出游戏</button>
+    <button type="button" class="btn btn-warning" (click)="restartGame()">重新开始</button>
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss('Cross click')">关闭</button>
+  </div>
+</ng-template>

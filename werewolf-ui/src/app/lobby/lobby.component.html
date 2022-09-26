@@ -6,7 +6,7 @@
     </div>
     <div *ngIf="gameState.hostId == gameState.playerId" style="min-width: 60px;">
        <button *ngIf="gameState.state == 'game'" type="button" class="btn btn-outline-secondary"
-       (click)="confirmModel.showDialog('退出游戏', '确定退出游戏？', {'op': 'leaveGame'})">游戏设置</button>
+       (click)="settingsModel.showDialog()">房间设置</button>
     </div>
     <a class="navbar-brand">{{ gameState.state == 'game' ? '房间号: ' + gameState.gameId : '狼人杀发牌助手' }} </a>
     <div style="min-width: 60px;">
@@ -253,6 +253,8 @@
 </ng-template>
 
 <app-profile-dialog #profileModel (onSave)="onProfileSave($event)"></app-profile-dialog>
+<app-settings-dialog #settingsModel (onRestart)="confirmModel.showDialog('确认重新开始', '确认重新发牌并重置游戏进度。游戏将被重置为查看身份回合。', {'op': 'restartGame'})"
+  (onLeave)="confirmModel.showDialog('退出游戏', '确定退出游戏？你是房主，退出游戏后房间内全部玩家也会被强行退出游戏。', {'op': 'leaveGame'})"></app-settings-dialog>
 <app-intro-dialog #introModel></app-intro-dialog>
 <app-confirm-dialog #confirmModel (onConfirm)="onConfirm($event)"></app-confirm-dialog>
 
