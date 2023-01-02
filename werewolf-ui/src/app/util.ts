@@ -1,3 +1,4 @@
+import { Bear } from "./model/bear"
 import { Cupid } from "./model/cupid"
 import { Guard } from "./model/guard"
 import { HiddenWerewolf } from "./model/hiddenWerewolf"
@@ -45,6 +46,8 @@ export default class Utils {
         return new Thief()
       case 'cupid':
         return new Cupid()
+      case 'bear':
+        return new Bear()
       default:
         return null
     }

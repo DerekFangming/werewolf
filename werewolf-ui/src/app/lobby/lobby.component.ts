@@ -18,7 +18,8 @@ import { HiddenWerewolf } from '../model/hiddenWerewolf';
 import { IntroDialogComponent } from '../intro-dialog/intro-dialog.component';
 import { Thief } from '../model/thief';
 import Utils from '../util';
-import { Cupid } from '../model/cupid';
+import { Cupid } from '../model/cupid'; 
+import { Bear } from '../model/bear';
 
 @Component({
   selector: 'app-lobby',
@@ -109,7 +110,7 @@ export class LobbyComponent implements OnInit {
       new WerewolfKing(), new WerewolfQueen(), new HiddenWerewolf(),
       new Villager({selected: true}), new Villager({selected: true}), new Villager(), new Villager(), new Villager(), new Pervert(),
       new Seer({selected: true}), new Witch({selected: true}), new Hunter(), new Guard(), new Idiot(), new Knight(),
-      new Thief(), new Cupid()]
+      new Thief(), new Cupid(), new Bear()]
   }
 
   confirmCreateGame() {
@@ -301,28 +302,57 @@ export class LobbyComponent implements OnInit {
     }
 
     if (isHost) {
+      let killed = []
       if (actionResult != '') actionResult = '\n' + actionResult
       if ('witchSave' in this.gameState.actions) {
         if ('guardProtect' in this.gameState.actions && this.gameState.actions['witchSave'] == this.gameState.actions['guardProtect']) {
-          this.confirmModel.showDialog('昨晚结果', `昨晚死亡的玩家为 ${this.gameState.playerPosition[this.gameState.actions['werewolfKill']]} 号${actionResult}`, {}, true)
-        } else {
-          this.confirmModel.showDialog('昨晚结果', `昨晚是平安夜${actionResult}`, {}, true)
+          killed.push(this.gameState.actions['werewolfKill'])
         }
       } else if ('witchKill' in this.gameState.actions) {
-        let witchKill = this.gameState.playerPosition[this.gameState.actions['witchKill']]
-  
-        if ('guardProtect' in this.gameState.actions && this.gameState.actions['werewolfKill'] == this.gameState.actions['guardProtect']) {
-          this.confirmModel.showDialog('昨晚结果', `昨晚死亡的玩家为 ${witchKill} 号${actionResult}`, {}, true)
+        if ('guardProtect' in this.gameState.actions) {
+          if (this.gameState.actions['witchKill'] == this.gameState.actions['guardProtect']) {
+            killed.push(this.gameState.actions['werewolfKill'])
+          } else if (this.gameState.actions['werewolfKill'] == this.gameState.actions['guardProtect']) {
+            killed.push(this.gameState.actions['witchKill'])
+          } else {
+            if (this.gameState.actions['werewolfKill'] == this.gameState.actions['witchKill']) {
+              killed.push(this.gameState.actions['werewolfKill'])
+            } else {
+              killed.push(this.gameState.actions['werewolfKill'])
+              killed.push(this.gameState.actions['witchKill'])
+            }
+          }
         } else {
-          let wolfKill = this.gameState.playerPosition[this.gameState.actions['werewolfKill']]
-          this.confirmModel.showDialog('昨晚结果', `昨晚死亡的玩家为 ${wolfKill} 号和 ${witchKill} 号${actionResult}`, {}, true)
+          if (this.gameState.actions['werewolfKill'] == this.gameState.actions['witchKill']) {
+            killed.push(this.gameState.actions['werewolfKill'])
+          } else {
+            killed.push(this.gameState.actions['werewolfKill'])
+            killed.push(this.gameState.actions['witchKill'])
+          }
         }
       } else {
-        if ('guardProtect' in this.gameState.actions && this.gameState.actions['werewolfKill'] == this.gameState.actions['guardProtect']) {
-          this.confirmModel.showDialog('昨晚结果', `昨晚是平安夜${actionResult}`, {}, true)
-        } else {
-          this.confirmModel.showDialog('昨晚结果', `昨晚死亡的玩家为 ${this.gameState.playerPosition[this.gameState.actions['werewolfKill']]} 号${actionResult}`, {}, true)
+        if (!('guardProtect' in this.gameState.actions) || this.gameState.actions['werewolfKill'] != this.gameState.actions['guardProtect']) {
+          killed.push(this.gameState.actions['werewolfKill'])
         }
+      }
+
+      // Check cupid
+      if ('cupidChoose' in this.gameState.actions && killed.length > 0) {
+        let linkedIds = this.gameState.actions['cupidChoose'].split(',')
+        if (killed.includes(linkedIds[0]) && !killed.includes(linkedIds[1])) {
+          killed.push(linkedIds[1])
+        }
+        if (killed.includes(linkedIds[1]) && !killed.includes(linkedIds[0])) {
+          killed.push(linkedIds[0])
+        }
+      }
+
+      // Show results
+      if (killed.length == 0) {
+        this.confirmModel.showDialog('昨晚结果', `昨晚是平安夜${actionResult}`, {}, true)
+      } else {
+        let killedPlayers = killed.map(k => this.gameState.playerPosition[k] + '号').join('，')
+        this.confirmModel.showDialog('昨晚结果', `昨晚死亡的玩家为 ${killedPlayers}${actionResult}`, {}, true)
       }
     } else {
       if (this.gameState.getSelfCharacter().type == 'werewolfQueen') {
