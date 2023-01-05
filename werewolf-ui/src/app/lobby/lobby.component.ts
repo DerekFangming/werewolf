@@ -350,16 +350,29 @@ export class LobbyComponent implements OnInit {
       let bear = this.gameState.players.find(p => p.character.type == 'bear')
       let bearResult = ''
       if (bear != null) {
-        let idx = this.gameState.playerPosition[bear.id] - 1
-        let lastIdx = this.gameState.players.length - 1
-
-        let left = idx > 0 ? this.gameState.players[idx - 1] : this.gameState.players[lastIdx]
-        let right = idx == lastIdx ? this.gameState.players[0] : this.gameState.players[idx + 1]
-
-        if (left.character.isWolf || right.character.isWolf) {
-          bearResult = '<br />' + '昨晚熊咆哮了'
-        } else {
+        if (killed.includes(bear.id)) {
           bearResult = '<br />' + '昨晚熊没有咆哮'
+        } else {
+          let idx = this.gameState.playerPosition[bear.id] - 1
+          let lastIdx = this.gameState.players.length - 1
+  
+          let left = null, right = null
+          for (let i = 1; i < this.gameState.characters.length; i ++) {
+            if (left == null) {
+              let leftIdx = idx - i >= 0 ? idx - i : idx - i + this.gameState.players.length
+              if (!killed.includes(this.gameState.players[leftIdx].id)) left = this.gameState.players[leftIdx]
+            }
+            if (right == null) {
+              let rightIdx = idx + i <= lastIdx ? idx + i : idx + i - this.gameState.players.length
+              if (!killed.includes(this.gameState.players[rightIdx].id)) right = this.gameState.players[rightIdx]
+            }
+          }
+  
+          if ((left != null && right != null) && (left.character.isWolf || right.character.isWolf)) {
+            bearResult = '<br />' + '昨晚熊咆哮了'
+          } else {
+            bearResult = '<br />' + '昨晚熊没有咆哮'
+          }
         }
       }
 
