@@ -283,7 +283,6 @@ export class LobbyComponent implements OnInit {
     } else if (character.type == 'hiddenWerewolf') {
       let werewolfs = ''
       for (let p in this.gameState.players) {
-        console.log(this.gameState.players[p])
         if (this.gameState.players[p].character.isWolf) {
           if (werewolfs != '') werewolfs += '，'
           werewolfs += (parseInt(p) + 1) + '号' 
@@ -303,7 +302,7 @@ export class LobbyComponent implements OnInit {
 
     if (isHost) {
       let killed = []
-      if (actionResult != '') actionResult = '\n' + actionResult
+      if (actionResult != '') actionResult = '<br />' + actionResult
       if ('witchSave' in this.gameState.actions) {
         if ('guardProtect' in this.gameState.actions && this.gameState.actions['witchSave'] == this.gameState.actions['guardProtect']) {
           killed.push(this.gameState.actions['werewolfKill'])
@@ -347,12 +346,29 @@ export class LobbyComponent implements OnInit {
         }
       }
 
+      // Check bear
+      let bear = this.gameState.players.find(p => p.character.type == 'bear')
+      let bearResult = ''
+      if (bear != null) {
+        let idx = this.gameState.playerPosition[bear.id] - 1
+        let lastIdx = this.gameState.players.length - 1
+
+        let left = idx > 0 ? this.gameState.players[idx - 1] : this.gameState.players[lastIdx]
+        let right = idx == lastIdx ? this.gameState.players[0] : this.gameState.players[idx + 1]
+
+        if (left.character.isWolf || right.character.isWolf) {
+          bearResult = '<br />' + '昨晚熊咆哮了'
+        } else {
+          bearResult = '<br />' + '昨晚熊没有咆哮'
+        }
+      }
+
       // Show results
       if (killed.length == 0) {
-        this.confirmModel.showDialog('昨晚结果', `昨晚是平安夜${actionResult}`, {}, true)
+        this.confirmModel.showDialog('昨晚结果', `昨晚是平安夜${bearResult}${actionResult}`, {}, true)
       } else {
         let killedPlayers = killed.map(k => this.gameState.playerPosition[k] + '号').join('，')
-        this.confirmModel.showDialog('昨晚结果', `昨晚死亡的玩家为 ${killedPlayers}${actionResult}`, {}, true)
+        this.confirmModel.showDialog('昨晚结果', `昨晚死亡的玩家为 ${killedPlayers}${bearResult}${actionResult}`, {}, true)
       }
     } else {
       if (this.gameState.getSelfCharacter().type == 'werewolfQueen') {

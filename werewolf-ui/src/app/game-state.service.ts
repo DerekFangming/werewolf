@@ -16,8 +16,9 @@ export class GameStateService {
   playerId = ''
   gameId = ''
   hostId = ''
-  characters = ''
+  characterDetails = ''
   turn = ''
+  characters = []
   playerPosition = {}
   players = []
   actions = {}
@@ -49,8 +50,9 @@ export class GameStateService {
     if (gameId == '') {
       this.gameId = ''
       this.hostId = ''
-      this.characters = ''
+      this.characterDetails = ''
       this.turn = ''
+      this.characters = []
       this.playerPosition = {}
       this.players = []
       this.actions = {}
@@ -75,6 +77,7 @@ export class GameStateService {
       return
     }
     let m = new Map()
+    this.characters = characters
     this.players = []
     for (let c of characters) {
       m.has(c) ? m.set(c, m.get(c) + 1) : m.set(c, 1)
@@ -84,12 +87,12 @@ export class GameStateService {
     // Two players less if thief exists
     if (characters.includes('thief')) this.players = this.players.slice(0, -2)
 
-    this.characters = ''
+    this.characterDetails = ''
     for (const [key, value] of m) {
-      if (this.characters != '') this.characters += ', '
+      if (this.characterDetails != '') this.characterDetails += ', '
 
-      this.characters += Utils.parseCharactor(key).name
-      if (value > 1) this.characters += 'X' + value
+      this.characterDetails += Utils.parseCharactor(key).name
+      if (value > 1) this.characterDetails += 'X' + value
     }
 
     for (let p in players) {
