@@ -290,6 +290,17 @@ export class LobbyComponent implements OnInit {
         }
       }
       return character.note.replace(/\{0\}/g, werewolfs)
+    } else if (character.type == 'fox') {
+      let killed = this.findKilledPlayerIds()
+      let tails = 9
+      for (let dead of killed) {
+        let idx = this.gameState.playerPosition[dead] - 1
+        let category = this.gameState.players[idx].character.category
+        if (category == 'god') tails -= 2
+        if (category == 'human') tails -= 1
+      }
+
+      return character.note.replace(/\{0\}/g, tails)
     } else {
       return character.note
     }
@@ -302,39 +313,8 @@ export class LobbyComponent implements OnInit {
     }
 
     if (isHost) {
-      let killed = []
+      let killed = this.findKilledPlayerIds()
       if (actionResult != '') actionResult = '<br />' + actionResult
-      if ('witchSave' in this.gameState.actions) {
-        if ('guardProtect' in this.gameState.actions && this.gameState.actions['witchSave'] == this.gameState.actions['guardProtect']) {
-          killed.push(this.gameState.actions['werewolfKill'])
-        }
-      } else if ('witchKill' in this.gameState.actions) {
-        if ('guardProtect' in this.gameState.actions) {
-          if (this.gameState.actions['witchKill'] == this.gameState.actions['guardProtect']) {
-            killed.push(this.gameState.actions['werewolfKill'])
-          } else if (this.gameState.actions['werewolfKill'] == this.gameState.actions['guardProtect']) {
-            killed.push(this.gameState.actions['witchKill'])
-          } else {
-            if (this.gameState.actions['werewolfKill'] == this.gameState.actions['witchKill']) {
-              killed.push(this.gameState.actions['werewolfKill'])
-            } else {
-              killed.push(this.gameState.actions['werewolfKill'])
-              killed.push(this.gameState.actions['witchKill'])
-            }
-          }
-        } else {
-          if (this.gameState.actions['werewolfKill'] == this.gameState.actions['witchKill']) {
-            killed.push(this.gameState.actions['werewolfKill'])
-          } else {
-            killed.push(this.gameState.actions['werewolfKill'])
-            killed.push(this.gameState.actions['witchKill'])
-          }
-        }
-      } else {
-        if (!('guardProtect' in this.gameState.actions) || this.gameState.actions['werewolfKill'] != this.gameState.actions['guardProtect']) {
-          killed.push(this.gameState.actions['werewolfKill'])
-        }
-      }
 
       // Check cupid
       if ('cupidChoose' in this.gameState.actions && killed.length > 0) {
@@ -392,6 +372,43 @@ export class LobbyComponent implements OnInit {
     }
   }
 
+  findKilledPlayerIds() {
+    let killed = []
+    if ('witchSave' in this.gameState.actions) {
+      if ('guardProtect' in this.gameState.actions && this.gameState.actions['witchSave'] == this.gameState.actions['guardProtect']) {
+        killed.push(this.gameState.actions['werewolfKill'])
+      }
+    } else if ('witchKill' in this.gameState.actions) {
+      if ('guardProtect' in this.gameState.actions) {
+        if (this.gameState.actions['witchKill'] == this.gameState.actions['guardProtect']) {
+          killed.push(this.gameState.actions['werewolfKill'])
+        } else if (this.gameState.actions['werewolfKill'] == this.gameState.actions['guardProtect']) {
+          killed.push(this.gameState.actions['witchKill'])
+        } else {
+          if (this.gameState.actions['werewolfKill'] == this.gameState.actions['witchKill']) {
+            killed.push(this.gameState.actions['werewolfKill'])
+          } else {
+            killed.push(this.gameState.actions['werewolfKill'])
+            killed.push(this.gameState.actions['witchKill'])
+          }
+        }
+      } else {
+        if (this.gameState.actions['werewolfKill'] == this.gameState.actions['witchKill']) {
+          killed.push(this.gameState.actions['werewolfKill'])
+        } else {
+          killed.push(this.gameState.actions['werewolfKill'])
+          killed.push(this.gameState.actions['witchKill'])
+        }
+      }
+    } else {
+      if (!('guardProtect' in this.gameState.actions) || this.gameState.actions['werewolfKill'] != this.gameState.actions['guardProtect']) {
+        killed.push(this.gameState.actions['werewolfKill'])
+      }
+    }
+
+    return killed
+  }
+
   restartGame() {
     this.confirmModel.showDialog('重新发牌', '请确认使用同样角色配置重新开始游戏', {op: 'restartGame'})
   }
@@ -429,7 +446,10 @@ export class LobbyComponent implements OnInit {
 
   debug() {
     // console.log(this.gameState.players)
-    this.ws.send(`{"op": "restartGame"}`)
+    let i = 1
+    for (let p of this.gameState.players) {
+      console.log(i ++ + ': ' + p.character.type)
+    }
   }
 
 }

@@ -22,7 +22,8 @@ const turnOrder = {
   seer: 6,
   witch: 7,
   hunter: 8,
-  guard: 9
+  guard: 9,
+  fox: 10
 }
 
 const wss = new ws.Server({
