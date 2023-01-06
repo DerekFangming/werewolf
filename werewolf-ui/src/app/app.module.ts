@@ -10,7 +10,7 @@ import { ProfileDialogComponent } from './profile-dialog/profile-dialog.componen
 import { HttpClientModule } from '@angular/common/http'
 import { FormsModule } from '@angular/forms'
 import { BrowserModule } from '@angular/platform-browser';
-import { SettingsDialogComponent } from './settings-dialog/settings-dialog.component';
+import { AnnouncerDialogComponent } from './announcer-dialog/announcer-dialog.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +19,7 @@ import { SettingsDialogComponent } from './settings-dialog/settings-dialog.compo
     ConfirmDialogComponent,
     IntroDialogComponent,
     ProfileDialogComponent,
-    SettingsDialogComponent
+    AnnouncerDialogComponent
   ],
   imports: [
     BrowserModule,

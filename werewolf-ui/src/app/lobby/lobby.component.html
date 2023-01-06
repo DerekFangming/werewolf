@@ -1,17 +1,22 @@
-<nav class="navbar navbar-light bg-light justify-content-between" id="body">
+<nav class="navbar navbar-light bg-light justify-content-between sticky-top" id="body">
   <div class="container">
-    <div *ngIf="gameState.hostId != gameState.playerId" style="min-width: 80px;">
+    <div style="min-width: 80px;">
       <button *ngIf="gameState.state == 'game'" type="button" class="btn btn-outline-danger"
-       (click)="confirmModel.showDialog('退出游戏', '确定退出游戏？', {'op': 'leaveGame'})">退出</button>
-    </div>
-    <div *ngIf="gameState.hostId == gameState.playerId" style="min-width: 60px;">
-       <button *ngIf="gameState.state == 'game'" type="button" class="btn btn-outline-secondary"
-       (click)="settingsModel.showDialog()">房间设置</button>
+       (click)="confirmModel.showDialog('退出游戏', gameState.hostId == gameState.playerId ? '确定退出游戏？你是房主，退出游戏后房间内全部玩家也会被强行退出游戏。' : '确定退出游戏？', {'op': 'leaveGame'})">退出</button>
     </div>
     <a class="navbar-brand">{{ gameState.state == 'game' ? '房间号: ' + gameState.gameId : '狼人杀发牌助手' }} </a>
-    <div style="min-width: 60px;">
-      <button *ngIf="gameState.state == 'game'" type="button" class="btn btn-outline-secondary"
-        (click)="profileModel.showDialog()">玩家信息</button>
+    <div style="min-width: 80px;">
+      <div *ngIf="gameState.state == 'game'" class="btn-group" role="group">
+        <button id="toolsGroup" type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+          设置
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="toolsGroup">
+          <li><a class="dropdown-item" (click)="profileModel.showDialog()">玩家信息</a></li>
+          <li><a class="dropdown-item mt-2" (click)="announcerModel.showDialog()">上帝助手</a></li>
+          <li *ngIf="gameState.hostId == gameState.playerId"><a class="dropdown-item mt-2"
+            (click)="confirmModel.showDialog('确认重新开始', '确认重新发牌并重置游戏进度。游戏将被重置为查看身份回合。', {'op': 'restartGame'})">重新开始</a></li>
+        </ul>
+      </div>
     </div>
   </div>
 </nav>
@@ -253,8 +258,7 @@
 </ng-template>
 
 <app-profile-dialog #profileModel (onSave)="onProfileSave($event)"></app-profile-dialog>
-<app-settings-dialog #settingsModel (onRestart)="confirmModel.showDialog('确认重新开始', '确认重新发牌并重置游戏进度。游戏将被重置为查看身份回合。', {'op': 'restartGame'})"
-  (onLeave)="confirmModel.showDialog('退出游戏', '确定退出游戏？你是房主，退出游戏后房间内全部玩家也会被强行退出游戏。', {'op': 'leaveGame'})"></app-settings-dialog>
+<app-announcer-dialog #announcerModel></app-announcer-dialog>
 <app-intro-dialog #introModel></app-intro-dialog>
 <app-confirm-dialog #confirmModel (onConfirm)="onConfirm($event)"></app-confirm-dialog>
 
