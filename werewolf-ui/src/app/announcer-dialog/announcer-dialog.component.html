@@ -16,7 +16,18 @@
 
     <ol style="margin-left:-10px">
       <li *ngFor="let a of announcements; let ind = index" [innerHTML]="a"></li>
-    </ol> 
+    </ol>
+
+    <div class="row">
+      <div class="col-12">
+        <p class="lead mb-0">记事本（刷新网页会清空）:</p>
+      </div>
+      <div class="col-12">
+        <div class="form-floating">
+          <textarea class="form-control pt-2" style="height: 200px"></textarea>
+        </div>
+      </div>
+    </div>
 
   </div>
   <div class="modal-footer">
