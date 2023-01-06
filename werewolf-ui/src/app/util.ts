@@ -1,5 +1,6 @@
 import { Bear } from "./model/bear"
 import { Cupid } from "./model/cupid"
+import { Fox } from "./model/fox"
 import { Guard } from "./model/guard"
 import { HiddenWerewolf } from "./model/hiddenWerewolf"
 import { Hunter } from "./model/hunter"
@@ -48,6 +49,8 @@ export default class Utils {
         return new Cupid()
       case 'bear':
         return new Bear()
+      case 'fox':
+        return new Fox()
       default:
         return null
     }

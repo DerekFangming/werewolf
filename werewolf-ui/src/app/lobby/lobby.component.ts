@@ -20,6 +20,7 @@ import { Thief } from '../model/thief';
 import Utils from '../util';
 import { Cupid } from '../model/cupid'; 
 import { Bear } from '../model/bear';
+import { Fox } from '../model/fox';
 
 @Component({
   selector: 'app-lobby',
@@ -110,7 +111,7 @@ export class LobbyComponent implements OnInit {
       new WerewolfKing(), new WerewolfQueen(), new HiddenWerewolf(),
       new Villager({selected: true}), new Villager({selected: true}), new Villager(), new Villager(), new Villager(), new Pervert(),
       new Seer({selected: true}), new Witch({selected: true}), new Hunter(), new Guard(), new Idiot(), new Knight(),
-      new Thief(), new Cupid(), new Bear()]
+      new Thief(), new Cupid(), new Bear(), new Fox()]
   }
 
   confirmCreateGame() {
