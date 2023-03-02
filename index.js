@@ -98,7 +98,7 @@ wss.on('connection', function connection(player) {
                 if (p == player.id) {
                   player.send(gameDetailsOp(game, cmd.gameId))
                 } else {
-                  players.get(p).send(`{"op": "joinGame", "playerId": "${player.id}"}`)
+                  players.get(p).send(`{"op": "joinGame", "playerId": "${player.id}","name": "${player.profileName}", "avatar": "${player.profileAvatar}"}`)
                 }
               }
             }
@@ -176,9 +176,7 @@ wss.on('connection', function connection(player) {
             game.players[player.id].name = cmd.name
             game.players[player.id].avatar = cmd.avatar
             for (let p in game.players) {
-              if (game.players[player.id].position) {
-                players.get(p).send(`{"op": "takeSeat", "position": ${game.players[player.id].position}, "playerId": "${player.id}", "name": "${player.profileName}", "avatar": "${player.profileAvatar}"}`)
-              }
+              players.get(p).send(`{"op": "updateProfile", "playerId": "${player.id}", "name": "${player.profileName}", "avatar": "${player.profileAvatar}"}`)
             }
           }
           break

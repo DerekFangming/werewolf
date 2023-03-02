@@ -91,11 +91,14 @@ export class LobbyComponent implements OnInit {
             that.modalService.open(that.errModal, { centered: true })
           }
           break
+        case 'updateProfile':
+          that.gameState.updateProfile(cmd.playerId, cmd.name, cmd.avatar)
+          break
         case 'takeSeat':
           that.gameState.takeSeat(cmd.playerId, cmd.position, cmd.name, cmd.avatar)
           break
         case 'joinGame':
-          that.gameState.joinGame(cmd.playerId)
+          that.gameState.joinGame(cmd.playerId, cmd.name, cmd.avatar)
           break
         case 'leaveGame':
           that.gameState.leaveGame(cmd.playerId)

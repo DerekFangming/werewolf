@@ -144,6 +144,19 @@ export class GameStateService {
     return this.cookieService.get(GameStateService.playerAvatarCookieName)
   }
 
+  updateProfile(playerId: string, name: string, avatar: string) {
+    let player = this.allPlayers.find(p => p.id == playerId)
+    if (player != null) {
+      player.name = name
+      player.avatar = avatar
+    }
+
+    if (playerId in this.playerPosition) {
+      this.seats[this.playerPosition[playerId] - 1].name = name
+      this.seats[this.playerPosition[playerId] - 1].avatar = avatar
+    }
+  }
+
   takeSeat(playerId: string, position: number, name: string, avatar: string) {
     let player = this.allPlayers.find(p => p.id == playerId)
     if (player != null) {
@@ -167,8 +180,8 @@ export class GameStateService {
     }
   }
 
-  joinGame(playerId: string) {
-    this.allPlayers.push({id: playerId})
+  joinGame(playerId: string, name: string, avatar: string) {
+    this.allPlayers.push({id: playerId, name: name, avatar: avatar})
   }
 
   leaveGame(playerId: string) {
