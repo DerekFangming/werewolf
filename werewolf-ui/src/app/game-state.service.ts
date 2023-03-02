@@ -20,7 +20,8 @@ export class GameStateService {
   turn = ''
   characters = []
   playerPosition = {}
-  players = []
+  allPlayers = []
+  seats = []
   actions = {}
   thiefOpt = []
   cupidSelection = []
@@ -54,7 +55,8 @@ export class GameStateService {
       this.turn = ''
       this.characters = []
       this.playerPosition = {}
-      this.players = []
+      this.seats = []
+      this.allPlayers = []
       this.actions = {}
       this.thiefOpt = []
       this.cupidSelection = []
@@ -78,14 +80,15 @@ export class GameStateService {
     }
     let m = new Map()
     this.characters = characters
-    this.players = []
+    this.seats = []
+    this.allPlayers = []
     for (let c of characters) {
       m.has(c) ? m.set(c, m.get(c) + 1) : m.set(c, 1)
-      this.players.push(new Player())
+      this.seats.push(new Player())
     }
 
     // Two players less if thief exists
-    if (characters.includes('thief')) this.players = this.players.slice(0, -2)
+    if (characters.includes('thief')) this.seats = this.seats.slice(0, -2)
 
     this.characterDetails = ''
     for (const [key, value] of m) {
@@ -96,13 +99,14 @@ export class GameStateService {
     }
 
     for (let p in players) {
+      this.allPlayers.push({id: p, name: players[p].name, avatar: players[p].avatar, position: players[p].position})
       if ('position' in players[p]) {
         this.takeSeat(p, players[p].position, players[p].name, players[p].avatar)
       }
       if ('character' in players[p]) {
         if (p in this.playerPosition) {
-          this.players[this.playerPosition[p] - 1].id = p
-          this.players[this.playerPosition[p] - 1].character = Utils.parseCharactor(players[p].character)
+          this.seats[this.playerPosition[p] - 1].id = p
+          this.seats[this.playerPosition[p] - 1].character = Utils.parseCharactor(players[p].character)
         }
       }
     }
@@ -112,7 +116,7 @@ export class GameStateService {
       this.actions = actions
 
       if (actions.thiefChoose) {
-        for (let p of this.players) {
+        for (let p of this.seats) {
           if (p.character.type == 'thief') {
             p.character = Utils.parseCharactor(actions.thiefChoose)
             break
@@ -141,24 +145,54 @@ export class GameStateService {
   }
 
   takeSeat(playerId: string, position: number, name: string, avatar: string) {
+    let player = this.allPlayers.find(p => p.id == playerId)
+    if (player != null) {
+      player.name = name
+      player.position = position
+      player.avatar = avatar
+    }
+
     if (playerId in this.playerPosition) {
-      this.players[this.playerPosition[playerId] - 1].isOcupied = false
+      this.seats[this.playerPosition[playerId] - 1].isOcupied = false
       if (this.playerId == playerId) {
-        this.players[this.playerPosition[playerId] - 1].isSelf = false
+        this.seats[this.playerPosition[playerId] - 1].isSelf = false
       }
     }
     this.playerPosition[playerId] = position
-    this.players[position - 1].isOcupied = true
-    this.players[position - 1].name = name
-    this.players[position - 1].avatar = avatar
+    this.seats[position - 1].isOcupied = true
+    this.seats[position - 1].name = name
+    this.seats[position - 1].avatar = avatar
     if (this.playerId == playerId) {
-      this.players[position - 1].isSelf = true
+      this.seats[position - 1].isSelf = true
     }
+  }
+
+  joinGame(playerId: string) {
+    this.allPlayers.push({id: playerId})
+  }
+
+  leaveGame(playerId: string) {
+    this.allPlayers = this.allPlayers.filter(p => p.id != playerId)
+
+    if (playerId in this.playerPosition) {
+      this.seats[this.playerPosition[playerId] - 1].isOcupied = false
+      this.seats[this.playerPosition[playerId] - 1].isSelf = false
+      // if (this.playerId == playerId) {
+      //   this.seats[this.playerPosition[playerId] - 1].isSelf = false
+      // }
+    }
+    // this.playerPosition[playerId] = position
+    // this.seats[position - 1].isOcupied = true
+    // this.seats[position - 1].name = name
+    // this.seats[position - 1].avatar = avatar
+    // if (this.playerId == playerId) {
+    //   this.seats[position - 1].isSelf = true
+    // }
   }
 
   getSelfCharacter() {
     let position = this.playerPosition[this.playerId]
-    return this.players[position - 1].character
+    return this.seats[position - 1].character
   }
 
   getThiefChoices() {
@@ -194,7 +228,7 @@ export class GameStateService {
       })
     }
     if (action == 'thiefChoose') {
-      for (let p of this.players) {
+      for (let p of this.seats) {
         if (p.character.type == 'thief') {
           p.character = Utils.parseCharactor(targetId)
           break

@@ -6,7 +6,7 @@ import { Seer } from '../model/seer';
 import { Villager } from '../model/villager';
 import { Werewolf } from '../model/werewolf';
 import { Witch } from '../model/witch';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {NgbModal, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { environment } from 'src/environments/environment';
 import { Idiot } from '../model/idiot';
@@ -42,10 +42,18 @@ export class LobbyComponent implements OnInit {
   @ViewChild('confirmModel') confirmModel: ConfirmDialogComponent
   @ViewChild('profileModal', { static: true}) profileModal: TemplateRef<any>
 
+  modalRef: NgbModalRef
+  @ViewChild('playersModal', { static: true}) playersModal: TemplateRef<any>
+
   constructor(public gameState: GameStateService, private modalService: NgbModal, private elementRef:ElementRef) { }
 
   ngOnInit() {
     this.connect()
+  }
+
+  managePlayers() {
+    console.log(this.gameState.allPlayers)
+    this.modalRef = this.modalService.open(this.playersModal, { centered: true })
   }
 
   connect() {
@@ -85,6 +93,12 @@ export class LobbyComponent implements OnInit {
           break
         case 'takeSeat':
           that.gameState.takeSeat(cmd.playerId, cmd.position, cmd.name, cmd.avatar)
+          break
+        case 'joinGame':
+          that.gameState.joinGame(cmd.playerId)
+          break
+        case 'leaveGame':
+          that.gameState.leaveGame(cmd.playerId)
           break
         case 'endTurn':
           that.gameState.endTurn(cmd.turn, cmd.action, cmd.target)
@@ -154,7 +168,7 @@ export class LobbyComponent implements OnInit {
 
   selectSeat(seatInd: number) {
     if (this.gameState.turn == '') {
-      if (!this.gameState.players[seatInd].isOcupied) {
+      if (!this.gameState.seats[seatInd].isOcupied) {
         if (environment.production) {
           this.confirmModel.showDialog('入座', '确定在' + (seatInd+1) + '号入座？', {'op': 'takeSeat', 'position': seatInd+1})
         } else {
@@ -165,7 +179,7 @@ export class LobbyComponent implements OnInit {
       let character = this.gameState.getSelfCharacter()
       if (character.type == 'thief') return
       if (this.gameState.turn  == 'cupid') {
-        let playerId = this.gameState.players[seatInd].id
+        let playerId = this.gameState.seats[seatInd].id
         if (this.gameState.cupidSelection.includes(playerId)) {
           this.gameState.cupidSelection = this.gameState.cupidSelection.filter(i => i != playerId)
         } else {
@@ -184,14 +198,14 @@ export class LobbyComponent implements OnInit {
         let position = this.gameState.playerPosition[this.gameState.actions['werewolfKill']]
         if (position == seatInd + 1) {
           this.confirmModel.showDialog(character.actionTitle.replace(/\{0\}/, '解药'), character.actionMessage.replace(/\{0\}/, seatInd+1).replace(/\{1\}/, '解药'),
-          {'op': 'endTurn', 'action': 'witchSave', 'target': this.gameState.players[seatInd].id}, false, '确认，并结束回合')
+          {'op': 'endTurn', 'action': 'witchSave', 'target': this.gameState.seats[seatInd].id}, false, '确认，并结束回合')
         } else {
           this.confirmModel.showDialog(character.actionTitle.replace(/\{0\}/, '毒药'), character.actionMessage.replace(/\{0\}/, seatInd+1).replace(/\{1\}/, '毒药'),
-          {'op': 'endTurn', 'action': 'witchKill', 'target': this.gameState.players[seatInd].id}, false, '确认，并结束回合')
+          {'op': 'endTurn', 'action': 'witchKill', 'target': this.gameState.seats[seatInd].id}, false, '确认，并结束回合')
         }
       } else {
         this.confirmModel.showDialog(character.actionTitle, character.actionMessage.replace(/\{0\}/, seatInd+1),
-          {'op': 'endTurn', 'action': character.actionName, 'target': this.gameState.players[seatInd].id}, false, '确认，并结束回合')
+          {'op': 'endTurn', 'action': character.actionName, 'target': this.gameState.seats[seatInd].id}, false, '确认，并结束回合')
       }
     }
   }
@@ -204,7 +218,7 @@ export class LobbyComponent implements OnInit {
   }
 
   startGame() {
-    if (this.gameState.players.filter(p => !p.isOcupied).length > 0) {
+    if (this.gameState.seats.filter(p => !p.isOcupied).length > 0) {
       this.error = '所有人选择座位之后才可以开始发牌'
       this.modalService.open(this.errModal, { centered: true })
     } else {
@@ -283,8 +297,8 @@ export class LobbyComponent implements OnInit {
       return character.note.replace(/\{0\}/g, '可以')
     } else if (character.type == 'hiddenWerewolf') {
       let werewolfs = ''
-      for (let p in this.gameState.players) {
-        if (this.gameState.players[p].character.isWolf) {
+      for (let p in this.gameState.seats) {
+        if (this.gameState.seats[p].character.isWolf) {
           if (werewolfs != '') werewolfs += '，'
           werewolfs += (parseInt(p) + 1) + '号' 
         }
@@ -295,7 +309,7 @@ export class LobbyComponent implements OnInit {
       let tails = 9
       for (let dead of killed) {
         let idx = this.gameState.playerPosition[dead] - 1
-        let category = this.gameState.players[idx].character.category
+        let category = this.gameState.seats[idx].character.category
         if (category == 'god') tails -= 2
         if (category == 'human') tails -= 1
       }
@@ -318,7 +332,8 @@ export class LobbyComponent implements OnInit {
 
       // Check cupid
       if ('cupidChoose' in this.gameState.actions && killed.length > 0) {
-        let linkedIds = this.gameState.actions['cupidChoose'].split(',')
+        let cupidChoose:any = this.gameState.actions['cupidChoose']
+        let linkedIds = cupidChoose.split(',')
         if (killed.includes(linkedIds[0]) && !killed.includes(linkedIds[1])) {
           killed.push(linkedIds[1])
         }
@@ -328,24 +343,24 @@ export class LobbyComponent implements OnInit {
       }
 
       // Check bear
-      let bear = this.gameState.players.find(p => p.character.type == 'bear')
+      let bear = this.gameState.seats.find(p => p.character.type == 'bear')
       let bearResult = ''
       if (bear != null) {
         if (killed.includes(bear.id)) {
           bearResult = '<br />' + '昨晚熊没有咆哮'
         } else {
           let idx = this.gameState.playerPosition[bear.id] - 1
-          let lastIdx = this.gameState.players.length - 1
+          let lastIdx = this.gameState.seats.length - 1
   
           let left = null, right = null
           for (let i = 1; i < this.gameState.characters.length; i ++) {
             if (left == null) {
-              let leftIdx = idx - i >= 0 ? idx - i : idx - i + this.gameState.players.length
-              if (!killed.includes(this.gameState.players[leftIdx].id)) left = this.gameState.players[leftIdx]
+              let leftIdx = idx - i >= 0 ? idx - i : idx - i + this.gameState.seats.length
+              if (!killed.includes(this.gameState.seats[leftIdx].id)) left = this.gameState.seats[leftIdx]
             }
             if (right == null) {
-              let rightIdx = idx + i <= lastIdx ? idx + i : idx + i - this.gameState.players.length
-              if (!killed.includes(this.gameState.players[rightIdx].id)) right = this.gameState.players[rightIdx]
+              let rightIdx = idx + i <= lastIdx ? idx + i : idx + i - this.gameState.seats.length
+              if (!killed.includes(this.gameState.seats[rightIdx].id)) right = this.gameState.seats[rightIdx]
             }
           }
   
@@ -429,14 +444,18 @@ export class LobbyComponent implements OnInit {
         }
         break
       case 'seerExamine': {
-        let character = this.gameState.players[context.target].character.isWolf ? '坏人' : '好人'
+        let character = this.gameState.seats[context.target].character.isWolf ? '坏人' : '好人'
         this.confirmModel.showDialog('身份检验', `${context.target + 1}号玩家的身份是${character}。`, {op: 'endTurn'}, true, '下一回合')
         break
       }
       case 'restartGame':
         this.ws.send(`{"op": "restartGame"}`)
         break
+      case 'kickPlayer':
+        this.ws.send(`{"op": "kickPlayer", "playerId": "${context.playerId}"}`)
+        break
       default:
+        console.log(`Unknown command: ${context.op}`)
     }
   }
 
@@ -444,10 +463,15 @@ export class LobbyComponent implements OnInit {
     this.ws.send(`{"op": "updateProfile", "name": "${data.name}", "avatar": "${data.avatar}"}`)
   }
 
+  kickPlayer(player: any) {
+    let name = player.name == '' || player.name == null ? '玩家' : player.name
+    let position = player.position ? '入座' + player.position + '号' : '未入坐'
+    this.confirmModel.showDialog('确认踢出玩家', `确认踢出 ${name}, 当前${position}?`, {'op': 'kickPlayer', 'playerId': player.id})
+  }
+
   debug() {
-    // console.log(this.gameState.players)
     let i = 1
-    for (let p of this.gameState.players) {
+    for (let p of this.gameState.seats) {
       console.log(i ++ + ': ' + p.character.type)
     }
   }

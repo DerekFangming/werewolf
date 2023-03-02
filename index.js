@@ -92,7 +92,15 @@ wss.on('connection', function connection(player) {
             } else {
               player.gameId = cmd.gameId
               game.players[player.id] = {name: player.profileName, avatar: player.profileAvatar}
-              player.send(gameDetailsOp(game, cmd.gameId))
+              
+
+              for (let p in game.players) {
+                if (p == player.id) {
+                  player.send(gameDetailsOp(game, cmd.gameId))
+                } else {
+                  players.get(p).send(`{"op": "joinGame", "playerId": "${player.id}"}`)
+                }
+              }
             }
           } else {
             player.send(`{"op": "gameDetails", "error": "房间号${cmd.gameId}不存在"}`)
@@ -111,19 +119,40 @@ wss.on('connection', function connection(player) {
                 }
                 games.delete(gameId)
               } else {
-                // Should we keep player data for him to come back? Game will break at this point
+                for (let p in game.players) {
+                  if (p == player.id) {
+                    player.send(`{"op": "gameDetails", "gameId": ""}`)
+                  } else {
+                    players.get(p).send(`{"op": "leaveGame", "playerId": "${player.id}"}`)
+                  }
+                }
                 delete game.players[player.id]
-                player.send(`{"op": "gameDetails", "gameId": ""}`)
               }
             }
-
             player.gameId = ''
+          }
+          break
+        case 'kickPlayer':
+          gameId = player.gameId
+          if (gameId != '') {
+            if (games.has(gameId)) {
+              let game = games.get(gameId)
+              if (game.hostId == player.id) {
+                for (let p in game.players) {
+                  if (p == cmd.playerId) {
+                    players.get(p).send(`{"op": "gameDetails", "gameId": ""}`)
+                  } else {
+                    players.get(p).send(`{"op": "leaveGame", "playerId": "${cmd.playerId}"}`)
+                  }
+                }
+                delete game.players[cmd.playerId]
+              }
+            }
           }
           break
         case 'gameDetails':
           if (games.has(cmd.gameId)) {
             let game = games.get(cmd.gameId)
-            console.log(JSON.stringify(game.players))
             player.send(gameDetailsOp(game, cmd.gameId))
           } else {
             player.gameId = ''
