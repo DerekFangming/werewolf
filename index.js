@@ -282,18 +282,34 @@ function gameDetailsOp(game, gameId){
 
 
 app.get('/debug', (req, res) => {
-  let status = '<h1>Players</h1>'
+  let status = '<html><head><style>table{font-family: arial, sans-serif; border-collapse: collapse; width: 100%;}td, th{border: 1px solid #dddddd; text-align: left; padding: 8px;}tr:nth-child(even){background-color: #dddddd;}</style></head><body>'
+  status += '<h1>Players</h1><table><tr><th>ID</th><th>Last heartbeat</th><th>Status</th></tr>'
+
+  
+
   for (const [id, p] of players) {
-    status += '<br />' + id + ' - Last heartbeat: ' + p.heatbeat + (p.gameId == '' ? ' - Not in game' : ' - ' + p.gameId)
+    status += '<tr><td>' + id + '</td><td>' + new Date(p.heatbeat).toLocaleString() + '</td><td>' + (p.gameId == '' ? 'Not in game' : p.gameId) + '</td></tr>'
   }
 
-  status += '<br /><br /><h1>Games</h1>'
+  status += '</table><h1>Games</h1>'
   for (const [id, g] of games) {
-    status += '<br />' + id + '<span style="color:red"> Host </span> ' + g.hostId + ' <span style="color:red"> characters </span> ' + JSON.stringify(g.characters)
-    status += '<br /><span style="color:red"> Turn </span> ' + g.turn + ' <span style="color:red"> turnOrder </span> ' + (g.turnOrder == undefined ? '[]' : JSON.stringify(g.turnOrder))
-    status += '<br />' + JSON.stringify(g.players)
-    status += '<br />' + JSON.stringify(g.actions)
+    status += '<table><tr><th>Game ID</th><th>Host ID</th><th>Characters</th><th>Turn</th><th>All Turns</th></tr>'
+    status += '<tr><td>' + id + '</td><td>' + g.hostId + '</td><td>' + (g.characters == null ? '' : g.characters.join()) + '</td><td>' + g.turn + '</td><td>' + (g.turnOrder == null ? 'Done' : g.turnOrder.join()) + '</tr></td>'
+    
+    status +=  '<tr><th>Name</th><th>Id</th><th>Position</th><th>Character</th><th>Avatar</th></tr>'
+    for (const pId in g.players) {
+      let p = g.players[pId]
+      status += '<tr><td>' + (p.name == '' || p.name == null ? '玩家' : p.name) + '</td><td>' + pId + '</td><td>' + (p.position == null ? '未入坐' : p.position) + 
+        '</td><td>' + (p.character == null ? '未选择' : p.character) + '</td><td>' + (p.avatar == '' || p.avatar == null ? '未设置' : p.avatar) + '</tr></td>'
+    }
+
+    status += '<tr><th colspan="2">Action Name</th><th colspan="3">Target ID</th></tr>'
+    for (const name in g.actions) {
+      status += '<tr><td colspan="2">' + name + '</td><td colspan="3">' + g.actions[name] + '</tr></td>'
+    }
+    status += '<br />'
   }
+  status += '</body></html>'
   res.send(status)
 })
 
