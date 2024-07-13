@@ -4,6 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "ui": "cd werewolf-ui && ng serve",
+    "build": "npm i && cd werewolf-ui && npm i && ng build --configuration production",
+    "start": "node .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
