@@ -1,10 +1,16 @@
-import { Component, EventEmitter, OnInit, Output, TemplateRef, ViewChild } from '@angular/core'
-import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap'
+import { CommonModule } from '@angular/common'
+import { Component, EventEmitter, OnInit, Output } from '@angular/core'
+import { FormsModule } from '@angular/forms'
+import { RouterOutlet } from '@angular/router'
+
+declare var $: any
 
 @Component({
   selector: 'app-confirm-dialog',
+  standalone: true,
+  imports: [RouterOutlet, FormsModule, CommonModule],
   templateUrl: './confirm-dialog.component.html',
-  styleUrls: ['./confirm-dialog.component.css']
+  styleUrl: './confirm-dialog.component.css'
 })
 export class ConfirmDialogComponent implements OnInit {
 
@@ -14,11 +20,9 @@ export class ConfirmDialogComponent implements OnInit {
   confirmOnly = false
   confirmText = '确定'
 
-  modalRef: NgbModalRef
-  @ViewChild('confirmModal', { static: true}) confirmModal: TemplateRef<any>
   @Output() onConfirm = new EventEmitter<any>()
   
-  constructor(private modalService: NgbModal) { }
+  constructor() { }
 
   ngOnInit(): void {
   }
@@ -30,16 +34,15 @@ export class ConfirmDialogComponent implements OnInit {
     this.confirmOnly = confirmOnly
     this.confirmText = confirmText
 
-    if (confirmOnly) {
-      this.modalRef = this.modalService.open(this.confirmModal, { centered: true, backdrop: 'static', keyboard: false })
-    } else {
-      this.modalRef = this.modalService.open(this.confirmModal, { centered: true })
-    }
+    $("#confirmModal").modal('show')
   }
 
   confirm(){
-    this.modalRef.close()
-    this.onConfirm.emit(this.context)
+    $("#confirmModal").modal('hide')
+
+    setTimeout(() => {
+      this.onConfirm.emit(this.context)
+    }, 500)
   }
 
 }

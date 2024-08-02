@@ -1,7 +1,7 @@
-import { Character } from "./character";
+import { Character } from "./character"
 
 export class Bear extends Character {
-  type = 'bear'
+  override type = 'bear'
   category = 'god'
   name = '熊'
 

@@ -1,16 +1,16 @@
-import { Character } from "./character";
+import { Character } from "./character"
 
 export class Fox extends Character {
-  type = 'fox'
+  override type = 'fox'
   category = 'god'
   name = '九尾狐'
-  allowNoAction = true
+  override allowNoAction = true
   note = '你还剩{0}条尾巴'
-  startAudio = 'foxStart.mp3'
-  endAudio = 'foxEnd.mp3'
+  override startAudio = 'foxStart.mp3'
+  override endAudio = 'foxEnd.mp3'
 
   public constructor(init?:Partial<Fox>) {
     super()
-    Object.assign(this, init);
+    Object.assign(this, init)
   }
 }

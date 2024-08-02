@@ -1,12 +1,12 @@
-import { Character } from "./character";
+import { Character } from "./character"
 
 export class Idiot extends Character {
-  type = 'idiot'
+  override type = 'idiot'
   category = 'god'
   name = '白痴'
 
   public constructor(init?:Partial<Idiot>) {
     super()
-    Object.assign(this, init);
+    Object.assign(this, init)
   }
 }

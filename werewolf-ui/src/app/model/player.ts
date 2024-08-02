@@ -1,8 +1,9 @@
-import { Character } from "./character";
+import { Character } from "./character"
+import { Villager } from "./villager"
 
 export class Player {
-  character: Character
-  id: string
+  character: Character = new Villager()
+  id: string = ''
   isOcupied = false
   isSelf = false
 

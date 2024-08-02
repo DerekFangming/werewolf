@@ -1,59 +1,59 @@
-import { Component, ElementRef, OnInit, TemplateRef, ViewChild } from '@angular/core'
-import { GameStateService } from '../game-state.service';
-import { Guard } from '../model/guard';
-import { Hunter } from '../model/hunter';
-import { Seer } from '../model/seer';
-import { Villager } from '../model/villager';
-import { Werewolf } from '../model/werewolf';
-import { Witch } from '../model/witch';
-import {NgbModal, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
-import { environment } from 'src/environments/environment';
-import { Idiot } from '../model/idiot';
-import { Knight } from '../model/knight';
-import { Pervert } from '../model/pervert';
-import { WerewolfQueen } from '../model/werewolfQueen';
-import { WerewolfKing } from '../model/werewolfKing';
-import { HiddenWerewolf } from '../model/hiddenWerewolf';
-import { IntroDialogComponent } from '../intro-dialog/intro-dialog.component';
-import { Thief } from '../model/thief';
-import Utils from '../util';
-import { Cupid } from '../model/cupid'; 
-import { Bear } from '../model/bear';
-import { Fox } from '../model/fox';
+import { Component, OnInit, ViewChild } from '@angular/core'
+import { GameStateService } from '../game-state.service'
+import { Guard } from '../model/guard'
+import { Hunter } from '../model/hunter'
+import { Seer } from '../model/seer'
+import { Villager } from '../model/villager'
+import { Werewolf } from '../model/werewolf'
+import { Witch } from '../model/witch'
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component'
+import { Idiot } from '../model/idiot'
+import { Knight } from '../model/knight'
+import { Pervert } from '../model/pervert'
+import { WerewolfQueen } from '../model/werewolfQueen'
+import { WerewolfKing } from '../model/werewolfKing'
+import { HiddenWerewolf } from '../model/hiddenWerewolf'
+import { IntroDialogComponent } from '../intro-dialog/intro-dialog.component'
+import { Thief } from '../model/thief'
+import Utils from '../util'
+import { Cupid } from '../model/cupid'
+import { Bear } from '../model/bear'
+import { Fox } from '../model/fox'
+import { environment } from '../../environments/environment'
+import { ProfileDialogComponent } from '../profile-dialog/profile-dialog.component'
+import { CommonModule } from '@angular/common'
+import { FormsModule } from '@angular/forms'
+import { RouterOutlet } from '@angular/router'
+import { AnnouncerDialogComponent } from '../announcer-dialog/announcer-dialog.component'
+
+declare var $: any
 
 @Component({
   selector: 'app-lobby',
+  standalone: true,
+  imports: [RouterOutlet, FormsModule, CommonModule, ProfileDialogComponent, AnnouncerDialogComponent,
+    IntroDialogComponent, ConfirmDialogComponent],
   templateUrl: './lobby.component.html',
-  styleUrls: ['./lobby.component.css']
+  styleUrl: './lobby.component.css'
 })
 export class LobbyComponent implements OnInit {
 
   gameIdInput = ''
   error = ''
-  ws: WebSocket
-  players = []
-  heartbeatInterval
+  ws: WebSocket | undefined
+  players: any[] = []
+  heartbeatInterval: any
 
   env = environment
 
-  @ViewChild('errModal', { static: true}) errModal: TemplateRef<any>
-  @ViewChild('introModel') introModel: IntroDialogComponent
-  @ViewChild('confirmModel') confirmModel: ConfirmDialogComponent
-  @ViewChild('profileModal', { static: true}) profileModal: TemplateRef<any>
+  @ViewChild('introModel') introModel: IntroDialogComponent | undefined
+  @ViewChild('confirmModel') confirmModel: ConfirmDialogComponent | undefined
+  @ViewChild('profileModel', { static: true}) profileModel: ProfileDialogComponent | undefined
 
-  modalRef: NgbModalRef
-  @ViewChild('playersModal', { static: true}) playersModal: TemplateRef<any>
-
-  constructor(public gameState: GameStateService, private modalService: NgbModal, private elementRef:ElementRef) { }
+  constructor(public gameState: GameStateService) { }
 
   ngOnInit() {
     this.connect()
-  }
-
-  managePlayers() {
-    console.log(this.gameState.allPlayers)
-    this.modalRef = this.modalService.open(this.playersModal, { centered: true })
   }
 
   connect() {
@@ -61,14 +61,14 @@ export class LobbyComponent implements OnInit {
     let that = this
 
     this.ws.onopen = function (event) {
-      that.ws.send(`{"op": "handshake", "playerId": "${that.gameState.getPlayerId()}", "gameId": "${that.gameState.getGameId()}", "name" : "${that.gameState.getName()}", "avatar" : "${that.gameState.getAvatar()}"}`)
+      that.ws?.send(`{"op": "handshake", "playerId": "${that.gameState.getPlayerId()}", "gameId": "${that.gameState.getGameId()}", "name" : "${that.gameState.getName()}", "avatar" : "${that.gameState.getAvatar()}"}`)
 
       // heartbeat
       if (that.heartbeatInterval != undefined) {
         clearInterval(that.heartbeatInterval)
       }
       that.heartbeatInterval = setInterval(function() {
-        if (environment.production) that.ws.send(`{"op": "heartBeat"}`)
+        if (environment.production) that.ws?.send(`{"op": "heartBeat"}`)
       }, 30000)
      
     }
@@ -79,7 +79,7 @@ export class LobbyComponent implements OnInit {
       switch (cmd.op) {
         case 'handshake':
           that.gameState.setplayerIdAndGameId(cmd.playerId, cmd.gameId)
-          if (cmd.gameId != '') that.ws.send(`{"op": "gameDetails", "gameId": "${cmd.gameId}"}`)
+          if (cmd.gameId != '') that.ws?.send(`{"op": "gameDetails", "gameId": "${cmd.gameId}"}`)
           break
         case 'gameDetails':
           if (cmd.error == null) {
@@ -88,7 +88,7 @@ export class LobbyComponent implements OnInit {
           } else {
             that.gameState.setState('lobby')
             that.error = cmd.error
-            that.modalService.open(that.errModal, { centered: true })
+            $("#errModal").modal('show')
           }
           break
         case 'updateProfile':
@@ -118,7 +118,7 @@ export class LobbyComponent implements OnInit {
     }
 
     this.ws.onerror = function (data) {
-      that.ws.close();
+      that.ws?.close();
     }
   }
 
@@ -136,14 +136,14 @@ export class LobbyComponent implements OnInit {
     let hasThief = selected.includes('thief')
     if (hasThief && selected.length < 8) {
       this.error = '至少需要六人才能创建游戏。因为选择了盗贼，需要额外选择两张身份牌。'
-      this.modalService.open(this.errModal, { centered: true })
+      $("#errModal").modal('show')
     } else if (!hasThief && selected.length < 6) {
       this.error = '至少需要六人才能创建游戏。'
-      this.modalService.open(this.errModal, { centered: true })
+      $("#errModal").modal('show')
     } else {
       this.gameState.setState('loading')
       console.log(JSON.stringify(selected))
-      this.ws.send(`{"op": "createGame", "characters": ${JSON.stringify(selected)}}`)
+      this.ws?.send(`{"op": "createGame", "characters": ${JSON.stringify(selected)}}`)
     }
   }
 
@@ -152,7 +152,7 @@ export class LobbyComponent implements OnInit {
       this.gameState.setState('joinGame')
     } else {
       this.gameState.setState('loading')
-      this.ws.send(`{"op": "joinGame", "gameId": "1111"}`)
+      this.ws?.send(`{"op": "joinGame", "gameId": "1111"}`)
       this.gameIdInput = ''
     }
   }
@@ -161,10 +161,10 @@ export class LobbyComponent implements OnInit {
     let gameId = this.gameIdInput.trim()
     if (gameId.length != 4) {
       this.error = '房间号应该为四位数字'
-      this.modalService.open(this.errModal, { centered: true })
+      $("#errModal").modal('show')
     } else {
       this.gameState.setState('loading')
-      this.ws.send(`{"op": "joinGame", "gameId": "${gameId}"}`)
+      this.ws?.send(`{"op": "joinGame", "gameId": "${gameId}"}`)
       this.gameIdInput = ''
     }
   }
@@ -173,9 +173,9 @@ export class LobbyComponent implements OnInit {
     if (this.gameState.turn == '') {
       if (!this.gameState.seats[seatInd].isOcupied) {
         if (environment.production) {
-          this.confirmModel.showDialog('入座', '确定在' + (seatInd+1) + '号入座？', {'op': 'takeSeat', 'position': seatInd+1})
+          this.confirmModel?.showDialog('入座', '确定在' + (seatInd+1) + '号入座？', {'op': 'takeSeat', 'position': seatInd+1})
         } else {
-          this.ws.send(`{"op": "takeSeat", "position": ${seatInd+1}}`)
+          this.ws?.send(`{"op": "takeSeat", "position": ${seatInd+1}}`)
         }
       }
     } else if (this.isMyTurn()) {
@@ -187,7 +187,7 @@ export class LobbyComponent implements OnInit {
           this.gameState.cupidSelection = this.gameState.cupidSelection.filter(i => i != playerId)
         } else {
           if (this.gameState.cupidSelection.length == 2) {
-            this.confirmModel.showDialog('无法选择', '你只能选择两个玩家。请点击已经选中的玩家之一来取消选择，然后在选择其他玩家。', {}, true)
+            this.confirmModel?.showDialog('无法选择', '你只能选择两个玩家。请点击已经选中的玩家之一来取消选择，然后在选择其他玩家。', {}, true)
           } else {
             this.gameState.cupidSelection.push(playerId)
           }
@@ -195,19 +195,19 @@ export class LobbyComponent implements OnInit {
         return
       }
       if (character.actionName == 'seerExamine') {
-        this.confirmModel.showDialog(character.actionTitle, character.actionMessage.replace(/\{0\}/, seatInd+1),
+        this.confirmModel?.showDialog(character.actionTitle, character.actionMessage.replace(/\{0\}/, seatInd+1),
           {'op': 'seerExamine', 'action': character.actionName, 'target': seatInd})
       } else if (character.actionName == 'witchPills') {
         let position = this.gameState.playerPosition[this.gameState.actions['werewolfKill']]
         if (position == seatInd + 1) {
-          this.confirmModel.showDialog(character.actionTitle.replace(/\{0\}/, '解药'), character.actionMessage.replace(/\{0\}/, seatInd+1).replace(/\{1\}/, '解药'),
+          this.confirmModel?.showDialog(character.actionTitle.replace(/\{0\}/, '解药'), character.actionMessage.replace(/\{0\}/, seatInd+1).replace(/\{1\}/, '解药'),
           {'op': 'endTurn', 'action': 'witchSave', 'target': this.gameState.seats[seatInd].id}, false, '确认，并结束回合')
         } else {
-          this.confirmModel.showDialog(character.actionTitle.replace(/\{0\}/, '毒药'), character.actionMessage.replace(/\{0\}/, seatInd+1).replace(/\{1\}/, '毒药'),
+          this.confirmModel?.showDialog(character.actionTitle.replace(/\{0\}/, '毒药'), character.actionMessage.replace(/\{0\}/, seatInd+1).replace(/\{1\}/, '毒药'),
           {'op': 'endTurn', 'action': 'witchKill', 'target': this.gameState.seats[seatInd].id}, false, '确认，并结束回合')
         }
       } else {
-        this.confirmModel.showDialog(character.actionTitle, character.actionMessage.replace(/\{0\}/, seatInd+1),
+        this.confirmModel?.showDialog(character.actionTitle, character.actionMessage.replace(/\{0\}/, seatInd+1),
           {'op': 'endTurn', 'action': character.actionName, 'target': this.gameState.seats[seatInd].id}, false, '确认，并结束回合')
       }
     }
@@ -216,18 +216,18 @@ export class LobbyComponent implements OnInit {
   // Currently thief only
   selectOption(selection: any) {
     let thief:any = Utils.parseCharactor('thief')
-    this.confirmModel.showDialog(thief.actionTitle, thief.actionMessage.replace(/\{0\}/, selection.name),
+    this.confirmModel?.showDialog(thief.actionTitle, thief.actionMessage.replace(/\{0\}/, selection.name),
           {'op': 'endTurn', 'action': thief.actionName, 'target': selection.type})
   }
 
   startGame() {
     if (this.gameState.seats.filter(p => !p.isOcupied).length > 0) {
       this.error = '所有人选择座位之后才可以开始发牌'
-      this.modalService.open(this.errModal, { centered: true })
+      $("#errModal").modal('show')
     } else {
       // Need this to break IOS mobile audio limitation.
       this.gameState.announce('soundUnlock.mp3')
-      this.ws.send(`{"op": "startGame", "gameId": "${this.gameState.gameId}"}`)
+      this.ws?.send(`{"op": "startGame", "gameId": "${this.gameState.gameId}"}`)
     }
   }
 
@@ -243,7 +243,7 @@ export class LobbyComponent implements OnInit {
         extra += '<br /> 你没有被丘比特选中。'
       }
     }
-    this.confirmModel.showDialog('你的身份是', `${this.gameState.getSelfCharacter().name}${extra}`, {})
+    this.confirmModel?.showDialog('你的身份是', `${this.gameState.getSelfCharacter().name}${extra}`, {})
   }
 
   isMyTurn() {
@@ -268,21 +268,21 @@ export class LobbyComponent implements OnInit {
   
   cupidConfirm() {
     if (this.gameState.cupidSelection.length != 2) {
-      this.confirmModel.showDialog('无法确认', '请选择两名玩家成为情侣。', {}, true)
+      this.confirmModel?.showDialog('无法确认', '请选择两名玩家成为情侣。', {}, true)
     } else {
       let first = this.gameState.playerPosition[this.gameState.cupidSelection[0]]
       let second = this.gameState.playerPosition[this.gameState.cupidSelection[1]]
       let choice = `${this.gameState.cupidSelection[0]},${this.gameState.cupidSelection[1]}`
-      this.confirmModel.showDialog('确认选择', `确认选择 ${first} 号和 ${second} 号成为情侣？`, {'op': 'endTurn', 'action': 'cupidChoose', 'target': choice})
+      this.confirmModel?.showDialog('确认选择', `确认选择 ${first} 号和 ${second} 号成为情侣？`, {'op': 'endTurn', 'action': 'cupidChoose', 'target': choice})
     }
   }
 
   nightStart() {
-    this.ws.send(`{"op": "endTurn", "action": "nightStart"}`)
+    this.ws?.send(`{"op": "endTurn", "action": "nightStart"}`)
   }
 
   endTurn() {
-    this.ws.send(`{"op": "endTurn"}`)
+    this.ws?.send(`{"op": "endTurn"}`)
   }
 
   getNote() {
@@ -377,16 +377,16 @@ export class LobbyComponent implements OnInit {
 
       // Show results
       if (killed.length == 0) {
-        this.confirmModel.showDialog('昨晚结果', `昨晚是平安夜${bearResult}${actionResult}`, {}, true)
+        this.confirmModel?.showDialog('昨晚结果', `昨晚是平安夜${bearResult}${actionResult}`, {}, true)
       } else {
         let killedPlayers = killed.map(k => this.gameState.playerPosition[k] + '号').join('，')
-        this.confirmModel.showDialog('昨晚结果', `昨晚死亡的玩家为 ${killedPlayers}${bearResult}${actionResult}`, {}, true)
+        this.confirmModel?.showDialog('昨晚结果', `昨晚死亡的玩家为 ${killedPlayers}${bearResult}${actionResult}`, {}, true)
       }
     } else {
       if (this.gameState.getSelfCharacter().type == 'werewolfQueen') {
         actionResult = actionResult.replace(/\{0\}/, this.gameState.playerPosition[this.gameState.actions['werewolfQueenLink']])
       }
-      this.confirmModel.showDialog('昨晚结果', `${actionResult}`, {}, true)
+      this.confirmModel?.showDialog('昨晚结果', `${actionResult}`, {}, true)
     }
   }
 
@@ -428,34 +428,34 @@ export class LobbyComponent implements OnInit {
   }
 
   restartGame() {
-    this.confirmModel.showDialog('重新发牌', '请确认使用同样角色配置重新开始游戏', {op: 'restartGame'})
+    this.confirmModel?.showDialog('重新发牌', '请确认使用同样角色配置重新开始游戏', {op: 'restartGame'})
   }
 
   public onConfirm(context: any) {
     switch(context.op) {
       case 'leaveGame':
-        this.ws.send(`{"op": "leaveGame"}`)
+        this.ws?.send(`{"op": "leaveGame"}`)
         break
       case 'takeSeat':
-        this.ws.send(`{"op": "takeSeat", "position": ${context.position}}`)
+        this.ws?.send(`{"op": "takeSeat", "position": ${context.position}}`)
         break
       case 'endTurn':
         if (context.action == undefined) {
-          this.ws.send(`{"op": "endTurn"}`)
+          this.ws?.send(`{"op": "endTurn"}`)
         } else {
-          this.ws.send(`{"op": "endTurn", "action": "${context.action}", "target": "${context.target}"}`)
+          this.ws?.send(`{"op": "endTurn", "action": "${context.action}", "target": "${context.target}"}`)
         }
         break
       case 'seerExamine': {
         let character = this.gameState.seats[context.target].character.isWolf ? '坏人' : '好人'
-        this.confirmModel.showDialog('身份检验', `${context.target + 1}号玩家的身份是${character}。`, {op: 'endTurn'}, true, '下一回合')
+        this.confirmModel?.showDialog('身份检验', `${context.target + 1}号玩家的身份是${character}。`, {op: 'endTurn'}, true, '下一回合')
         break
       }
       case 'restartGame':
-        this.ws.send(`{"op": "restartGame"}`)
+        this.ws?.send(`{"op": "restartGame"}`)
         break
       case 'kickPlayer':
-        this.ws.send(`{"op": "kickPlayer", "playerId": "${context.playerId}"}`)
+        this.ws?.send(`{"op": "kickPlayer", "playerId": "${context.playerId}"}`)
         break
       default:
         console.log(`Unknown command: ${context.op}`)
@@ -463,13 +463,13 @@ export class LobbyComponent implements OnInit {
   }
 
   onProfileSave(data: any) {
-    this.ws.send(`{"op": "updateProfile", "name": "${data.name}", "avatar": "${data.avatar}"}`)
+    this.ws?.send(`{"op": "updateProfile", "name": "${data.name}", "avatar": "${data.avatar}"}`)
   }
 
   kickPlayer(player: any) {
     let name = player.name == '' || player.name == null ? '玩家' : player.name
     let position = player.position ? '入座' + player.position + '号' : '未入坐'
-    this.confirmModel.showDialog('确认踢出玩家', `确认踢出 ${name}, 当前${position}?`, {'op': 'kickPlayer', 'playerId': player.id})
+    this.confirmModel?.showDialog('确认踢出玩家', `确认踢出 ${name}, 当前${position}?`, {'op': 'kickPlayer', 'playerId': player.id})
   }
 
   debug() {

@@ -1,121 +1,125 @@
-<ng-template #inrtoModal let-modal>
-  <div class="modal-header">
-    <h4 class="modal-title">角色介绍</h4>
-    <button type="button" class="btn-close" (click)="modal.dismiss('Cross click')"> </button>
+<div class="modal fade" id="inrtoModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">角色介绍</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col">
+            <p class="display-6 mb-0 mt-3"><small><strong>狼阵营</strong></small></p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <hr class="mt-2 mb-3"/>
+          </div>
+        </div>
+        <div class="row">
+          <p class="lead mb-0"><strong>狼人</strong></p>
+          <p class="lead"><small>每晚可以睁眼与队友见面讨论战术并选择杀害对象，可以选择当夜不杀害任何玩家（空刀）或自杀（自刀）。白天混入村落中混淆好人。狼人可以在白天发言阶段任何时候选择翻牌自爆强制进入夜晚，自爆的狼人在晚上点刀后死亡。</small></p>
+        </div>
+        <div class="row">
+          <p class="lead mb-0"><strong>白狼王</strong></p>
+          <p class="lead"><small>白狼王自爆可以开枪带走一名玩家。</small></p>
+        </div>
+        <div class="row">
+          <p class="lead mb-0"><strong>狼美人</strong></p>
+          <p class="lead"><small>
+            每晚与狼人睁眼杀人后，再独自睁眼选择魅惑一名玩家。除与骑士决斗而死外，狼美人以任何方式被淘汰，前一晚被魅惑的玩家殉情，且不能发动技能。狼美人不能自刀或自爆。</small></p>
+        </div>
+        <div class="row">
+          <p class="lead mb-0"><strong>隐狼</strong></p>
+          <p class="lead"><small>隐狼晚上不与狼人一起睁眼杀人，狼人不会得知隐狼身分；隐狼则会单独睁眼，并得知所有狼队友的身分。预言家、骑士均不能认定其为狼人。当场上只剩隐狼一名狼人，则狼人失败。隐狼不能自爆，狼队友可以杀死隐狼。</small></p>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <p class="display-6 mb-0 mt-3"><small><strong>平民阵营</strong></small></p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <hr class="mt-2 mb-3"/>
+          </div>
+        </div>
+        <div class="row">
+          <p class="lead mb-0"><strong>村民</strong></p>
+          <p class="lead"><small>又称「村民」。没有特殊技能，晚上全程闭眼，透过白天所得资讯投票放逐疑似狼人的玩家。</small></p>
+        </div>
+        <div class="row">
+          <p class="lead mb-0"><strong>老流氓</strong></p>
+          <p class="lead"><small>不受狼美人魅惑。被毒杀或者射杀后分别进入中毒和负伤状态，直到第二天发言结束后死亡。</small></p>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <p class="display-6 mb-0 mt-3"><small><strong>神阵营</strong></small></p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <hr class="mt-2 mb-3"/>
+          </div>
+        </div>
+        <div class="row">
+          <p class="lead mb-0"><strong>预言家</strong></p>
+          <p class="lead"><small>每晚可以查验一位存活玩家的所属阵营，并在白天透过发言向好人报出资讯。</small></p>
+        </div>
+        <div class="row">
+          <p class="lead mb-0"><strong>女巫</strong></p>
+          <p class="lead"><small>拥有一瓶解药和一瓶毒药。解药未使用时可以得知狼人的杀害对象，并决定是否使用解药，只有首夜可以自救。女巫也可以利用白天所得资讯，将怀疑的对象毒杀，该对象死后不能发动技能。解药和毒药不可以在同一晚使用。</small></p>
+        </div>
+        <div class="row">
+          <p class="lead mb-0"><strong>猎人</strong></p>
+          <p class="lead"><small>除殉情或被毒杀外，以任何其他方式被淘汰时可以公布角色牌发动技能开枪带走一位玩家，亦可以选择压枪不发动技能。</small></p>
+        </div>
+        <div class="row">
+          <p class="lead mb-0"><strong>守卫</strong></p>
+          <p class="lead"><small>每晚可以守护一名玩家免受狼人杀害，可以守护自己，但不能连续两晚守护同一人。</small></p>
+        </div>
+        <div class="row">
+          <p class="lead mb-0"><strong>白痴</strong></p>
+          <p class="lead"><small>若白天放逐公投中被投出，可翻开角色牌以免疫该次放逐，但在之后的放逐公投中失去投票权利。狼人无须追刀白痴。</small></p>
+        </div>
+        <div class="row">
+          <p class="lead mb-0"><strong>骑士</strong></p>
+          <p class="lead"><small>白天发言阶段任意时候可以翻牌选择与一名玩家决斗。如对方是狼人则对方即时出局且不能发动技能，并直接进入夜晚；如对方是好人则骑士以死谢罪，继续白天流程。</small></p>
+        </div>
+        <div class="row">
+          <p class="lead mb-0"><strong>熊</strong></p>
+          <p class="lead"><small>天亮后，如果熊存活且熊两边存活的玩家之中存在狼人，则法官会向场上所有玩家宣布“熊咆哮了”。如果熊死亡或熊相邻存活的玩家之中没有狼人，则法官会向场上所有玩家宣布“熊没有咆哮”。</small></p>
+        </div>
+        <div class="row">
+          <p class="lead mb-0"><strong>九尾狐</strong></p>
+          <p class="lead"><small>九尾妖狐共有9条尾巴，每出局1个平民，失去1条尾巴;每出局1个神民，失去2条尾巴;狼人出局，尾巴数不变。当九尾妖狐失去所有尾巴时，将直接死亡。九尾妖狐每晚最后一个睁眼，获知自己剩下的尾巴数(当夜死亡玩家已计算在内)。</small></p>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <p class="display-6 mb-0 mt-3"><small><strong>第三方阵营</strong></small></p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <hr class="mt-2 mb-3"/>
+          </div>
+        </div>
+        <div class="row">
+          <p class="lead mb-0"><strong>盗贼</strong></p>
+          <p class="lead"><small>上帝从所有身份牌中随机抽取两张，并将其他身份牌正常发放。第一晚盗贼最先睁眼，上帝向他展示这两张身份牌，盗贼从中选择一张作为自己的身份，另一张则作废。若两张身份牌中存在狼人则盗贼必须选择狼人。</small></p>
+        </div>
+        <div class="row">
+          <p class="lead mb-0"><strong>丘比特</strong></p>
+          <p class="lead"><small>丘比特在首夜狼人行动前，选择任意两名玩家成为情侣。这两名玩家若是其中一名死去，另一名也要跟着殉情。第一天晚上情侣睁眼互相确认，丘比特无法得知情侣的具体身份。若情侣双方都为好人，则丘比特与好人胜利条件相同；
+            若情侣双方都为狼人，则丘比特与狼人胜利条件相同；若情侣双方分别为好人和狼人，则丘比特与情侣成为第三方阵营，胜利条件为所有其他阵营玩家出局。丘比特既不算神职、平民，也不算狼人牌，但被预言家查验为好人。因殉情出局的猎人或狼王不可以发动技能，殉情时可以有遗言。</small></p>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" data-bs-dismiss="modal">关闭</button>
+      </div>
+    </div>
   </div>
-  <div class="modal-body" ngbAutofocus>
-    <div class="row">
-      <div class="col">
-        <p class="display-6 mb-0 mt-3"><small><strong>狼阵营</strong></small></p>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <hr class="mt-2 mb-3"/>
-      </div>
-    </div>
-    <div class="row">
-      <p class="lead mb-0"><strong>狼人</strong></p>
-      <p class="lead"><small>每晚可以睁眼与队友见面讨论战术并选择杀害对象，可以选择当夜不杀害任何玩家（空刀）或自杀（自刀）。白天混入村落中混淆好人。狼人可以在白天发言阶段任何时候选择翻牌自爆强制进入夜晚，自爆的狼人在晚上点刀后死亡。</small></p>
-    </div>
-    <div class="row">
-      <p class="lead mb-0"><strong>白狼王</strong></p>
-      <p class="lead"><small>白狼王自爆可以开枪带走一名玩家。</small></p>
-    </div>
-    <div class="row">
-      <p class="lead mb-0"><strong>狼美人</strong></p>
-      <p class="lead"><small>
-        每晚与狼人睁眼杀人后，再独自睁眼选择魅惑一名玩家。除与骑士决斗而死外，狼美人以任何方式被淘汰，前一晚被魅惑的玩家殉情，且不能发动技能。狼美人不能自刀或自爆。</small></p>
-    </div>
-    <div class="row">
-      <p class="lead mb-0"><strong>隐狼</strong></p>
-      <p class="lead"><small>隐狼晚上不与狼人一起睁眼杀人，狼人不会得知隐狼身分；隐狼则会单独睁眼，并得知所有狼队友的身分。预言家、骑士均不能认定其为狼人。当场上只剩隐狼一名狼人，则狼人失败。隐狼不能自爆，狼队友可以杀死隐狼。</small></p>
-    </div>
-
-    <div class="row">
-      <div class="col">
-        <p class="display-6 mb-0 mt-3"><small><strong>平民阵营</strong></small></p>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <hr class="mt-2 mb-3"/>
-      </div>
-    </div>
-    <div class="row">
-      <p class="lead mb-0"><strong>村民</strong></p>
-      <p class="lead"><small>又称「村民」。没有特殊技能，晚上全程闭眼，透过白天所得资讯投票放逐疑似狼人的玩家。</small></p>
-    </div>
-    <div class="row">
-      <p class="lead mb-0"><strong>老流氓</strong></p>
-      <p class="lead"><small>不受狼美人魅惑。被毒杀或者射杀后分别进入中毒和负伤状态，直到第二天发言结束后死亡。</small></p>
-    </div>
-
-    <div class="row">
-      <div class="col">
-        <p class="display-6 mb-0 mt-3"><small><strong>神阵营</strong></small></p>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <hr class="mt-2 mb-3"/>
-      </div>
-    </div>
-    <div class="row">
-      <p class="lead mb-0"><strong>预言家</strong></p>
-      <p class="lead"><small>每晚可以查验一位存活玩家的所属阵营，并在白天透过发言向好人报出资讯。</small></p>
-    </div>
-    <div class="row">
-      <p class="lead mb-0"><strong>女巫</strong></p>
-      <p class="lead"><small>拥有一瓶解药和一瓶毒药。解药未使用时可以得知狼人的杀害对象，并决定是否使用解药，只有首夜可以自救。女巫也可以利用白天所得资讯，将怀疑的对象毒杀，该对象死后不能发动技能。解药和毒药不可以在同一晚使用。</small></p>
-    </div>
-    <div class="row">
-      <p class="lead mb-0"><strong>猎人</strong></p>
-      <p class="lead"><small>除殉情或被毒杀外，以任何其他方式被淘汰时可以公布角色牌发动技能开枪带走一位玩家，亦可以选择压枪不发动技能。</small></p>
-    </div>
-    <div class="row">
-      <p class="lead mb-0"><strong>守卫</strong></p>
-      <p class="lead"><small>每晚可以守护一名玩家免受狼人杀害，可以守护自己，但不能连续两晚守护同一人。</small></p>
-    </div>
-    <div class="row">
-      <p class="lead mb-0"><strong>白痴</strong></p>
-      <p class="lead"><small>若白天放逐公投中被投出，可翻开角色牌以免疫该次放逐，但在之后的放逐公投中失去投票权利。狼人无须追刀白痴。</small></p>
-    </div>
-    <div class="row">
-      <p class="lead mb-0"><strong>骑士</strong></p>
-      <p class="lead"><small>白天发言阶段任意时候可以翻牌选择与一名玩家决斗。如对方是狼人则对方即时出局且不能发动技能，并直接进入夜晚；如对方是好人则骑士以死谢罪，继续白天流程。</small></p>
-    </div>
-    <div class="row">
-      <p class="lead mb-0"><strong>熊</strong></p>
-      <p class="lead"><small>天亮后，如果熊存活且熊两边存活的玩家之中存在狼人，则法官会向场上所有玩家宣布“熊咆哮了”。如果熊死亡或熊相邻存活的玩家之中没有狼人，则法官会向场上所有玩家宣布“熊没有咆哮”。</small></p>
-    </div>
-    <div class="row">
-      <p class="lead mb-0"><strong>九尾狐</strong></p>
-      <p class="lead"><small>九尾妖狐共有9条尾巴，每出局1个平民，失去1条尾巴;每出局1个神民，失去2条尾巴;狼人出局，尾巴数不变。当九尾妖狐失去所有尾巴时，将直接死亡。九尾妖狐每晚最后一个睁眼，获知自己剩下的尾巴数(当夜死亡玩家已计算在内)。</small></p>
-    </div>
-
-    <div class="row">
-      <div class="col">
-        <p class="display-6 mb-0 mt-3"><small><strong>第三方阵营</strong></small></p>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <hr class="mt-2 mb-3"/>
-      </div>
-    </div>
-    <div class="row">
-      <p class="lead mb-0"><strong>盗贼</strong></p>
-      <p class="lead"><small>上帝从所有身份牌中随机抽取两张，并将其他身份牌正常发放。第一晚盗贼最先睁眼，上帝向他展示这两张身份牌，盗贼从中选择一张作为自己的身份，另一张则作废。若两张身份牌中存在狼人则盗贼必须选择狼人。</small></p>
-    </div>
-    <div class="row">
-      <p class="lead mb-0"><strong>丘比特</strong></p>
-      <p class="lead"><small>丘比特在首夜狼人行动前，选择任意两名玩家成为情侣。这两名玩家若是其中一名死去，另一名也要跟着殉情。第一天晚上情侣睁眼互相确认，丘比特无法得知情侣的具体身份。若情侣双方都为好人，则丘比特与好人胜利条件相同；
-        若情侣双方都为狼人，则丘比特与狼人胜利条件相同；若情侣双方分别为好人和狼人，则丘比特与情侣成为第三方阵营，胜利条件为所有其他阵营玩家出局。丘比特既不算神职、平民，也不算狼人牌，但被预言家查验为好人。因殉情出局的猎人或狼王不可以发动技能，殉情时可以有遗言。</small></p>
-    </div>
-
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-success" (click)="modal.dismiss('Cross click')">关闭</button>
-  </div>
-</ng-template>
+</div>

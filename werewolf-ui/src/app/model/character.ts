@@ -5,4 +5,5 @@ export class Character {
   nonePlayerAction = false
   startAudio = ''
   endAudio = ''
+  type = ''
 }

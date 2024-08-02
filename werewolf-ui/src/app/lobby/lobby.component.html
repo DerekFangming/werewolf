@@ -13,7 +13,7 @@
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="toolsGroup">
           <li><a class="dropdown-item" (click)="profileModel.showDialog()">玩家信息</a></li>
           <li><a class="dropdown-item mt-2" (click)="announcerModel.showDialog()">上帝助手</a></li>
-          <li *ngIf="gameState.hostId == gameState.playerId"><a class="dropdown-item mt-2" (click)="managePlayers()">玩家管理</a></li>
+          <!-- <li *ngIf="gameState.hostId == gameState.playerId"><a class="dropdown-item mt-2" (click)="managePlayers()">玩家管理</a></li> -->
           <li *ngIf="gameState.hostId == gameState.playerId"><a class="dropdown-item mt-2"
             (click)="confirmModel.showDialog('确认重新开始', '确认重新发牌并重置游戏进度。游戏将被重置为查看身份回合。', {'op': 'restartGame'})">重新开始</a></li>
         </ul>
@@ -241,22 +241,26 @@
   </div>
 </nav>
 
-<ng-template #errModal let-modal>
-  <div class="modal-header">
-    <h4 class="modal-title"><span style="color: red">错误</span></h4>
-    <button type="button" class="btn-close" (click)="modal.dismiss('Cross click')"> </button>
-  </div>
-  <div class="modal-body" ngbAutofocus>
-    <div class="row">
-      <div class="col">
-        <p class="lead"><small>{{error}}</small></p>
+<div class="modal fade" id="errModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><span style="color: red">错误</span></h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col">
+            <p class="lead"><small>{{error}}</small></p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">确定</button>
       </div>
     </div>
   </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" (click)="modal.dismiss('Cross click')">确定</button>
-  </div>
-</ng-template>
+</div>
 
 <app-profile-dialog #profileModel (onSave)="onProfileSave($event)"></app-profile-dialog>
 <app-announcer-dialog #announcerModel></app-announcer-dialog>
@@ -267,7 +271,7 @@
     <h4 class="modal-title">玩家管理</h4>
     <button type="button" class="btn-close" (click)="modal.dismiss('Cross click')"> </button>
   </div>
-  <div class="modal-body" ngbAutofocus>
+  <div class="modal-body">
     <div class="row mt-2" *ngFor="let p of gameState.allPlayers; let ind = index">
       <div class="col-6">
           <img [src]="p.avatar == '' || p.avatar == null ? 'https://i.imgur.com/Q6Y7L9u.png' : p.avatar" height="50" width="50">

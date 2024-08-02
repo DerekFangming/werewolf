@@ -1,20 +1,24 @@
-import { Component, EventEmitter, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
-import { NgbModalRef, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { GameStateService } from '../game-state.service';
+import { Component, OnInit } from '@angular/core'
+import { GameStateService } from '../game-state.service'
+import { CommonModule } from '@angular/common'
+import { FormsModule } from '@angular/forms'
+import { RouterOutlet } from '@angular/router'
+
+declare var $: any
 
 @Component({
   selector: 'app-announcer-dialog',
+  standalone: true,
+  imports: [RouterOutlet, FormsModule, CommonModule],
   templateUrl: './announcer-dialog.component.html',
-  styleUrls: ['./announcer-dialog.component.css']
+  styleUrl: './announcer-dialog.component.css'
 })
 export class AnnouncerDialogComponent implements OnInit {
 
-  modalRef: NgbModalRef
-  @ViewChild('announcerModal', { static: true}) announcerModal: TemplateRef<any>
-  announcements = []
+  announcements: string[] = []
   note = ''
 
-  constructor(public gameState: GameStateService, public modalService: NgbModal) { }
+  constructor(public gameState: GameStateService) { }
 
   ngOnInit(): void { }
 
@@ -67,7 +71,7 @@ export class AnnouncerDialogComponent implements OnInit {
 
     this.announcements.push('<b>天亮了。</b>')
 
-    this.modalRef = this.modalService.open(this.announcerModal, { centered: true })
+    $("#announcerModal").modal('show')
   }
 
 }

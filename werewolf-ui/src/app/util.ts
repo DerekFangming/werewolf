@@ -52,7 +52,7 @@ export default class Utils {
       case 'fox':
         return new Fox()
       default:
-        return null
+        return new Villager()
     }
   }
 }

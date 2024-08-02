@@ -18,13 +18,13 @@ export class GameStateService {
   hostId = ''
   characterDetails = ''
   turn = ''
-  characters = []
-  playerPosition = {}
-  allPlayers = []
-  seats = []
-  actions = {}
-  thiefOpt = []
-  cupidSelection = []
+  characters: string[] = []
+  playerPosition: any = {}
+  allPlayers: any[]  = []
+  seats: any[] = []
+  actions: any = {}
+  thiefOpt: any[] = []
+  cupidSelection: any[] = []
   state = 'loading'
 
   constructor(private cookieService: CookieService) {
@@ -94,7 +94,7 @@ export class GameStateService {
     for (const [key, value] of m) {
       if (this.characterDetails != '') this.characterDetails += ', '
 
-      this.characterDetails += Utils.parseCharactor(key).name
+      this.characterDetails += Utils.parseCharactor(key)?.name
       if (value > 1) this.characterDetails += 'X' + value
     }
 
@@ -209,7 +209,7 @@ export class GameStateService {
   }
 
   getThiefChoices() {
-    if (this.thiefOpt == null && this.thiefOpt.length != 2) return []
+    if (this.thiefOpt == null || this.thiefOpt.length != 2) return []
     let character0 = Utils.parseCharactor(this.thiefOpt[0])
     let character1 = Utils.parseCharactor(this.thiefOpt[1])
     let hasWolf = character0.isWolf || character1.isWolf
@@ -251,7 +251,7 @@ export class GameStateService {
     this.turn = newTurn
   }
 
-  audio: HTMLAudioElement
+  audio: HTMLAudioElement | undefined
 
   announce(fileName: string, done: any = null) {
     if (this.audio == null) {

@@ -1,22 +1,26 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { CommonModule } from '@angular/common'
+import { Component, OnInit } from '@angular/core'
+import { FormsModule } from '@angular/forms'
+import { RouterOutlet } from '@angular/router'
+
+declare var $: any
 
 @Component({
   selector: 'app-intro-dialog',
+  standalone: true,
+  imports: [RouterOutlet, FormsModule, CommonModule],
   templateUrl: './intro-dialog.component.html',
-  styleUrls: ['./intro-dialog.component.css']
+  styleUrl: './intro-dialog.component.css'
 })
 export class IntroDialogComponent implements OnInit {
 
-  @ViewChild('inrtoModal', { static: true}) inrtoModal: TemplateRef<any>
-
-  constructor(private modalService: NgbModal) { }
+  constructor() { }
 
   ngOnInit(): void {
   }
 
   showDialog() {
-    this.modalService.open(this.inrtoModal, { centered: true })
+    $("#inrtoModal").modal('show')
   }
 
 }

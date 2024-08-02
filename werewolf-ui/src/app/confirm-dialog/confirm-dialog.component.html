@@ -1,17 +1,21 @@
-<ng-template #confirmModal let-modal>
-  <div class="modal-header">
-    <h4 class="modal-title">{{ title }}</h4>
-    <button *ngIf="!confirmOnly" type="button" class="btn-close" (click)="modal.dismiss('Cross click')"> </button>
-  </div>
-  <div class="modal-body" ngbAutofocus>
-    <div class="row">
-      <div class="col">
-        <p class="lead"><small [innerHTML]='message'></small></p>
+<div class="modal fade" id="confirmModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ title }}</h4>
+        <button *ngIf="!confirmOnly" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col">
+            <p class="lead"><small [innerHTML]='message'></small></p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button *ngIf="!confirmOnly" type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-success" (click)="confirm()">{{ confirmText }}</button>
       </div>
     </div>
   </div>
-  <div class="modal-footer">
-    <button *ngIf="!confirmOnly" type="button" class="btn btn-secondary" (click)="modal.dismiss('Cross click')">取消</button>
-    <button type="button" class="btn btn-success" (click)="confirm()">{{ confirmText }}</button>
-  </div>
-</ng-template>
+</div>
